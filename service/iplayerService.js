@@ -37,7 +37,8 @@ const iplayerService = {
             size: 0,
             sizeLeft : 1000,
             speed: 0,
-            eta: ""
+            eta: "",
+            start: new Date()
         }
 
         downloads[uuid] = download;
