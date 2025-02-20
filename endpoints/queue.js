@@ -1,4 +1,5 @@
 import { getParameter } from "../service/configService.js";
+import historyService from "../service/historyService.js";
 import iplayerService from "../service/iplayerService.js";
 import { formatBytes, formatTimeShort } from "../utils/utils.js";
 const { default: disk } = await import('diskusage');
@@ -25,7 +26,7 @@ export default async (req, res) => {
     const downloadDir = getParameter("DOWNLOAD_DIR");
     const { available, total } = await disk.check(downloadDir);
     const iplayerQueue = iplayerService.getQueue();
-    const iplayerComplete = iplayerService.getComplete();
+    const iplayerComplete = await historyService.getHistory();
     const queueObj = {
         queue : {
             diskspace1: formatBytes(available, false),
@@ -40,7 +41,7 @@ export default async (req, res) => {
                 "status": "Downloading",
                 "index": 0,
                 "password": "",
-                "avg_age": formatTimeShort(slot.start, new Date()),
+                "avg_age": "0d",
                 "script": "None",
                 "direct_unpack": "10/30",
                 "mb": slot.size,
