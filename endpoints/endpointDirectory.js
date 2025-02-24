@@ -13,5 +13,6 @@ export const directory = {
     "history" : history,
     "test" : test,
     "missing" : missing,
-    "caps" : caps
+    "caps" : caps,
+    "tvsearch" : tvsearch
 }

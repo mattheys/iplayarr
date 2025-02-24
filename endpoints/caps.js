@@ -1,16 +1,33 @@
-import { readFile } from "fs/promises";
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
+import { Builder } from "xml2js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default async (req, res) => {
-    try {
-        const filePath = join(__dirname, "../static/caps.xml");
-        const data = await readFile(filePath, "utf8");
-        res.set("Content-Type", "application/xml");
-        res.send(data);
-    } catch (err) {
-        res.status(500).send("Error reading file");
+    const json = {
+    caps: {
+        server: { $: { title: "iPlayarr" } },
+        limits: { $: { default: "100", max: "100" } },
+        searching: {
+        search: { $: { available: "yes", supportedParams: "q" } },
+        "tv-search": { $: { available: "yes", supportedParams: "q,season,ep" } },
+        "movie-search": { $: { available: "no", supportedParams: "q" } },
+        "music-search": { $: { available: "no", supportedParams: "q" } },
+        "audio-search": { $: { available: "no", supportedParams: "q" } },
+        "book-search": { $: { available: "no", supportedParams: "q" } }
+        },
+        categories: {
+        category: [
+            { $: { id: "0", name: "Other" } },
+            { $: { id: "2000", name: "Movies" } },
+            { $: { id: "5000", name: "TV" } }
+        ]
+        },
+        tags: ""
     }
+    };
+
+    const builder = new Builder({ headless: true });
+    const xml = builder.buildObject(json);
+    res.set("Content-Type", "application/xml");
+    res.send(xml);
 }
