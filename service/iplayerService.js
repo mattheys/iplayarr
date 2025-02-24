@@ -103,7 +103,7 @@ const iplayerService = {
             const args = fullExec.match(/(?:[^\s"]+|"[^"]*")+/g);
 
             const exec = args.shift();
-            const allArgs = [...args, `"${term}${season ? `: Series ${season}` : ''}${episode ? ` - Episode ${episode}` : ''}"`]
+            const allArgs = [...args, `"${term}"`]
             console.log(allArgs);
 
             const searchProcess = spawn(exec, allArgs, { shell: true });
@@ -115,6 +115,12 @@ const iplayerService = {
                     if (match) {
                         const [_, number, show, channel, id] = match;
                         const nzbName = createNZBName(show);
+                        if (season && !show.includes(`Series ${season}`) && !show.includes(`Season ${season}`)){
+                            continue;
+                        }
+                        if (episode && !show.includes(`Episode ${episode}`)){
+                            continue;
+                        }
                         results.push({ number, show, channel, id, nzbName });
                     }
                 }
