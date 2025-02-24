@@ -96,14 +96,21 @@ const iplayerService = {
         });
     },
 
-    search: (term) => {
+    search: (term, season, episode) => {
         return new Promise((resolve, reject) => {
             const results = [];
             const fullExec = getParameter("GET_IPLAYER_EXEC");
             const args = fullExec.match(/(?:[^\s"]+|"[^"]*")+/g);
 
             const exec = args.shift();
-            const allArgs = [...args, `"${term}"`]
+            const allArgs = [...args]
+            if (season) {
+                allArgs.push(`--series=${season}`);
+            }
+            if (episode) {
+                allArgs.push(episode);
+            }
+            allArgs.push(`"${term}"`);
             console.log(allArgs);
 
             const searchProcess = spawn(exec, allArgs, { shell: true });
