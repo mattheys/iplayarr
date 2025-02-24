@@ -25,18 +25,20 @@ This will require the following properties in the env file:
 
 iplayarr presents as a newznab indexer and sabnzbd downloader on port 4044. In Sonarr you need to create a new SABnzbd download client with these settings:
 
-*Name:* iPlayarr
-*Host:* <Your Docker Host>
-*Port:* 4044 (Unless remapped)
-*API Key:* API_KEY from above
-*Category:* iplayer
+| Property | Value |
+| ---------| ----- |
+| Name     | iPlayerr |
+| Host     | Your Docker Host |
+| Port     | 4044 |
+| API Key  | API_KEY from avove |
+| Category | iplayer |
+
 
 Test and save this. Then create a new Newznab indexer with these settings:
 
-*Name:* iPlayarr
-*URL:* http://<Your Docker Host>:4044
-*Api Key:* API_KEY from above
-
-Click on Advanced settings and set
-
-*Download Client:* iPlayarr (created above)
+| Property | Value |
+| ---------| ----- |
+| Name     | iPlayerr |
+| URL      | http://Your Docker Host:4044 |
+| API Key  | API_KEY from avove |
+| Download Client  | iPlayarr (created above) |
