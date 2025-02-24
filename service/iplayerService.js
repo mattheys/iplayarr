@@ -103,14 +103,7 @@ const iplayerService = {
             const args = fullExec.match(/(?:[^\s"]+|"[^"]*")+/g);
 
             const exec = args.shift();
-            const allArgs = [...args]
-            if (season) {
-                allArgs.push(`--series=${season}`);
-            }
-            if (episode) {
-                allArgs.push(episode);
-            }
-            allArgs.push(`"${term}"`);
+            const allArgs = [...args, `"${term}${season ? `: Series ${season}` : ''}${episode ? ` - Episode ${episode}` : ''}"`]
             console.log(allArgs);
 
             const searchProcess = spawn(exec, allArgs, { shell: true });
