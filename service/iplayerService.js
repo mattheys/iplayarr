@@ -7,6 +7,7 @@ import path from 'path';
 import historyService from './historyService.js';
 
 const downloads = {};
+const timestampFile = 'iplayarr_timestamp';
 
 const episodeRegex = /([0-9]+:)[^a-zA-Z]([^,]+),[^a-zA-Z]([^,]+),[^a-zA-Z]([^,]+)(?:$|\n)/;
 const progressRegex = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s) ETA: ([\d:]+).*$/;
@@ -17,6 +18,51 @@ const iplayerService = {
         return Object.values(downloads);
     },
 
+    refreshCache: () => {
+        const downloadDir = getParameter("DOWNLOAD_DIR");
+        const fullExec = getParameter("GET_IPLAYER_EXEC");
+        const args = fullExec.match(/(?:[^\s"]+|"[^"]*")+/g);
+
+        const exec = args.shift();
+
+        //Refresh the cache
+        spawn(exec, [...args, '--cache-rebuild'], { shell: true });
+        
+        //Delete failed jobs
+        const threeHoursAgo = Date.now() - 3 * 60 * 60 * 1000;
+        fs.readdir(downloadDir, { withFileTypes: true }, (err, entries) => {
+            if (err) {
+                console.error('Error reading directory:', err);
+                return;
+            }
+    
+            entries.forEach(entry => {
+                if (!entry.isDirectory()) return;
+    
+                const dirPath = path.join(downloadDir, entry.name);
+                const filePath = path.join(dirPath, timestampFile);
+    
+                fs.stat(filePath, (err, stats) => {
+                    if (err) {
+                        // Ignore missing files
+                        if (err.code !== 'ENOENT') console.error(`Error checking ${filePath}:`, err);
+                        return;
+                    }
+    
+                    if (stats.mtimeMs < threeHoursAgo) {
+                        fs.rm(dirPath, { recursive: true, force: true }, (err) => {
+                            if (err) {
+                                console.error(`Error deleting ${dirPath}:`, err);
+                            } else {
+                                console.log(`Deleted old directory: ${dirPath}`);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    },
+
     download: async (id) => {
         const uuid = v4();
         const fullExec = getParameter("GET_IPLAYER_EXEC");
@@ -25,6 +71,8 @@ const iplayerService = {
         const args = fullExec.match(/(?:[^\s"]+|"[^"]*")+/g);
 
         const exec = args.shift();
+        fs.mkdirSync(`${downloadDir}/${uuid}`);
+        fs.writeFile(`${downloadDir}/${uuid}/iplayarr_timestamp`, '');
         const allArgs = [...args, '--output', `${downloadDir}/${uuid}`, '--overwrite', '--log-progress', `--pid=${id}`];
 
         const downloadProcess = spawn(exec, allArgs);

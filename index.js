@@ -2,9 +2,13 @@ import express from 'express';
 import { getParameter } from './service/configService.js';
 import { directory } from './endpoints/endpointDirectory.js';
 import multer from 'multer';
+import cron from 'node-cron';
+import iplayerService from './service/iplayerService.js';
+
 
 const app = express();
 const port = 4404;
+const cronSchedule = getParameter("REFRESH_SCHEDULE") || "0 * * * *";
 
 const upload = multer();
 app.use(express.json());
@@ -27,6 +31,10 @@ app.use('/api', upload.any(), (req, res) => {
     } else {
         res.status(401).json({ "error": "Not authorised" });
     }
+});
+
+cron.schedule(cronSchedule, () => {
+  iplayerService.refreshCache();
 });
 
 app.listen(port, () => {
