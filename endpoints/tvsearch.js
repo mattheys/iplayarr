@@ -7,7 +7,7 @@ export default async (req, res) => {
     const results = await iplayerService.search(searchTerm);
 
     const date = new Date();
-    date.setMinutes(date.getMinutes() - 15);
+    date.setMinutes(date.getMinutes() - 720);
 
     const pubDate = date.toUTCString().replace("GMT", "+0000");
 
@@ -32,7 +32,10 @@ export default async (req, res) => {
                         "newznab:attr": [
                           { $: { name: "category", value: "5000" } },
                           { $: { name: "category", value: "5040" } },
-                          { $: { name: "tvdbid", value: "326124" } }
+                          { $: { name: "tvdbid", value: "326124" } },
+                          { $: { name: "language", value: "English" } },
+                          { $: { name: "files", value: "0" } },
+                          { $: { name: "grabs", value: "0" } }
                         ],
                         link: `http://192.168.1.19:3000/api/download/${id}`,
                         enclosure: {$:{url : `http://192.168.1.19:3000/api/download/${id}`, length : "1073741824", type: "application/x-zb"} } 
