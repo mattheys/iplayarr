@@ -25,7 +25,7 @@ export function formatTimeShort(date1, date2 = new Date()) {
         if (value >= 1) return `${value}${interval.label}`;
     }
 
-    return "0s"; // If the difference is less than 1 second
+    return "0s";
 }
 
 export function formatInlineDates(str) {
@@ -37,9 +37,6 @@ export function formatSeriesString(input) {
         return `S${season.padStart(2, '0')}E${episode.padStart(2, '0')}`;
     });
 }
-
-//The.Repair.Shop.On.The.Road.S01E14.WEB.H264-RBB
-//The Repair Shop: Series 14 - Episode 5
 export function createNZBName(input) {
     let filename = input.replaceAll("_", ".");
     filename = filename.replaceAll(" ", ".");
@@ -48,3 +45,8 @@ export function createNZBName(input) {
     filename = formatSeriesString(filename);
     return `${filename}.WEB.H264-BBC`;
 }
+
+export function getBaseUrl(req) {
+    return `${req.protocol}://${req.hostname}:${req.socket.localPort}`;
+  };
+  

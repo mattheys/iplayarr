@@ -2,7 +2,6 @@ import { getParameter } from "../service/configService.js";
 import historyService from "../service/historyService.js";
 import iplayerService from "../service/iplayerService.js";
 import { formatBytes, formatTimeShort } from "../utils/utils.js";
-const { default: disk } = await import('diskusage');
 
 const queue_skeleton = {
     "speedlimit": "9",
@@ -22,9 +21,9 @@ const queue_skeleton = {
     "have_quota": false,
 }
 
-export default async (req, res) => {
+export default async (_, res) => {
     const downloadDir = getParameter("DOWNLOAD_DIR");
-    const { available, total } = await disk.check(downloadDir);
+    const { available, total } = { available: 107374182400, total: 107374182400}
     const iplayerQueue = iplayerService.getQueue();
     const iplayerComplete = await historyService.getHistory();
     const queueObj = {

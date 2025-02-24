@@ -25,8 +25,7 @@ const iplayerService = {
         const args = fullExec.match(/(?:[^\s"]+|"[^"]*")+/g);
 
         const exec = args.shift();
-        const allArgs = [...args, '--output', `${downloadDir}/${uuid}`, '--overwrite', '--log-progress', `--pid=${id}`]
-        console.log(allArgs);
+        const allArgs = [...args, '--output', `${downloadDir}/${uuid}`, '--overwrite', '--log-progress', `--pid=${id}`];
 
         const downloadProcess = spawn(exec, allArgs);
 
@@ -38,7 +37,7 @@ const iplayerService = {
             speed: 0,
             eta: "",
             start: new Date()
-        }
+        };
 
         downloads[uuid] = download;
 
@@ -48,9 +47,8 @@ const iplayerService = {
             const filenameLine = lines.find((l) => filenameRegex.exec(l));
             if (filenameLine) {
                 const filenameMatch = filenameRegex.exec(filenameLine);
-                let filename = `${filenameMatch[1].replaceAll(" ", "_").replaceAll("/", "-")}_${filenameMatch[2]}_original.mp4`;
-                filename = formatInlineDates(filename);
-                filename = formatSeriesString(filename);
+                let filename = `${filenameMatch[1]} ${filenameMatch[2]}`;
+                filename = createNZBName(filename) + ".mp4";
                 downloads[uuid].filename = filename;
             }
             const progressLines = lines.filter((l) => progressRegex.exec(l));
@@ -86,13 +84,12 @@ const iplayerService = {
                     // Delete the uuid directory after moving the file
                     fs.rmSync(uuidPath, { recursive: true, force: true });
 
-
                     await historyService.addHistory(downloads[uuid]);
                 } catch (err) {
                     console.error(err);
                 }
             }
-            delete (downloads[uuid]);
+            delete downloads[uuid];
         });
     },
 
@@ -103,8 +100,7 @@ const iplayerService = {
             const args = fullExec.match(/(?:[^\s"]+|"[^"]*")+/g);
 
             const exec = args.shift();
-            const allArgs = [...args, `"${term}"`]
-            console.log(allArgs);
+            const allArgs = [...args, `"${term}"`];
 
             const searchProcess = spawn(exec, allArgs, { shell: true });
 
@@ -115,10 +111,10 @@ const iplayerService = {
                     if (match) {
                         const [_, number, show, channel, id] = match;
                         const nzbName = createNZBName(show);
-                        if (season && !show.includes(`Series ${season}`) && !show.includes(`Season ${season}`)){
+                        if (season && !show.includes(`Series ${season}`) && !show.includes(`Season ${season}`)) {
                             continue;
                         }
-                        if (episode && !show.includes(`Episode ${episode}`)){
+                        if (episode && !show.includes(`Episode ${episode}`)) {
                             continue;
                         }
                         results.push({ number, show, channel, id, nzbName });
@@ -131,7 +127,6 @@ const iplayerService = {
             });
 
             searchProcess.on('close', (code) => {
-                //console.log(stdout);
                 if (code === 0) {
                     resolve(results);
                 } else {
@@ -139,8 +134,7 @@ const iplayerService = {
                 }
             });
         });
-
     }
-}
+};
 
 export default iplayerService;

@@ -1,9 +1,9 @@
 import { Builder } from "xml2js";
 import iplayerService from "../service/iplayerService.js";
+import { getBaseUrl } from "../utils/utils.js";
 
 export default async (req, res) => {
     const {q, season, ep} = req.query;
-    console.log(JSON.stringify(req.query));
     const searchTerm = q ?? '*';
     const results = await iplayerService.search(searchTerm, season, ep);
 
@@ -33,13 +33,12 @@ export default async (req, res) => {
                         "newznab:attr": [
                           { $: { name: "category", value: "5000" } },
                           { $: { name: "category", value: "5040" } },
-                        //   { $: { name: "tvdbid", value: "326124" } },
                           { $: { name: "language", value: "English" } },
                           { $: { name: "files", value: "0" } },
                           { $: { name: "grabs", value: "0" } }
                         ],
-                        link: `http://192.168.1.19:3000/api?mode=download&pid=${id}&apikey=${req.query.apikey}`,
-                        enclosure: {$:{url : `http://192.168.1.19:3000/api?mode=download&pid=${id}&apikey=${req.query.apikey}`, length : "2147483648", type: "application/x-nzb"} } 
+                        link: `${getBaseUrl(req)}/api?mode=nzb-download&pid=${id}&apikey=${req.query.apikey}`,
+                        enclosure: {$:{url : `${getBaseUrl(req)}/api?mode=nzb-download&pid=${id}&apikey=${req.query.apikey}`, length : "2147483648", type: "application/x-nzb"} } 
                       }
                 ))
             }

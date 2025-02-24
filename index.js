@@ -1,19 +1,15 @@
 import express from 'express';
 import { getParameter } from './service/configService.js';
 import { directory } from './endpoints/endpointDirectory.js';
-import sonarrService from './service/sonarrService.js';
-import iplayerService from './service/iplayerService.js';
+import multer from 'multer';
 
 const app = express();
-const port = 3000;
+const port = 4404;
 
+const upload = multer();
 app.use(express.json());
 
-app.get("/", (req, res) => {
-    res.render("index");
-})
-
-app.use('/api', (req, res) => {
+app.use('/api', upload.any(), (req, res) => {
     const {apikey : queryKey, mode, t} = req.query;
     const envKey = getParameter('API_KEY');
     if (envKey === queryKey){
@@ -32,34 +28,6 @@ app.use('/api', (req, res) => {
         res.status(401).json({ "error": "Not authorised" });
     }
 });
-
-app.get("/download", async (req, res) => {
-    const {series, title, season, episode} = req.query;
-    const allResults = await iplayerService.search(series);
-
-    const result = allResults.find(({show}) => {
-        const correctSeason = show.includes(`Series ${season}`);
-        const correctEpisodeNumber = show.includes(`Episode ${episode}`);
-        const correctEpisodeName = show.includes(title);
-        return correctSeason && (correctEpisodeName || correctEpisodeNumber);
-    });
-
-    if (result){
-        await iplayerService.download(result.id);
-        res.json({"status" : "success"})
-    } else {
-        res.status(404).json({ "error": "Not found" });
-    }
-})
-
-app.all('*', (req, res) => {
-    console.log('Request received:');
-        console.log('Method:', req.method);
-        console.log('URL:', req.url);
-        console.log('Headers:', req.headers);
-        console.log('Body:', req.body);
-        res.status(404).json({ "error": "Not found" });
-})
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
