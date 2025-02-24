@@ -21,7 +21,7 @@ export default async (req, res) => {
             channel: {
                 "atom:link": { $: { rel: "self", type: "application/rss+xml" } },
                 title: "iPlayarr",
-                item: results.map(({show, id}) => (
+                item: results.map(({show, id, nzbName}) => (
                     {
                         title: nzbName,
                         description: show,
