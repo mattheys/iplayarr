@@ -14,11 +14,12 @@ app.get("/", (req, res) => {
 })
 
 app.use('/api', (req, res) => {
-    const {apikey : queryKey, mode} = req.query;
+    const {apikey : queryKey, mode, t} = req.query;
     const envKey = getParameter('API_KEY');
     if (envKey === queryKey){
-        if (Object.keys(directory).includes(mode)){
-            directory[mode](req, res);
+        const endpoint = mode ?? t;
+        if (Object.keys(directory).includes(endpoint)){
+            directory[endpoint](req, res);
         } else {
             console.log('Request received:');
             console.log('Method:', req.method);
@@ -30,11 +31,6 @@ app.use('/api', (req, res) => {
     } else {
         res.status(401).json({ "error": "Not authorised" });
     }
-});
-
-app.get("/missing", async (_, res) => {
-    const missing = await sonarrService.getMissing();
-    res.json(missing);
 });
 
 app.get("/download", async (req, res) => {
