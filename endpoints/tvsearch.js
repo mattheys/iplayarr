@@ -1,10 +1,16 @@
 import { Builder } from "xml2js";
-import iplayerService from "../service/iplayerService";
+import iplayerService from "../service/iplayerService.js";
 
 export default async (req, res) => {
     const {q} = req.query;
     const searchTerm = q ?? '*';
     const results = await iplayerService.search(searchTerm);
+
+    const date = new Date();
+    date.setMinutes(date.getMinutes() - minutesAgo);
+
+    const pubDate = date.toUTCString().replace("GMT", "+0000");
+
     const json = {
         rss: {
             $: {
@@ -22,6 +28,7 @@ export default async (req, res) => {
                         guid: `https://www.bbc.co.uk/iplayer/episodes/${id}`,
                         size: "1073741824",
                         category: ["5000"],
+                        pubDate,
                         "newznab:attr": [
                           { $: { name: "category", value: "5000" } }
                         ]
