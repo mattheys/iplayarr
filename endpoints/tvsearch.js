@@ -27,10 +27,12 @@ export default async (req, res) => {
                         description: show,
                         guid: `https://www.bbc.co.uk/iplayer/episodes/${id}`,
                         size: "1073741824",
-                        category: ["5000"],
+                        category: ["5000", "5040"],
                         pubDate,
                         "newznab:attr": [
-                          { $: { name: "category", value: "5000" } }
+                          { $: { name: "category", value: "5000" } },
+                          { $: { name: "category", value: "5040" } },
+                          { $: { name: "tvdbid", value: "326124" } }
                         ],
                         link: `http://192.168.1.19:3000/api/download/${id}`,
                         enclosure: {$:{url : `http://192.168.1.19:3000/api/download/${id}`, length : "1073741824", type: "application/x-zb"} } 

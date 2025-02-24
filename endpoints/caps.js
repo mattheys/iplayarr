@@ -17,7 +17,9 @@ export default async (req, res) => {
         category: [
             { $: { id: "0", name: "Other" } },
             { $: { id: "2000", name: "Movies" } },
-            { $: { id: "5000", name: "TV" } }
+            { $: { id: "5000", name: "TV" }, subcat : [
+                {$: {id : "5040", name : "TV/HD"}}
+            ] }
         ]
         },
         tags: ""
