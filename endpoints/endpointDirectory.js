@@ -5,6 +5,7 @@ import history from './history.js'
 import test from './test.js'
 import missing from './missing.js'
 import caps from './caps.js'
+import tvsearch from './tvsearch.js'
 
 export const directory = {
     "version" : version,

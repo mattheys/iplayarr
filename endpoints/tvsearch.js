@@ -1,24 +1,39 @@
+import { Builder } from "xml2js";
+import iplayerService from "../service/iplayerService";
+
 export default async (req, res) => {
-    import { Builder } from "xml2js";
+    const {q} = req.query;
+    const searchTerm = q ?? '*';
+    const results = await iplayerService.search(searchTerm);
+    const json = {
+        rss: {
+            $: {
+                version: "1.0",
+                "xmlns:atom": "http://www.w3.org/2005/Atom",
+                "xmlns:newznab": "http://www.newznab.com/DTD/2010/feeds/attributes/"
+            },
+            channel: {
+                "atom:link": { $: { rel: "self", type: "application/rss+xml" } },
+                title: "iPlayarr",
+                item: results.map(({show, id}) => (
+                    {
+                        title: show,
+                        description: show,
+                        guid: `https://www.bbc.co.uk/iplayer/episodes/${id}`,
+                        size: "1073741824",
+                        category: ["5000"],
+                        "newznab:attr": [
+                          { $: { name: "category", value: "5000" } }
+                        ]
+                      }
+                ))
+            }
+        }
+    };
 
-const json = {
-  rss: {
-    $: {
-      version: "1.0",
-      "xmlns:atom": "http://www.w3.org/2005/Atom",
-      "xmlns:newznab": "http://www.newznab.com/DTD/2010/feeds/attributes/"
-    },
-    channel: {
-      "atom:link": { $: { rel: "self", type: "application/rss+xml" } },
-      title: "iPlayarr",
-      item: []
-    }
-  }
-};
+    const builder = new Builder({ headless: false, xmldec: { version: "1.0", encoding: "UTF-8" } });
+    const xml = builder.buildObject(json);
 
-const builder = new Builder({ headless: false, xmldec: { version: "1.0", encoding: "UTF-8" } });
-const xml = builder.buildObject(json);
-
-console.log(xml);
-
+    res.set("Content-Type", "application/xml");
+    res.send(xml);
 }

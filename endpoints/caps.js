@@ -1,7 +1,5 @@
 import { Builder } from "xml2js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
 export default async (req, res) => {
     const json = {
     caps: {
