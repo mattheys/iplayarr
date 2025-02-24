@@ -9,7 +9,7 @@ iPlayarr is a companion for Sonarr (and the rest of the *arr stack) to simplify 
 The simplest way to use iPlayarr is to use the bundled docker definition:
 
 ```
-docker built -t iplayarr .
+docker build -t iplayarr .
 docker run -d --name iplayarr -v /path/to/incomplete:/incomplete -v /path/to/complete:/complete --env-file=env-file -p 4404:4404 iplayarr
 ```
 
