@@ -3,6 +3,7 @@ import iplayerService from "../service/iplayerService.js";
 
 export default async (req, res) => {
     const {q} = req.query;
+    console.log(JSON.stringify(req.query));
     const searchTerm = q ?? '*';
     const results = await iplayerService.search(searchTerm);
 
@@ -26,19 +27,19 @@ export default async (req, res) => {
                         title: nzbName,
                         description: nzbName,
                         guid: `https://www.bbc.co.uk/iplayer/episodes/${id}`,
-                        size: "1073741824",
+                        size: "2147483648",
                         category: ["5000", "5040"],
                         pubDate,
                         "newznab:attr": [
                           { $: { name: "category", value: "5000" } },
                           { $: { name: "category", value: "5040" } },
-                          { $: { name: "tvdbid", value: "326124" } },
+                        //   { $: { name: "tvdbid", value: "326124" } },
                           { $: { name: "language", value: "English" } },
                           { $: { name: "files", value: "0" } },
                           { $: { name: "grabs", value: "0" } }
                         ],
                         link: `http://192.168.1.19:3000/api/download/${id}`,
-                        enclosure: {$:{url : `http://192.168.1.19:3000/api/download/${id}`, length : "1073741824", type: "application/x-nzb"} } 
+                        enclosure: {$:{url : `http://192.168.1.19:3000/api/download/${id}`, length : "2147483648", type: "application/x-nzb"} } 
                       }
                 ))
             }
