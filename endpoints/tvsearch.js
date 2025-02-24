@@ -2,9 +2,8 @@ import { Builder } from "xml2js";
 import iplayerService from "../service/iplayerService.js";
 
 export default async (req, res) => {
-    const {q} = req.query;
-    console.log(JSON.stringify(req.query));
-    const searchTerm = q ?? '*';
+    const {q, season, episode} = req.query;
+    const searchTerm = q ?? '*' +(season ? ` Series ${season}` : '') + (episode ? ` Episode ${episodoe}` : ''); 
     const results = await iplayerService.search(searchTerm);
 
     const date = new Date();
