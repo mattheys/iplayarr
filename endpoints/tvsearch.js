@@ -38,8 +38,8 @@ export default async (req, res) => {
                           { $: { name: "files", value: "0" } },
                           { $: { name: "grabs", value: "0" } }
                         ],
-                        link: `http://192.168.1.19:3000/api?mode=download&pid=${id}`,
-                        enclosure: {$:{url : `http://192.168.1.19:3000/api?mode=download&pid=${id}`, length : "2147483648", type: "application/x-nzb"} } 
+                        link: `http://192.168.1.19:3000/api?mode=download&pid=${id}&apikey=${req.query.apikey}`,
+                        enclosure: {$:{url : `http://192.168.1.19:3000/api?mode=download&pid=${id}&apikey=${req.query.apikey}`, length : "2147483648", type: "application/x-nzb"} } 
                       }
                 ))
             }
