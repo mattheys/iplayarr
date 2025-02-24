@@ -2,7 +2,7 @@ import { spawn } from 'child_process';
 import { getParameter } from './configService.js';
 import { v4 } from 'uuid';
 import fs from 'fs';
-import { formatInlineDates, formatSeriesString } from '../utils/utils.js';
+import { createNZBName, formatInlineDates, formatSeriesString } from '../utils/utils.js';
 import path from 'path';
 import historyService from './historyService.js';
 
@@ -114,7 +114,8 @@ const iplayerService = {
                     const match = episodeRegex.exec(line);
                     if (match) {
                         const [_, number, show, channel, id] = match;
-                        results.push({ number, show, channel, id });
+                        const nzbName = createNZBName(show);
+                        results.push({ number, show, channel, id, nzbName });
                     }
                 }
             });

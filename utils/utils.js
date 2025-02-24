@@ -33,7 +33,18 @@ export function formatInlineDates(str) {
 }
 
 export function formatSeriesString(input) {
-    return input.replace(/Series_(\d+)_-_\d+\.?_Episode_(\d+)/, (match, season, episode) => {
+    return input.replace(/Series\.(\d+)\.-(?:\.\d+\.?)?\.Episode\.(\d+)/, (match, season, episode) => {
         return `S${season.padStart(2, '0')}E${episode.padStart(2, '0')}`;
     });
+}
+
+//The.Repair.Shop.On.The.Road.S01E14.WEB.H264-RBB
+//The Repair Shop: Series 14 - Episode 5
+export function createNZBName(input) {
+    let filename = input.replaceAll("_", ".");
+    filename = filename.replaceAll(" ", ".");
+    filename = filename.replaceAll(":", "");
+    filename = formatInlineDates(filename);
+    filename = formatSeriesString(filename);
+    return `${filename}.WEB.H264-BBC`;
 }

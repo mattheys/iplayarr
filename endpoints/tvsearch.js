@@ -23,7 +23,7 @@ export default async (req, res) => {
                 title: "iPlayarr",
                 item: results.map(({show, id}) => (
                     {
-                        title: show,
+                        title: nzbName,
                         description: show,
                         guid: `https://www.bbc.co.uk/iplayer/episodes/${id}`,
                         size: "1073741824",
