@@ -31,7 +31,9 @@ export default async (req, res) => {
                         pubDate,
                         "newznab:attr": [
                           { $: { name: "category", value: "5000" } }
-                        ]
+                        ],
+                        link: `http://192.168.1.19:3000/api/download/${id}`,
+                        enclosure: {$:{url : `http://192.168.1.19:3000/api/download/${id}`, length : "1073741824", type: "application/x-zb"} } 
                       }
                 ))
             }
