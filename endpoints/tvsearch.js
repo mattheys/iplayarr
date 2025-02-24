@@ -2,10 +2,10 @@ import { Builder } from "xml2js";
 import iplayerService from "../service/iplayerService.js";
 
 export default async (req, res) => {
-    const {q, season, episode} = req.query;
+    const {q, season, ep} = req.query;
     console.log(JSON.stringify(req.query));
     const searchTerm = q ?? '*';
-    const results = await iplayerService.search(searchTerm, season, episode);
+    const results = await iplayerService.search(searchTerm, season, ep);
 
     const date = new Date();
     date.setMinutes(date.getMinutes() - 720);
