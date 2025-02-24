@@ -7,7 +7,7 @@ export default async (req, res) => {
     const results = await iplayerService.search(searchTerm);
 
     const date = new Date();
-    date.setMinutes(date.getMinutes() - minutesAgo);
+    date.setMinutes(date.getMinutes() - 15);
 
     const pubDate = date.toUTCString().replace("GMT", "+0000");
 
