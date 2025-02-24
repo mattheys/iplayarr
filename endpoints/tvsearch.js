@@ -24,7 +24,7 @@ export default async (req, res) => {
                 item: results.map(({show, id, nzbName}) => (
                     {
                         title: nzbName,
-                        description: show,
+                        description: nzbName,
                         guid: `https://www.bbc.co.uk/iplayer/episodes/${id}`,
                         size: "1073741824",
                         category: ["5000", "5040"],
@@ -38,7 +38,7 @@ export default async (req, res) => {
                           { $: { name: "grabs", value: "0" } }
                         ],
                         link: `http://192.168.1.19:3000/api/download/${id}`,
-                        enclosure: {$:{url : `http://192.168.1.19:3000/api/download/${id}`, length : "1073741824", type: "application/x-zb"} } 
+                        enclosure: {$:{url : `http://192.168.1.19:3000/api/download/${id}`, length : "1073741824", type: "application/x-nzb"} } 
                       }
                 ))
             }
