@@ -9,9 +9,16 @@ router.get('/queue', (_, res) => {
     res.json(queue);
 });
 
-router.get('/history', (_, res) => {
-    const history = historyService.getHistory() || [];
+router.get('/history', async (_, res) => {
+    const history = await historyService.getHistory() || [];
     res.json(history);
 });
+
+router.delete('/history', async (req, res) => {
+    const {pid} = req.query;
+    await historyService.removeHistory(pid);
+    const history = await historyService.getHistory() || [];
+    res.json(history);
+})
 
 export default router;

@@ -91,7 +91,7 @@ const iplayerService = {
         downloads[uuid] = download;
 
         downloadProcess.stdout.on('data', (data) => {
-            socketService.emit('log', {id, message : data.toString()});
+            socketService.emit('log', {id, message : data.toString(), timestamp : new Date()});
             console.log(data.toString());
             const lines = data.toString().split("\n");
             const filenameLine = lines.find((l) => filenameRegex.exec(l));

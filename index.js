@@ -43,7 +43,7 @@ app.use('/api', upload.any(), (req, res) => {
 app.use('/json-api', jsonapi);
 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
 });
 
 cron.schedule(cronSchedule, () => {

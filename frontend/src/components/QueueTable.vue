@@ -9,6 +9,7 @@
                 <th>Progress</th>
                 <th>ETA</th>
                 <th>Speed</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
