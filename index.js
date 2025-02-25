@@ -4,7 +4,8 @@ import { directory } from './endpoints/endpointDirectory.js';
 import multer from 'multer';
 import cron from 'node-cron';
 import iplayerService from './service/iplayerService.js';
-
+import path from 'path';
+import jsonapi from './routes/jsonapi.js';
 
 const app = express();
 const port = 4404;
@@ -12,6 +13,9 @@ const cronSchedule = getParameter("REFRESH_SCHEDULE") || "0 * * * *";
 
 const upload = multer();
 app.use(express.json());
+
+const __dirname = path.resolve(); // Ensure __dirname works in ES module
+app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
 
 app.use('/api', upload.any(), (req, res) => {
     const {apikey : queryKey, mode, t} = req.query;
@@ -31,6 +35,12 @@ app.use('/api', upload.any(), (req, res) => {
     } else {
         res.status(401).json({ "error": "Not authorised" });
     }
+});
+
+app.use('/json-api', jsonapi);
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 cron.schedule(cronSchedule, () => {
