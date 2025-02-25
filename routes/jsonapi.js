@@ -1,5 +1,6 @@
 import { Router } from "express";
 import iplayerService from "../service/iplayerService.js";
+import historyService from "../service/historyService.js";
 
 const router = Router();
 
@@ -9,7 +10,7 @@ router.get('/queue', (_, res) => {
 });
 
 router.get('/history', (_, res) => {
-    const history = iplayerService.getHistory() || [];
+    const history = historyService.getHistory() || [];
     res.json(history);
 });
 
