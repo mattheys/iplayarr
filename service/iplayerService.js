@@ -5,6 +5,7 @@ import fs from 'fs';
 import { createNZBName, formatInlineDates, formatSeriesString } from '../utils/utils.js';
 import path from 'path';
 import historyService from './historyService.js';
+import socketService from './socketService.js';
 
 const downloads = {};
 const timestampFile = 'iplayarr_timestamp';
@@ -72,8 +73,8 @@ const iplayerService = {
 
         const exec = args.shift();
         fs.mkdirSync(`${downloadDir}/${uuid}`);
-        fs.writeFile(`${downloadDir}/${uuid}/iplayarr_timestamp`, '');
-        const allArgs = [...args, '--output', `${downloadDir}/${uuid}`, '--overwrite', '--log-progress', `--pid=${id}`];
+        fs.writeFileSync(`${downloadDir}/${uuid}/iplayarr_timestamp`, '');
+        const allArgs = [...args, '--output', `${downloadDir}/${uuid}`, '--overwrite', '--force', '--log-progress', `--pid=${id}`];
 
         const downloadProcess = spawn(exec, allArgs);
 
@@ -90,6 +91,7 @@ const iplayerService = {
         downloads[uuid] = download;
 
         downloadProcess.stdout.on('data', (data) => {
+            socketService.emit('log', {id, message : data.toString(), timestamp : new Date()});
             console.log(data.toString());
             const lines = data.toString().split("\n");
             const filenameLine = lines.find((l) => filenameRegex.exec(l));
@@ -113,6 +115,8 @@ const iplayerService = {
                 const sizeLeft = downloads[uuid].size * percentFactor;
                 downloads[uuid].sizeLeft = sizeLeft;
             }
+
+            socketService.emit('downloads', Object.values(downloads));
         });
 
         downloadProcess.on('close', async (code) => {

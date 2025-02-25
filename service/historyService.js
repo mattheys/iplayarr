@@ -22,8 +22,11 @@ const historyService = {
         await storage.setItem("history", history);
     },
 
-    removeHistory : async () => {
+    removeHistory : async (pid) => {
         await initStorage();
+        let history = await historyService.getHistory();
+        history = history.filter(({id}) => id !== pid);
+        await storage.setItem("history", history);
     }
 }
 

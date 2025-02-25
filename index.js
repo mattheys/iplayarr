@@ -1,10 +1,14 @@
 import express from 'express';
+import http from 'http';
 import { getParameter } from './service/configService.js';
 import { directory } from './endpoints/endpointDirectory.js';
 import multer from 'multer';
 import cron from 'node-cron';
 import iplayerService from './service/iplayerService.js';
-
+import path from 'path';
+import jsonapi from './routes/jsonapi.js';
+import { Server as SocketIOServer } from "socket.io";
+import socketService from './service/socketService.js';
 
 const app = express();
 const port = 4404;
@@ -12,6 +16,9 @@ const cronSchedule = getParameter("REFRESH_SCHEDULE") || "0 * * * *";
 
 const upload = multer();
 app.use(express.json());
+
+const __dirname = path.resolve(); // Ensure __dirname works in ES module
+app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
 
 app.use('/api', upload.any(), (req, res) => {
     const {apikey : queryKey, mode, t} = req.query;
@@ -33,10 +40,25 @@ app.use('/api', upload.any(), (req, res) => {
     }
 });
 
+app.use('/json-api', jsonapi);
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
+});
+
 cron.schedule(cronSchedule, () => {
   iplayerService.refreshCache();
 });
 
-app.listen(port, () => {
+const server = http.createServer(app);
+
+const io = new SocketIOServer(server);
+socketService.registerIo(io);
+
+io.on("connection", (socket) => {
+    socketService.registerSocket(socket);
+});
+
+server.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });

@@ -27,7 +27,7 @@ iplayarr presents as a newznab indexer and sabnzbd downloader on port 4404. In S
 
 | Property | Value |
 | ---------| ----- |
-| Name     | iPlayerr |
+| Name     | iPlayarr |
 | Host     | Your Docker Host |
 | Port     | 4404 |
 | API Key  | API_KEY from avove |
@@ -38,7 +38,7 @@ Test and save this. Then create a new Newznab indexer with these settings:
 
 | Property | Value |
 | ---------| ----- |
-| Name     | iPlayerr |
+| Name     | iPlayarr |
 | URL      | http://Your Docker Host:4404 |
 | API Key  | API_KEY from avove |
 | Download Client  | iPlayarr (created above) |

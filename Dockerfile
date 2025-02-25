@@ -26,8 +26,12 @@ ENV GET_IPLAYER_EXEC=/iplayer/get_iplayer
 WORKDIR /app
 
 COPY package*.json ./
+RUN mkdir frontend
+COPY frontend/package*.json ./frontend/
 
 RUN npm install
+RUN cd frontend && npm install
 COPY . .
+RUN cd frontend && npm run build
 
 CMD ["npm", "run", "start"]

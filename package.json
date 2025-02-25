@@ -4,7 +4,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon index.js"
+    "build:frontend": "cd frontend && npm run build",
+    "watch:frontend": "chokidar 'frontend/src/**/*.{vue,js,css}' -c \"npm run build:frontend\"",
+    "start": "npm run build:frontend && node index.js",
+    "dev": "npm run build:frontend && concurrently \"nodemon index.js\" \"npm run watch:frontend\""
   },
   "author": "",
   "license": "ISC",
@@ -19,8 +22,12 @@
     "node-cron": "^3.0.3",
     "node-persist": "^4.0.4",
     "nodemon": "^3.1.9",
+    "socket.io": "^4.8.1",
     "uuid": "^11.0.5",
     "vue-router": "^4.5.0",
     "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0"
   }
 }
