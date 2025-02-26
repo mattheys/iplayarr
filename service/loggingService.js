@@ -18,7 +18,7 @@ const loggingService = {
         const debug = getParameter("DEBUG");
         const message = params.join(" ");
         if (debug && debug.toLowerCase() == 'true'){
-            loggingService.log(...params);
+            console.log(...params);
         }
         socketService.emit('log', {id: 'SYSTEM-DEBUG', message, timestamp : new Date()});
     },

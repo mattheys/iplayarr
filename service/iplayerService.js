@@ -7,6 +7,7 @@ import path from 'path';
 import historyService from './historyService.js';
 import socketService from './socketService.js';
 import loggingService from './loggingService.js';
+import sonarrService from './sonarrService.js';
 
 const downloads = {};
 const timestampFile = 'iplayarr_timestamp';
@@ -149,7 +150,8 @@ const iplayerService = {
     },
 
     search: (term, season, episode) => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
+            const episodeName = await sonarrService.getEpisodeTitle(term, season, episode);
             const results = [];
             const fullExec = getParameter("GET_IPLAYER_EXEC");
             const args = fullExec.match(/(?:[^\s"]+|"[^"]*")+/g);
@@ -160,7 +162,7 @@ const iplayerService = {
             loggingService.debug(`Executing get_iplayer with args: ${allArgs.join(" ")}`);
             const searchProcess = spawn(exec, allArgs, { shell: true });
 
-            searchProcess.stdout.on('data', (data) => {
+            searchProcess.stdout.on('data', async (data) => {
                 loggingService.debug(data.toString().trim());
                 const lines = data.toString().split("\n");
                 for (const line of lines) {
@@ -171,8 +173,12 @@ const iplayerService = {
                         if (season && !show.includes(`Series ${season}`) && !show.includes(`Season ${season}`)) {
                             continue;
                         }
-                        if (episode && !show.includes(`Episode ${episode}`)) {
-                            continue;
+                        if (episode) {
+                            const episodeFoundByNumber = show.includes(`Episode ${episode}`);
+                            const episodeFoundByName = episodeName && show.includes(episodeName);
+                            if (!episodeFoundByNumber && !episodeFoundByName) {
+                                continue;
+                            }
                         }
                         results.push({ number, show, channel, id, nzbName });
                     }
