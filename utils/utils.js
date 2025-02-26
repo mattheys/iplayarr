@@ -1,3 +1,8 @@
+import sonarrService from "../service/sonarrService.js";
+
+const seasonRegex = /(?:Series|Season)\s(\d+)/;
+const episodeRegex = /(?:Episode|Ep)\s(\d+)/;
+
 export function formatBytes(bytes, unit = true, decimals = 2) {
     if (bytes === 0) return "0 Bytes";
 
@@ -47,7 +52,6 @@ export function legacyCreateNZBName(input) {
 }
 
 export async function createNZBName(title, line){
-    if (line.startsWith("INFO: Downloading tv:")){
         let season = false;
         let episode = false;
         const seasonMatch = seasonRegex.exec(line);
@@ -64,7 +68,6 @@ export async function createNZBName(title, line){
         if (season && episode){
             return `${title.replaceAll(" ", ".")}.S${season.toString().padStart(2, '0')}E${episode.toString().padStart(2, '0')}.WEB.H264-BBC`;
         }
-    }
 }
 
 export function getBaseUrl(req) {

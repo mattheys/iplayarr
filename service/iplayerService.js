@@ -166,15 +166,13 @@ const iplayerService = {
             loggingService.debug(`Executing get_iplayer with args: ${allArgs.join(" ")}`);
             const searchProcess = spawn(exec, allArgs, { shell: true });
 
-            searchProcess.stdout.on('data', async (data) => {
+            searchProcess.stdout.on('data', (data) => {
                 loggingService.debug(data.toString().trim());
                 const lines = data.toString().split("\n");
                 for (const line of lines) {
                     const match = episodeRegex.exec(line);
                     if (match) {
                         const [_, number, show, channel, id] = match;
-                        const nzbName = createNZBName(term, line || legacyCreateNZBName(show));
-                        filenameCache.set(number, nzbName);
                         if (season && !show.includes(`Series ${season}`) && !show.includes(`Season ${season}`)) {
                             continue;
                         }
@@ -185,7 +183,7 @@ const iplayerService = {
                                 continue;
                             }
                         }
-                        results.push({ number, show, channel, id, nzbName });
+                        results.push({ number, show, channel, id, nzbData : {term, line} });
                     }
                 }
             });
@@ -194,8 +192,13 @@ const iplayerService = {
                 loggingService.error(data.toString().trim());
             });
 
-            searchProcess.on('close', (code) => {
+            searchProcess.on('close', async (code) => {
                 if (code === 0) {
+                    for (let result of results){
+                        const nzbName = await createNZBName(result.nzbData.term, result.nzbData.line || legacyCreateNZBName(result.show));
+                        filenameCache.set(result.number, nzbName);
+                        result.nzbName = nzbName;
+                    }
                     resolve(results);
                 } else {
                     reject(new Error(`Process exited with code ${code}`));

@@ -34,8 +34,9 @@ const sonarrService = {
                 }
             });  
 
-            if (data.length > 0){
-                return data[0].title;
+            const validEpisodes = data.filter(({episodeNumber}) => episodeNumber == episode);
+            if (validEpisodes.length > 0){
+                return validEpisodes[0].title;
             }
         }
         return;
@@ -56,7 +57,6 @@ const sonarrService = {
 
             const found = data.filter((episode) => downloadLine.includes(episode.title));
             if (found.length > 0){
-                console.log(found[0].title);
                 return found[0].episodeNumber;
             }
         }
