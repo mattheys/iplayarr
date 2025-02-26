@@ -8,7 +8,7 @@ import historyService from './historyService.js';
 import socketService from './socketService.js';
 import loggingService from './loggingService.js';
 import sonarrService from './sonarrService.js';
-import { NodeCache } from 'node-cache';
+import NodeCache from 'node-cache';
 
 const downloads = {};
 const timestampFile = 'iplayarr_timestamp';
