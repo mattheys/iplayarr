@@ -30,6 +30,8 @@ services:
         - "API_KEY=1234"
         - "DOWNLOAD_DIR=/mnt/media/iplayarr/incomplete"
         - "COMPLETE_DIR=/mnt/media/iplayarr/complete"
+        - "SONARR_HOST=http://localhost:8989"
+        - "SONARR_API_KEY=xxxxxxxxx"
       ports:
         - "4404:4404"
       volumes:
@@ -52,7 +54,7 @@ iplayarr presents as a newznab indexer and sabnzbd downloader on port 4404. In S
 | Property | Value |
 | ---------| ----- |
 | Name     | iPlayarr |
-| Host     | Your Docker Host |
+| Host     | Your_Docker_Host |
 | Port     | 4404 |
 | API Key  | API_KEY from avove |
 | Category | iplayer |
@@ -63,9 +65,18 @@ Test and save this. Then create a new Newznab indexer with these settings:
 | Property | Value |
 | ---------| ----- |
 | Name     | iPlayarr |
-| URL      | http://Your Docker Host:4404 |
+| URL      | http://Your_Docker_Host:4404 |
 | API Key  | API_KEY from avove |
 | Download Client  | iPlayarr (created above) |
+
+## Sonarr Loop Back
+
+iPlayer doesn't always respond with episode numbers nice and neatly, sometimes it responds with episode names, but unfortuantely Sonarr only provides us the episode number in the search request. As such, there's a loop back mechanism in iPlayarr to ask Sonarr for more information on this episode. This isn't required, but will Vastly improve iPlayarr's ability to find results and requires the following settings:
+
+| Property            | Description                                                   |
+| ------------------- | ------------------------------------------------------------- |
+| SONARR_HOST         | Protocol, Host and Port for Sonarr, e.g http://localhost:8989 |
+| SONARR_API_KEY      | API Key for Sonarr                                            |
 
 ### Web Interface
 
