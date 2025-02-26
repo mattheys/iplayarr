@@ -1,7 +1,7 @@
 <template>
   <NavBar />
   <div class="main-layout">
-    <LeftHandNav />
+    <LeftHandNav ref="leftHandNav"/>
     <div class="content">
       <RouterView />
     </div>
@@ -18,6 +18,8 @@ import { ref, provide, onMounted } from 'vue';
 
 const [queue, history, logs, socket] = [ref([]), ref([]), ref([]), ref(null)];
 
+const leftHandNav = ref(null);
+
 const updateQueue = async () => {
   const queueResponse = await fetch("/json-api/queue");
   queue.value = await queueResponse.json();
@@ -25,11 +27,16 @@ const updateQueue = async () => {
   history.value = await historyResponse.json();
 }
 
+const toggleLeftHandNav = () => {
+  leftHandNav.value.toggleLHN();
+}
+
 provide('queue', queue);
 provide('history', history);
 provide('socket', socket);
 provide('logs', logs);
 provide('updateQueue', updateQueue);
+provide('toggleLeftHandNav', toggleLeftHandNav);
 
 onMounted(async () => {
   await updateQueue();
@@ -63,5 +70,19 @@ body {
 }
 .clickable {
   cursor: pointer;
+}
+.pull-right {
+  text-align: right;
+}
+@media (min-width: 768px) {
+  .mobileOnly {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .desktopOnly {
+    display: none;
+  }
 }
 </style>

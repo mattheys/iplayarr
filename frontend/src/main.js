@@ -2,10 +2,10 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faTasks, faHistory, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faTasks, faHistory, faTrash, faXmark, faBars } from '@fortawesome/free-solid-svg-icons'
 import router from './router/router.js';
 
-library.add([faTasks, faHistory, faTrash])
+library.add([faTasks, faHistory, faTrash, faXmark, faBars])
 
 const app = createApp(App);
 app.component('font-awesome-icon', FontAwesomeIcon);

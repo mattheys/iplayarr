@@ -2,14 +2,14 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
+                <th class="desktopOnly">ID</th>
                 <th>Filename</th>
-                <th>Start</th>
-                <th>Size</th>
+                <th class="desktopOnly">Start</th>
+                <th class="desktopOnly">Size</th>
                 <th>Progress</th>
-                <th>ETA</th>
-                <th>Speed</th>
-                <th></th>
+                <th class="desktopOnly">ETA</th>
+                <th class="desktopOnly">Speed</th>
+                <th class="desktopOnly"></th>
             </tr>
         </thead>
         <tbody>
@@ -41,7 +41,12 @@
 table {
     width: 100%;
     padding: 1rem;
-    text-align: center;
+}
+
+@media (min-width: 768px) {
+    table {
+        text-align: center;
+    }
 }
 
 tr:nth-child(even) {

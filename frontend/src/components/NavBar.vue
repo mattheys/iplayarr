@@ -7,10 +7,16 @@
 
         </div>
         <div class="right">
-
+            <font-awesome-icon class="mobileOnly clickable" @click="toggleLeftHandNav" :icon="['fas', 'bars']" />
         </div>
     </div>
 </template>
+
+<script setup>
+    import { inject } from 'vue';
+
+    const toggleLeftHandNav = inject('toggleLeftHandNav');
+</script>
 
 <style scoped>
     .NavBar {
@@ -21,5 +27,9 @@
 
     .NavBar div {
         flex: 1;
+    }
+
+    .NavBar .right {
+        text-align: right;
     }
 </style>

@@ -1,21 +1,44 @@
 <template>
-    <div class="LeftHandNav">
+    <div class="LeftHandNav" ref="lhn">
       <ul>
+        <li class="mobileOnly pull-right">
+          <font-awesome-icon :icon="['fas', 'xmark']" @click="toggleLHN"/>
+        </li>
         <li>
           <RouterLink to="/queue">
-            <font-awesome-icon :icon="['fas', 'tasks']" />
-            <span class="menuText">Queue</span>
+            <span @click="closeLHN">
+              <font-awesome-icon :icon="['fas', 'tasks']" />
+              <span class="menuText">Queue</span>
+            </span>
           </RouterLink>
         </li>
         <li>
           <RouterLink to="/logs">
-            <font-awesome-icon :icon="['fas', 'history']" />
-            <span class="menuText">Logs</span>
+            <span @click="closeLHN">
+              <font-awesome-icon :icon="['fas', 'history']" />
+              <span class="menuText">Logs</span>
+            </span>
           </RouterLink>
         </li>
       </ul>
     </div>
   </template>
+
+  <script setup>
+    import {ref, defineExpose} from 'vue';
+
+    const lhn = ref(null);
+
+    const toggleLHN = () => {
+      lhn.value.classList.toggle('show');
+    }
+
+    const closeLHN = () => {
+      lhn.value.classList.remove('show');
+    }
+
+    defineExpose({ toggleLHN });
+  </script>
   
   <style scoped>
   .LeftHandNav {
@@ -24,6 +47,26 @@
     color: white;
     padding: 1rem;
     height: 100vh;
+  }
+
+  @media (max-width: 768px) {
+    .LeftHandNav {
+      display: none;
+    }
+
+    .LeftHandNav.show {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: calc(100% - 32px);;
+      height: 100vh;
+    }
+
+    .LeftHandNav li {
+      border-bottom: 1px solid white;
+      padding-bottom: 1rem;
+    }
   }
   
   .LeftHandNav ul {

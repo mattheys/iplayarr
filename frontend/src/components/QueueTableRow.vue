@@ -1,16 +1,16 @@
 <template>
     <tr :class="[history ? 'history' : '']">
-        <td><RouterLink :to="{ path: '/logs', query: { filter: item.id } }">{{ item.id }}</RouterLink></td>
-        <td>{{ item.filename }}</td>
-        <td>{{ item.start }}</td>
-        <td>{{ item.size }}</td>
+        <td class="desktopOnly"><RouterLink :to="{ path: '/logs', query: { filter: item.id } }">{{ item.id }}</RouterLink></td>
+        <td><RouterLink :to="{ path: '/logs', query: { filter: item.id } }">{{ item.filename }}</RouterLink></td>
+        <td class="desktopOnly">{{ item.start }}</td>
+        <td class="desktopOnly">{{ item.size }}</td>
         <td>
             <ProgressBar :progress="item.progress" v-if="!history"/>
             <span v-else>COMPLETE</span>
         </td>
-        <td>{{ item.eta }}</td>
-        <td>{{ item.speed }}</td>
-        <td>
+        <td class="desktopOnly">{{ item.eta }}</td>
+        <td class="desktopOnly">{{ item.speed }}</td>
+        <td class="desktopOnly">
             <font-awesome-icon class="clickable" :icon="['fas', 'trash']" v-if="history" @click="trash(item.id)" />
         </td>
     </tr>
