@@ -151,7 +151,7 @@ const iplayerService = {
 
     search: (term, season, episode) => {
         return new Promise(async (resolve, reject) => {
-            const episodeName = await sonarrService.getEpisodeTitle(term, season, episode);
+            const episodeName = term != '*' ? await sonarrService.getEpisodeTitle(term, season, episode) : undefined;
             const results = [];
             const fullExec = getParameter("GET_IPLAYER_EXEC");
             const args = fullExec.match(/(?:[^\s"]+|"[^"]*")+/g);
