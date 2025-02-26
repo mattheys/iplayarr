@@ -2,12 +2,13 @@ import { spawn } from 'child_process';
 import { getParameter } from './configService.js';
 import { v4 } from 'uuid';
 import fs from 'fs';
-import { createNZBName, formatInlineDates, formatSeriesString } from '../utils/utils.js';
+import { createNZBName, legacyCreateNZBName } from '../utils/utils.js';
 import path from 'path';
 import historyService from './historyService.js';
 import socketService from './socketService.js';
 import loggingService from './loggingService.js';
 import sonarrService from './sonarrService.js';
+import { NodeCache } from 'node-cache';
 
 const downloads = {};
 const timestampFile = 'iplayarr_timestamp';
@@ -15,6 +16,8 @@ const timestampFile = 'iplayarr_timestamp';
 const episodeRegex = /([0-9]+:)[^a-zA-Z]([^,]+),[^a-zA-Z]([^,]+),[^a-zA-Z]([^,]+)(?:$|\n)/;
 const progressRegex = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s) ETA: ([\d:]+).*$/;
 const filenameRegex = /INFO: Downloading (?:[a-z]+): '([^']+) \(([0-9a-z]+)\) \[[a-z]+\]'/;
+
+const filenameCache = new NodeCache({ stdTTL: 60 * 60 * 24, checkperiod: 60 * 60 });
 
 const iplayerService = {
     getQueue: () => {
@@ -102,7 +105,8 @@ const iplayerService = {
             if (filenameLine) {
                 const filenameMatch = filenameRegex.exec(filenameLine);
                 let filename = `${filenameMatch[1]} ${filenameMatch[2]}`;
-                filename = createNZBName(filename) + ".mp4";
+                const cachedFilename = filenameCache.get(id);
+                filename = cachedFilename || legacyCreateNZBName(filename) + ".mp4";
                 downloads[uuid].filename = filename;
             }
             const progressLines = lines.filter((l) => progressRegex.exec(l));
@@ -169,7 +173,8 @@ const iplayerService = {
                     const match = episodeRegex.exec(line);
                     if (match) {
                         const [_, number, show, channel, id] = match;
-                        const nzbName = createNZBName(show);
+                        const nzbName = createNZBName(term, line || legacyCreateNZBName(show));
+                        filenameCache.set(number, nzbName);
                         if (season && !show.includes(`Series ${season}`) && !show.includes(`Season ${season}`)) {
                             continue;
                         }

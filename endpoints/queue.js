@@ -50,7 +50,7 @@ export default async (_, res) => {
                 "priority": "Normal",
                 "cat": "iplayer",
                 "timeleft": slot.eta,
-                "percentage": "0",
+                "percentage": slot.progress,
                 "nzo_id": slot.id,
                 "unpackopts": "3",
             }))
