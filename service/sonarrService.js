@@ -27,7 +27,7 @@ const sonarrService = {
 
         const series = await sonarrService.findSeries(name);
         if (series){
-            const url = `http://192.168.1.19:8989/api/v3/episode?seriesId=${series.id}&seasonNumber=${season}&episodeIds=${episode}&apikey=${SONARR_API_KEY}`;
+            const url = `${SONARR_HOST}/api/v3/episode?seriesId=${series.id}&seasonNumber=${season}&episodeIds=${episode}&apikey=${SONARR_API_KEY}`;
             const {data} = await axios.get(url, {
                 headers: {
                     'X-Api-Key': SONARR_API_KEY
