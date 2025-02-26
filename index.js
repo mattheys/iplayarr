@@ -9,6 +9,7 @@ import path from 'path';
 import jsonapi from './routes/jsonapi.js';
 import { Server as SocketIOServer } from "socket.io";
 import socketService from './service/socketService.js';
+import loggingService from './service/loggingService.js';
 
 const app = express();
 const port = 4404;
@@ -21,6 +22,13 @@ const __dirname = path.resolve(); // Ensure __dirname works in ES module
 app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
 
 app.use('/api', upload.any(), (req, res) => {
+    
+    loggingService.debug('Request received:');
+    loggingService.debug('Method:', req.method);
+    loggingService.debug('URL:', req.url);
+    loggingService.debug('Headers:', req.headers);
+    loggingService.debug('Body:', req.body);
+
     const {apikey : queryKey, mode, t} = req.query;
     const envKey = getParameter('API_KEY');
     if (envKey === queryKey){
@@ -28,11 +36,6 @@ app.use('/api', upload.any(), (req, res) => {
         if (Object.keys(directory).includes(endpoint)){
             directory[endpoint](req, res);
         } else {
-            console.log('Request received:');
-            console.log('Method:', req.method);
-            console.log('URL:', req.url);
-            console.log('Headers:', req.headers);
-            console.log('Body:', req.body);
             res.status(404).json({ "error": "Not found" });
         }
     } else {
@@ -60,5 +63,5 @@ io.on("connection", (socket) => {
 });
 
 server.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    loggingService.log(`Server running at http://localhost:${port}`);
 });

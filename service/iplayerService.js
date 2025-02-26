@@ -6,6 +6,7 @@ import { createNZBName, formatInlineDates, formatSeriesString } from '../utils/u
 import path from 'path';
 import historyService from './historyService.js';
 import socketService from './socketService.js';
+import loggingService from './loggingService.js';
 
 const downloads = {};
 const timestampFile = 'iplayarr_timestamp';
@@ -27,6 +28,7 @@ const iplayerService = {
         const exec = args.shift();
 
         //Refresh the cache
+        loggingService.debug(`Executing get_iplayer with args: ${args.join(" ")} --cache-rebuild`);
         spawn(exec, [...args, '--cache-rebuild'], { shell: true });
         
         //Delete failed jobs
@@ -53,9 +55,9 @@ const iplayerService = {
                     if (stats.mtimeMs < threeHoursAgo) {
                         fs.rm(dirPath, { recursive: true, force: true }, (err) => {
                             if (err) {
-                                console.error(`Error deleting ${dirPath}:`, err);
+                                loggingService.error(`Error deleting ${dirPath}:`, err);
                             } else {
-                                console.log(`Deleted old directory: ${dirPath}`);
+                                loggingService.log(`Deleted old directory: ${dirPath}`);
                             }
                         });
                     }
@@ -76,6 +78,7 @@ const iplayerService = {
         fs.writeFileSync(`${downloadDir}/${uuid}/iplayarr_timestamp`, '');
         const allArgs = [...args, '--output', `${downloadDir}/${uuid}`, '--overwrite', '--force', '--log-progress', `--pid=${id}`];
 
+        loggingService.debug(`Executing get_iplayer with args: ${allArgs.join(" ")}`);
         const downloadProcess = spawn(exec, allArgs);
 
         const download = {
@@ -154,9 +157,11 @@ const iplayerService = {
             const exec = args.shift();
             const allArgs = [...args, `"${term}"`];
 
+            loggingService.debug(`Executing get_iplayer with args: ${allArgs.join(" ")}`);
             const searchProcess = spawn(exec, allArgs, { shell: true });
 
             searchProcess.stdout.on('data', (data) => {
+                loggingService.debug(data.toString().trim());
                 const lines = data.toString().split("\n");
                 for (const line of lines) {
                     const match = episodeRegex.exec(line);
@@ -175,7 +180,7 @@ const iplayerService = {
             });
 
             searchProcess.stderr.on('data', (data) => {
-                console.log(data.toString().trim());
+                loggingService.error(data.toString().trim());
             });
 
             searchProcess.on('close', (code) => {
