@@ -2,7 +2,11 @@
     <p v-if="filter.length > 0">
         Applied Filters: {{ filter.join(",")}}
     </p>
-    <ul>
+    <div>
+      <label for="follow">Follow?</label>
+      <input type="checkbox" id="follow" v-model="followlog"/>
+    </div>
+    <ul ref="logView">
         <li v-for="log in filteredLogs" :key="`${log.id}_${log.timestamp}`">
             [ {{ log.id }} ] - {{ log.timestamp }} - {{ log.message }}
         </li>
@@ -10,11 +14,13 @@
 </template>
 
 <script setup>
-import { inject, computed, ref, watch } from 'vue';
+import { inject, computed, ref, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 
 const logs = inject('logs');
 const route = useRoute();
+const logView = ref(null);
+const followlog = ref(true);
 
 const filter = ref([]);
 
@@ -28,6 +34,21 @@ const filteredLogs = computed(() =>
         ? logs.value 
         : logs.value.filter(log => filter.value.includes(log.id))
 );
+
+const scrollToBottom = () => {
+  nextTick(() => {
+    if (logView.value) {
+      logView.value.scrollTop = logView.value.scrollHeight;
+    }
+  });
+};
+
+watch(filteredLogs, () => {
+    if (followlog.value) {
+      scrollToBottom();
+    }
+}, { deep: true });
+
 </script>
 
 <style scoped>
