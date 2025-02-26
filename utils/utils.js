@@ -37,15 +37,12 @@ export function formatSeriesString(input) {
         return `S${season.padStart(2, '0')}E${episode.padStart(2, '0')}`;
     });
 }
-export function createNZBName(input, episodeName, episodeNumber) {
+export function createNZBName(input) {
     let filename = input.replaceAll("_", ".");
     filename = filename.replaceAll(" ", ".");
     filename = filename.replaceAll(":", "");
     filename = formatInlineDates(filename);
     filename = formatSeriesString(filename);
-    if (episodeName && episodeNumber){
-        filename = filename.replaceAll(episodeName, `E${episodeNumber.padStart(2, '0')}`);
-    }
     return `${filename}.WEB.H264-BBC`;
 }
 

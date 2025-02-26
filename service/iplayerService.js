@@ -169,7 +169,7 @@ const iplayerService = {
                     const match = episodeRegex.exec(line);
                     if (match) {
                         const [_, number, show, channel, id] = match;
-                        const nzbName = createNZBName(show, episodeName, episode);
+                        const nzbName = createNZBName(show);
                         if (season && !show.includes(`Series ${season}`) && !show.includes(`Season ${season}`)) {
                             continue;
                         }
