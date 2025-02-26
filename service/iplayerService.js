@@ -106,7 +106,7 @@ const iplayerService = {
                 const filenameMatch = filenameRegex.exec(filenameLine);
                 let filename = `${filenameMatch[1]} ${filenameMatch[2]}`;
                 const cachedFilename = filenameCache.get(id);
-                filename = cachedFilename || legacyCreateNZBName(filename) + ".mp4";
+                filename = (cachedFilename || legacyCreateNZBName(filename)) + ".mp4";
                 downloads[uuid].filename = filename;
             }
             const progressLines = lines.filter((l) => progressRegex.exec(l));
@@ -195,8 +195,8 @@ const iplayerService = {
             searchProcess.on('close', async (code) => {
                 if (code === 0) {
                     for (let result of results){
-                        const nzbName = await createNZBName(result.nzbData.term, result.nzbData.line || legacyCreateNZBName(result.show));
-                        filenameCache.set(result.number, nzbName);
+                        const nzbName = term != "*" ? (await createNZBName(result.nzbData.term, result.nzbData.line || legacyCreateNZBName(result.show))) : legacyCreateNZBName(result.show);
+                        filenameCache.set(result.id, nzbName);
                         result.nzbName = nzbName;
                     }
                     resolve(results);

@@ -24,7 +24,8 @@ const queue_skeleton = {
 export default async (_, res) => {
     const downloadDir = getParameter("DOWNLOAD_DIR");
     const { available, total } = { available: 107374182400, total: 107374182400}
-    const iplayerQueue = iplayerService.getQueue();
+    const rawQueue = iplayerService.getQueue();
+    const iplayerQueue = rawQueue.filter(({filename}) => filename);
     const iplayerComplete = await historyService.getHistory();
     const queueObj = {
         queue : {
@@ -49,7 +50,7 @@ export default async (_, res) => {
                 "labels": [],
                 "priority": "Normal",
                 "cat": "iplayer",
-                "timeleft": slot.eta,
+                "timeleft": slot.eta || "00:00:00",
                 "percentage": slot.progress,
                 "nzo_id": slot.id,
                 "unpackopts": "3",
