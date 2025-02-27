@@ -4,36 +4,39 @@
         <li class="mobileOnly pull-right">
           <font-awesome-icon :icon="['fas', 'xmark']" @click="toggleLHN"/>
         </li>
-        <li>
-          <RouterLink to="/queue">
-            <span @click="closeLHN">
-              <font-awesome-icon :icon="['fas', 'tasks']" />
-              <span class="menuText">Queue</span>
-            </span>
-          </RouterLink>
-        </li>
-        <li>
-          <RouterLink to="/logs">
-            <span @click="closeLHN">
-              <font-awesome-icon :icon="['fas', 'history']" />
-              <span class="menuText">Logs</span>
-            </span>
-          </RouterLink>
-        </li>
-        <li>
-          <RouterLink to="/about">
-            <span @click="closeLHN">
-              <font-awesome-icon :icon="['fas', 'circle-info']" />
-              <span class="menuText">About</span>
-            </span>
-          </RouterLink>
-        </li>
+        <RouterLink to="/queue">
+          <li :class="route.path === '/queue' ? 'active' : ''">
+              <span @click="closeLHN">
+                <font-awesome-icon :icon="['fas', 'tasks']" />
+                <span class="menuText">Queue</span>
+              </span>
+          </li>
+        </RouterLink>
+        <RouterLink to="/logs">
+          <li :class="route.path === '/logs' ? 'active' : ''">
+              <span @click="closeLHN">
+                <font-awesome-icon :icon="['fas', 'history']" />
+                <span class="menuText">Logs</span>
+              </span>
+          </li>
+        </RouterLink>
+        <RouterLink to="/about">
+          <li :class="[route.path === '/about' ? 'active' : '', 'clickable']">
+              <span @click="closeLHN">
+                <font-awesome-icon :icon="['fas', 'circle-info']" />
+                <span class="menuText">About</span>
+              </span>
+          </li>
+      </RouterLink>
       </ul>
     </div>
   </template>
 
   <script setup>
     import {ref, defineExpose} from 'vue';
+    import { useRoute } from 'vue-router';
+
+    const route = useRoute();
 
     const lhn = ref(null);
 
@@ -50,12 +53,13 @@
   
   <style scoped>
   .LeftHandNav {
-    width: 200px;
+    width: 210px;
     background-color: rgb(42, 42, 42);
-    color: white;
-    padding: 1rem;
+    color: rgb(225, 226, 227);
     height: 100vh;
     z-index: 3;
+    font-size: 14px;
+    flex-shrink: 0;
   }
 
   @media (max-width: 768px) {
@@ -68,7 +72,7 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: calc(100% - 32px);;
+      width: 100%;
       height: 100vh;
     }
 
@@ -84,16 +88,22 @@
   }
   
   .LeftHandNav li {
-    margin: 1rem 0;
+    padding: 1rem;
+    padding-left: 1.5rem;
   }
   
   .LeftHandNav a {
-    color: white;
+    color: rgb(225, 226, 227);
     text-decoration: none;
+  }
+
+  .active {
+    background-color: rgb(51, 51, 51);
+    color: rgb(225, 31, 119);
   }
   
   .LeftHandNav a:hover {
-    font-weight: bold;
+    color: rgb(225, 31, 119);
   }
 
   .menuText {

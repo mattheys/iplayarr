@@ -34,6 +34,9 @@
 
     .NavBar .right {
         text-align: right;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
     }
 
     .logoPanel {
