@@ -1,20 +1,17 @@
 <template>
     <tr class=''>
-        <td class='desktopOnly' data-title='ID'>
-            <RouterLink :to="{ path: '/logs', query: { filter: renderItem.id } }">{{ renderItem.id }}</RouterLink>
-        </td>
         <td class='text' data-title='Filename'>
             <RouterLink :to="{ path: '/logs', query: { filter: renderItem.id } }">{{ renderItem.filename }}</RouterLink>
         </td>
         <td class='desktopOnly' data-title='Start'>{{ renderItem.start }}</td>
-        <td class='desktopOnly' data-title='Size'>{{ renderItem.size }}</td>
+        <td class='desktopOnly' data-title='Size'>{{ formatStorageSize(renderItem.size) }}</td>
         <td class='' data-title='Progress'>
             <ProgressBar :progress="renderItem.progress" :history="history" :idle="renderItem.status == 'Idle'"/>
         </td>
         <td class='mobileOnly mobileInline' data-title='Start'>{{ renderItem.start }}</td>
-        <td class='mobileOnly mobileInline' data-title='Size'>{{ renderItem.size }}</td>
+        <td class='mobileOnly mobileInline' data-title='Size'>{{ formatStorageSize(renderItem.size) }}</td>
         <td class='mobileInline' data-title='ETA'>{{ renderItem.eta }}</td>
-        <td class='mobileInline' data-title='Speed'>{{ renderItem.speed }} MB/s</td>
+        <td class='mobileInline' data-title='Speed'>{{ renderItem.speed }} {{ renderItem.speed != '' ? 'MB/s' : '' }}</td>
         <td class='actionCol' data-title='Action'>
             <span v-if="history">
                 <font-awesome-icon class="clickable" :icon="['fas', 'trash']" @click="trash(renderItem.id)" />
@@ -70,11 +67,22 @@ const renderItem = computed(() => {
 
 
 const trash = async (pid) => {
-    await fetch(`/json-api/history?pid=${pid}`, { method: 'DELETE' });
+    if (confirm("Are you sure you want to delete this history item?")) {
+        await fetch(`/json-api/history?pid=${pid}`, { method: 'DELETE' });
+    }
 }
 
 const cancel = async (pid) => {
-    await fetch(`/json-api/queue?pid=${pid}`, { method: 'DELETE' });
+    if (confirm("Are you sure you want to cancel this download?")) {
+        await fetch(`/json-api/queue?pid=${pid}`, { method: 'DELETE' });
+    }
+}
+
+const formatStorageSize = (mb) => {
+    if (mb >= 1024) {
+        return (mb / 1024).toFixed(2) + " GB";
+    }
+    return mb.toFixed(2) + " MB";
 }
 </script>
 
@@ -90,6 +98,12 @@ a:hover {
 
 td {
     padding: 0.8rem 0.5rem;
+}
+
+@media (min-width: 768px) {
+    .actionCol {
+        text-align: center;
+    }
 }
 
 @media (max-width: 768px) {
