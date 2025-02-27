@@ -21,8 +21,11 @@ const queue_skeleton = {
     "have_quota": false,
 }
 
-export default async (_, res) => {
-    const downloadDir = getParameter("DOWNLOAD_DIR");
+export default async (req, res) => {
+    const {name, value} = req.query;
+    if (name && name == 'delete') {
+        iplayerService.cancel(value);
+    }
     const { available, total } = { available: 107374182400, total: 107374182400}
     const rawQueue = iplayerService.getQueue();
     const iplayerQueue = rawQueue.filter(({filename}) => filename);
