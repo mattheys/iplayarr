@@ -21,4 +21,11 @@ router.delete('/history', async (req, res) => {
     res.json(history);
 })
 
+router.delete('/queue', async (req, res) => {
+    const {pid} = req.query;
+   iplayerService.cancel(pid);
+    const queue = iplayerService.getQueue() || [];
+    res.json(queue);
+})
+
 export default router;

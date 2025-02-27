@@ -11,6 +11,7 @@ import sonarrService from './sonarrService.js';
 import NodeCache from 'node-cache';
 
 const downloads = {};
+const processes = {};
 const timestampFile = 'iplayarr_timestamp';
 
 const episodeRegex = /([0-9]+:)[^a-zA-Z]([^,]+),[^a-zA-Z]([^,]+),[^a-zA-Z]([^,]+)(?:$|\n)/;
@@ -70,6 +71,22 @@ const iplayerService = {
         });
     },
 
+    cancel: async (id) => {
+        processes[id].kill('SIGINT');
+        delete processes[id];
+        const {uuid} = Object.values(downloads).find((d) => d.id === id)
+        delete downloads[uuid];
+
+        const downloadDir = getParameter("DOWNLOAD_DIR");
+        const uuidPath = path.join(downloadDir, uuid);
+
+        try{
+            fs.rmSync(uuidPath, { recursive: true, force: true });
+        } catch (err) {
+           loggingService.error(`Error deleting ${uuidPath}:`, err);
+        }
+    },
+
     download: async (id) => {
         const uuid = v4();
         const fullExec = getParameter("GET_IPLAYER_EXEC");
@@ -85,7 +102,10 @@ const iplayerService = {
         loggingService.debug(`Executing get_iplayer with args: ${allArgs.join(" ")}`);
         const downloadProcess = spawn(exec, allArgs);
 
+        processes[id] = downloadProcess;
+
         const download = {
+            uuid,
             id,
             progress: 0,
             size: 0,
@@ -150,6 +170,7 @@ const iplayerService = {
                 }
             }
             delete downloads[uuid];
+            delete processes[id];
         });
     },
 
