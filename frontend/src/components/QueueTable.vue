@@ -3,14 +3,13 @@
         <table class='rg-table zebra' summary='Hed'>
             <thead>
                 <tr>
-                    <th class='text'>ID</th>
                     <th class='text'>Filename</th>
                     <th class=' '>Start</th>
                     <th class='number'>Size</th>
                     <th class='progress-column'>Progress</th>
                     <th class='text'>ETA</th>
                     <th class='number'>Speed</th>
-                    <th class='text'></th>
+                    <th class='center'><font-awesome-icon :icon="['fas', 'cog']" /></th>
                 </tr>
             </thead>
             <tbody>
@@ -77,6 +76,10 @@ table.rg-table thead {
 
 .progress-column {
     min-width: 150px;
+}
+
+th.center {
+  text-align: center;
 }
 
 @media (max-width: 768px) {
