@@ -1,7 +1,12 @@
 <template>
-    <div :class="['progress-bar', history ? 'history' : '']">
+    <div :class="['progress-bar', history ? 'history' : '']" v-if="!idle">
         <span class="progressText">{{ progress }}%</span>
         <div class="progress" :style="{ width: progress + '%' }"></div>
+    </div>
+
+    <div class="progress-bar idle" v-if="idle">
+        <span class="progressText">Idle</span>
+        <div class="progress" style="width: 100%"></div>
     </div>
 </template>
 
@@ -14,6 +19,11 @@ defineProps({
         required: true
     },
     history: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
+    idle: {
         type: Boolean,
         required: false,
         default: false
@@ -40,6 +50,10 @@ defineProps({
     background-color: green;
 }
 
+.progress-bar.idle .progress {
+    background-color: grey;
+}
+
 .progressText {
     position: absolute;
     top: 50%;
@@ -55,6 +69,10 @@ defineProps({
 }
 
 .progress-bar.history .progressText {
+    mix-blend-mode: normal;
+}
+
+.progress-bar.idle .progressText {
     mix-blend-mode: normal;
 }
 

@@ -1,7 +1,7 @@
 import { Builder } from "xml2js";
 
 export default async (req, res) => {
-    const { pid, season, ep } = req.query;
+    const { pid, nzbName } = req.query;
 
     const date = new Date();
     date.setMinutes(date.getMinutes() - 720);
@@ -17,8 +17,7 @@ export default async (req, res) => {
             head: {
                 title: pid,
                 meta: [
-                    { $: { type: "season", _: season}},
-                    { $: { type: "episode", _: ep}}
+                    { $: { type: "nzbName", _: nzbName}},
                 ]
             },
             file: {

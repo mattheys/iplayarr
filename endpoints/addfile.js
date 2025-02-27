@@ -10,8 +10,8 @@ export default async (req, res) => {
         const pids = [];
         for (const file of files){
             const xmlString = file.buffer.toString('utf-8');
-            const {pid} = await getDetails(xmlString);
-            queueService.addToQueue(pid);
+            const {pid, nzbName} = await getDetails(xmlString);
+            queueService.addToQueue(pid, nzbName);
             pids.push(pid);
         }
 
@@ -33,8 +33,11 @@ async function getDetails(xml) {
             if (err || !result?.nzb?.head?.[0]?.title?.[0]) {
                 return reject(err);
             }
+            const nzbName = result.nzb.head[0].meta.find(({$}) => $.type === 'nzbName');
             const details = {
-                "pid" : result.nzb.head[0].title[0]
+                "pid" : result.nzb.head[0].title[0],
+                "nzbName" : nzbName?.$?._,
+
             }
             resolve(details);
         });

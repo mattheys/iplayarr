@@ -73,16 +73,21 @@ const iplayerService = {
 
     cancel: async (id) => {
         queueService.cancelItem(id);
-        const {uuid} = Object.values(downloads).find((d) => d.id === id)
-        delete downloads[uuid];
 
-        const downloadDir = getParameter("DOWNLOAD_DIR");
-        const uuidPath = path.join(downloadDir, uuid);
 
-        try{
-            fs.rmSync(uuidPath, { recursive: true, force: true });
-        } catch (err) {
-           loggingService.error(`Error deleting ${uuidPath}:`, err);
+        const download = Object.values(downloads).find((d) => d.id === id)
+        if (download){
+            const {uuid} = download;
+            delete downloads[uuid];
+
+            const downloadDir = getParameter("DOWNLOAD_DIR");
+            const uuidPath = path.join(downloadDir, uuid);
+
+            try{
+                fs.rmSync(uuidPath, { recursive: true, force: true });
+            } catch (err) {
+            loggingService.error(`Error deleting ${uuidPath}:`, err);
+            }
         }
     },
 
@@ -143,7 +148,6 @@ const iplayerService = {
                 }
 
                 queueService.updateQueue(id, downloads[uuid]);
-                socketService.emit('downloads', Object.values(downloads));
             }
         });
 

@@ -1,22 +1,24 @@
 import { getParameter } from "./configService.js";
 import iplayerService from "./iplayerService.js";
 import { spawn } from 'child_process';
+import socketService from "./socketService.js";
 
 
 let queue = [];
 
-const activeLimit = getParameter("ACTIVE_LIMIT") || 1;
+const activeLimit = getParameter("ACTIVE_LIMIT") || 3;
 
 const DOWNLOADING = "Downloading";
 const IDLE = "Idle";
 
 const queueService = {
-    addToQueue: (pid) => {
+    addToQueue: (pid, nzbName) => {
         const queueEntry = {
             pid,
             status: IDLE,
             process: null,
-            details: {}
+            details: {},
+            nzbName
         }
         queue.push(queueEntry);
         queueService.moveQueue();
@@ -32,11 +34,13 @@ const queueService = {
             next.status = DOWNLOADING;
             next.process = downloadProcess;
 
-            queue.push(next);
+            activeQueue.push(next);
 
+            queue = [...activeQueue, ...idleQueue];
             activeQueue = queue.filter(({ status }) => status == DOWNLOADING);
             idleQueue = queue.filter(({status}) => status == IDLE);
         }
+        socketService.emit('queue', queue);
     },
 
     updateQueue: (pid, details) => {
@@ -44,6 +48,7 @@ const queueService = {
         if (index > -1){
             queue[index].details = details;
         }
+        socketService.emit('queue', queue);
     },
 
     removeFromQueue: (pid) => {
@@ -53,11 +58,11 @@ const queueService = {
 
     cancelItem: (pid) => {
         for (const queueItem of queue){
-            if (queueItem.pid == pid){
+            if (queueItem.process && queueItem.pid == pid){
                 spawn('kill', ['-9', queueItem.process.pid]);
             }
         }
-        queueService.moveQueue();
+        queueService.removeFromQueue(pid);
     },
 
     getQueue: () => {

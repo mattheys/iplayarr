@@ -2,11 +2,12 @@ import { Router } from "express";
 import iplayerService from "../service/iplayerService.js";
 import historyService from "../service/historyService.js";
 import socketService from "../service/socketService.js";
+import queueService from "../service/queueService.js";
 
 const router = Router();
 
 router.get('/queue', (_, res) => {
-    const queue = iplayerService.getQueue() || [];
+    const queue = queueService.getQueue() || [];
     res.json(queue);
 });
 
