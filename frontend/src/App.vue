@@ -46,6 +46,10 @@ onMounted(async () => {
     queue.value = data;
   });
 
+  socket.value.on('history', (data) => {
+    history.value = data;
+  });
+
   socket.value.on('log', (data) => {
     logs.value.push(data);
   })

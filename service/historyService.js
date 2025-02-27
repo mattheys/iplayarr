@@ -1,4 +1,5 @@
 import storage from 'node-persist';
+import socketService from './socketService.js';
 
 let isStorageInitialized = false;
 
@@ -21,6 +22,7 @@ const historyService = {
         const history = await historyService.getHistory();
         history.push(historyItem);
         await storage.setItem("history", history);
+        socketService.emit("history", history);
     },
 
     removeHistory : async (pid) => {
@@ -28,6 +30,7 @@ const historyService = {
         let history = await historyService.getHistory();
         history = history.filter(({id}) => id !== pid);
         await storage.setItem("history", history);
+        socketService.emit("history", history);
     }
 }
 

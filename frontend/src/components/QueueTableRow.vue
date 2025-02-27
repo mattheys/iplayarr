@@ -25,9 +25,7 @@
 
 <script setup>
 import ProgressBar from './ProgressBar.vue';
-import { defineProps, inject } from 'vue';
-
-const updateQueue = inject('updateQueue');
+import { defineProps } from 'vue';
 
 defineProps({
     item: {
@@ -43,7 +41,6 @@ defineProps({
 
 const trash = async (pid) => {
     await fetch(`/json-api/history?pid=${pid}`, { method: 'DELETE' });
-    updateQueue();
 }
 </script>
 
