@@ -26,6 +26,8 @@ export default async (req, res) => {
     const {name, value} = req.query;
     if (name && name == 'delete') {
         iplayerService.cancel(value);
+        res.json({status:true});
+	return
     }
     const { available, total } = { available: 107374182400, total: 107374182400}
     const queue = queueService.getQueue();

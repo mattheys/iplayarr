@@ -5,24 +5,24 @@
           <font-awesome-icon :icon="['fas', 'xmark']" @click="toggleLHN"/>
         </li>
         <RouterLink to="/queue">
-          <li :class="route.path === '/queue' ? 'active' : ''">
-              <span @click="closeLHN">
+          <li :class="route.path === '/queue' ? 'active' : ''" @click="closeLHN">
+              <span>
                 <font-awesome-icon :icon="['fas', 'tasks']" />
                 <span class="menuText">Queue</span>
               </span>
           </li>
         </RouterLink>
         <RouterLink to="/logs">
-          <li :class="route.path === '/logs' ? 'active' : ''">
-              <span @click="closeLHN">
+          <li :class="route.path === '/logs' ? 'active' : ''" @click="closeLHN">
+              <span>
                 <font-awesome-icon :icon="['fas', 'history']" />
                 <span class="menuText">Logs</span>
               </span>
           </li>
         </RouterLink>
         <RouterLink to="/about">
-          <li :class="[route.path === '/about' ? 'active' : '', 'clickable']">
-              <span @click="closeLHN">
+          <li :class="[route.path === '/about' ? 'active' : '', 'clickable']" @click="closeLHN">
+              <span>
                 <font-awesome-icon :icon="['fas', 'circle-info']" />
                 <span class="menuText">About</span>
               </span>

@@ -14,6 +14,12 @@ const history_skeleton = {
 }
 
 export default async (req, res) => {
+    const {name, value} = req.query;
+    if (name && name == 'delete') {
+        historyService.removeHistory(value);
+        res.json({status:true});
+        return
+    }
     const iplayerComplete = await historyService.getHistory();
     const completeDir = getParameter("COMPLETE_DIR")
 
@@ -39,7 +45,7 @@ export default async (req, res) => {
                 "status": "Completed",
                 "script_line": "",
                 "completed": complete.size,
-                "nzo_id": `SABnzbd_nzo_${complete.id}`,
+                "nzo_id": complete.id,
                 "downloaded": complete.size,
                 "report": "",
                 "password": "",
