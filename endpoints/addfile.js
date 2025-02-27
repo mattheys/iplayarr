@@ -10,7 +10,7 @@ export default async (req, res) => {
         const pids = [];
         for (const file of files){
             const xmlString = file.buffer.toString('utf-8');
-            const pid = await getPID(xmlString);
+            const {pid} = await getDetails(xmlString);
             queueService.addToQueue(pid);
             pids.push(pid);
         }
@@ -27,13 +27,16 @@ export default async (req, res) => {
     }
 }
 
-async function getPID(xml) {
+async function getDetails(xml) {
     return new Promise((resolve, reject) => {
         parser.parseString(xml, (err, result) => {
             if (err || !result?.nzb?.head?.[0]?.title?.[0]) {
                 return reject(err);
             }
-            resolve(result.nzb.head[0].title[0]);
+            const details = {
+                "pid" : result.nzb.head[0].title[0]
+            }
+            resolve(details);
         });
     });
 }
