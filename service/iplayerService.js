@@ -187,7 +187,7 @@ const iplayerService = {
     search: async (term, season, episode) => {
 
         //Get the episode name from Sonarr
-        const episodeName = term != '*' ? await sonarrService.getEpisodeTitle(term, season, episode) : undefined;
+        const episodeName = episode && term != '*' ? await sonarrService.getEpisodeTitle(term, season, episode) : undefined;
         
         //Check if we've searched this show before
         let results = searchCache.get(term);
