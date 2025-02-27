@@ -85,11 +85,11 @@
   .LeftHandNav ul {
     list-style: none;
     padding: 0;
+    margin: 0;
   }
   
   .LeftHandNav li {
-    padding: 1rem;
-    padding-left: 1.5rem;
+    padding: 12px 24px;
   }
   
   .LeftHandNav a {

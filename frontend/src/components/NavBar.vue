@@ -24,8 +24,9 @@
 <style scoped>
     .NavBar {
         display: flex;
-        padding: 0px 1rem;
+        padding: 0px 20px;
         background-color: rgb(42, 42, 42);
+        height: 60px;
     }
 
     .NavBar div {
@@ -43,6 +44,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
+        height: 100%;
     }
 
     .logoPanel img {
