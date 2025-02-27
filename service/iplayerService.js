@@ -19,6 +19,7 @@ const progressRegex = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s)
 const filenameRegex = /INFO: Downloading (?:[a-z]+): '([^']+) \(([0-9a-z]+)\) \[[a-z]+\]'/;
 
 const filenameCache = new NodeCache({ stdTTL: 60 * 60 * 24, checkperiod: 60 * 60 });
+const searchCache = new NodeCache({stdTTL: 300, checkpreiod: 60});
 
 const iplayerService = {
     getQueue: () => {
@@ -137,14 +138,17 @@ const iplayerService = {
                     const progressLine = progressLines.pop();
                     const match = progressRegex.exec(progressLine);
                     const [_, progress, size, speed, eta] = match;
-                    downloads[uuid].progress = parseFloat(progress);
-                    downloads[uuid].size = parseFloat(size);
-                    downloads[uuid].speed = parseFloat(speed);
-                    downloads[uuid].eta = eta;
-
                     const percentFactor = (100 - parseFloat(progress)) / 100;
-                    const sizeLeft = downloads[uuid].size * percentFactor;
-                    downloads[uuid].sizeLeft = sizeLeft;
+                    const sizeLeft =  parseFloat(size) * percentFactor;
+
+                    downloads[uuid] = {
+                        ...downloads[uuid],
+                        progress: parseFloat(progress),
+                        size: parseFloat(size),
+                        speed: parseFloat(speed),
+                        eta,
+                        sizeLeft
+                    }
                 }
 
                 queueService.updateQueue(id, downloads[uuid]);
@@ -180,59 +184,79 @@ const iplayerService = {
         return downloadProcess;
     },
 
-    search: (term, season, episode) => {
-        return new Promise(async (resolve, reject) => {
-            const episodeName = term != '*' ? await sonarrService.getEpisodeTitle(term, season, episode) : undefined;
-            const results = [];
-            const fullExec = getParameter("GET_IPLAYER_EXEC");
-            const args = fullExec.match(/(?:[^\s"]+|"[^"]*")+/g);
+    search: async (term, season, episode) => {
 
-            const exec = args.shift();
-            const allArgs = [...args, `"${term}"`];
+        //Get the episode name from Sonarr
+        const episodeName = term != '*' ? await sonarrService.getEpisodeTitle(term, season, episode) : undefined;
+        
+        //Check if we've searched this show before
+        let results = searchCache.get(term);
+        if (!results){
+            results = await searchIPlayer(term);
+            searchCache.set(term, results);
+        }
 
-            loggingService.debug(`Executing get_iplayer with args: ${allArgs.join(" ")}`);
-            const searchProcess = spawn(exec, allArgs, { shell: true });
-
-            searchProcess.stdout.on('data', (data) => {
-                loggingService.debug(data.toString().trim());
-                const lines = data.toString().split("\n");
-                for (const line of lines) {
-                    const match = episodeRegex.exec(line);
-                    if (match) {
-                        const [_, number, show, channel, id] = match;
-                        if (season && !show.includes(`Series ${season}`) && !show.includes(`Season ${season}`)) {
-                            continue;
-                        }
-                        if (episode) {
-                            const episodeFoundByNumber = show.includes(`Episode ${episode}`);
-                            const episodeFoundByName = episodeName && show.includes(episodeName);
-                            if (!episodeFoundByNumber && !episodeFoundByName) {
-                                continue;
-                            }
-                        }
-                        results.push({ number, show, channel, id, nzbData : {term, line} });
-                    }
+        //Find the correct season and show
+        results = results.filter(({show}) => {
+            if (season && !show.includes(`Series ${season}`) && !show.includes(`Season ${season}`)) {
+                return false;
+            }
+            if (episode) {
+                const episodeFoundByNumber = show.includes(`Episode ${episode}`);
+                const episodeFoundByName = episodeName && show.includes(episodeName);
+                if (!episodeFoundByNumber && !episodeFoundByName) {
+                    return false;;
                 }
-            });
-
-            searchProcess.stderr.on('data', (data) => {
-                loggingService.error(data.toString().trim());
-            });
-
-            searchProcess.on('close', async (code) => {
-                if (code === 0) {
-                    for (let result of results){
-                        const nzbName = term != "*" ? (await createNZBName(result.nzbData.term, result.nzbData.line || legacyCreateNZBName(result.show))) : legacyCreateNZBName(result.show);
-                        filenameCache.set(result.id, nzbName);
-                        result.nzbName = nzbName;
-                    }
-                    resolve(results);
-                } else {
-                    reject(new Error(`Process exited with code ${code}`));
-                }
-            });
+            }
+            return true;
         });
+
+        //Create an NZB Name for this result
+        for (let result of results){
+            const nzbName = term != "*" ? (await createNZBName(result.nzbData.term, result.nzbData.line || legacyCreateNZBName(result.show))) : legacyCreateNZBName(result.show);
+            filenameCache.set(result.id, nzbName);
+            result.nzbName = nzbName;
+        }
+        return results;
     }
 };
+
+async function searchIPlayer(term){
+    return new Promise((resolve, reject) => {
+        const results = [];
+        const fullExec = getParameter("GET_IPLAYER_EXEC");
+        const args = fullExec.match(/(?:[^\s"]+|"[^"]*")+/g);
+
+        const exec = args.shift();
+        const allArgs = [...args, `"${term}"`];
+
+        loggingService.debug(`Executing get_iplayer with args: ${allArgs.join(" ")}`);
+        const searchProcess = spawn(exec, allArgs, { shell: true });    
+
+        searchProcess.stdout.on('data', (data) => {
+            loggingService.debug(data.toString().trim());
+            const lines = data.toString().split("\n");
+            for (const line of lines) {
+                const match = episodeRegex.exec(line);
+                if (match) {
+                    const [_, number, show, channel, id] = match;
+                    results.push({ number, show, channel, id, nzbData : {term, line} });
+                }
+            }
+        });
+
+        searchProcess.stderr.on('data', (data) => {
+            loggingService.error(data.toString().trim());
+        });
+
+        searchProcess.on('close', async (code) => {
+            if (code === 0) {
+                resolve(results);
+            } else {
+                reject(new Error(`Process exited with code ${code}`));
+            }
+        });
+    })
+}
 
 export default iplayerService;
