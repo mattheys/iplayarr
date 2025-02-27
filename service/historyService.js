@@ -15,7 +15,8 @@ const historyService = {
         return (await storage.getItem("history")) ?? [];
     },
 
-    addHistory : async (historyItem) => {
+    addHistory : async (item) => {
+        const historyItem = {...item, eta: "", speed: "", progress: ""}
         await initStorage();
         const history = await historyService.getHistory();
         history.push(historyItem);

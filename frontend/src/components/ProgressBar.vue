@@ -1,5 +1,5 @@
 <template>
-    <div class="progress-bar">
+    <div :class="['progress-bar', history ? 'history' : '']">
         <span class="progressText">{{ progress }}%</span>
         <div class="progress" :style="{ width: progress + '%' }"></div>
     </div>
@@ -12,6 +12,11 @@ defineProps({
     progress: {
         type: Number,
         required: true
+    },
+    history: {
+        type: Boolean,
+        required: false,
+        default: false
     }
 });
 </script>
@@ -31,6 +36,10 @@ defineProps({
     background-color: blue;
 }
 
+.progress-bar.history .progress {
+    background-color: green;
+}
+
 .progressText {
     position: absolute;
     top: 50%;
@@ -43,6 +52,10 @@ defineProps({
     z-index: 2;
     pointer-events: none;
     mix-blend-mode: difference; /* Inverts color based on background */
+}
+
+.progress-bar.history .progressText {
+    mix-blend-mode: normal;
 }
 
 </style>

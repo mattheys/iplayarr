@@ -47,6 +47,7 @@
     color: white;
     padding: 1rem;
     height: 100vh;
+    z-index: 3;
   }
 
   @media (max-width: 768px) {
