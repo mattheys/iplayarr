@@ -1,9 +1,11 @@
 import { getParameter } from "./configService.js";
 import iplayerService from "./iplayerService.js";
+import { spawn } from 'child_process';
 
-const queue = [];
 
-const activeLimit = getParameter("ACTIVE_LIMIT") || 3;
+let queue = [];
+
+const activeLimit = getParameter("ACTIVE_LIMIT") || 1;
 
 const DOWNLOADING = "Downloading";
 const IDLE = "Idle";
@@ -45,11 +47,21 @@ const queueService = {
     },
 
     removeFromQueue: (pid) => {
-        const index = queue.findIndex(({pid: id}) => id == pid);
-        if (index > -1){
-            queue.splice(index, 1);
-            queueService.moveQueue();
+        queue = queue.filter(({pid: id}) => id != pid);
+        queueService.moveQueue();
+    },
+
+    cancelItem: (pid) => {
+        for (const queueItem of queue){
+            if (queueItem.pid == pid){
+                spawn('kill', ['-9', queueItem.process.pid]);
+            }
         }
+        queueService.moveQueue();
+    },
+
+    getQueue: () => {
+        return queue;
     }
 }
 

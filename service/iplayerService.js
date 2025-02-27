@@ -12,7 +12,6 @@ import NodeCache from 'node-cache';
 import queueService from './queueService.js';
 
 const downloads = {};
-const processes = {};
 const timestampFile = 'iplayarr_timestamp';
 
 const episodeRegex = /([0-9]+:)[^a-zA-Z]([^,]+),[^a-zA-Z]([^,]+),[^a-zA-Z]([^,]+)(?:$|\n)/;
@@ -73,8 +72,7 @@ const iplayerService = {
     },
 
     cancel: async (id) => {
-        processes[id].kill('SIGINT');
-        delete processes[id];
+        queueService.cancelItem(id);
         const {uuid} = Object.values(downloads).find((d) => d.id === id)
         delete downloads[uuid];
 
@@ -103,8 +101,6 @@ const iplayerService = {
         loggingService.debug(`Executing get_iplayer with args: ${allArgs.join(" ")}`);
         const downloadProcess = spawn(exec, allArgs);
 
-        processes[id] = downloadProcess;
-
         const download = {
             uuid,
             id,
@@ -119,34 +115,36 @@ const iplayerService = {
         downloads[uuid] = download;
 
         downloadProcess.stdout.on('data', (data) => {
-            socketService.emit('log', {id, message : data.toString(), timestamp : new Date()});
-            console.log(data.toString());
-            const lines = data.toString().split("\n");
-            const filenameLine = lines.find((l) => filenameRegex.exec(l));
-            if (filenameLine) {
-                const filenameMatch = filenameRegex.exec(filenameLine);
-                let filename = `${filenameMatch[1]} ${filenameMatch[2]}`;
-                const cachedFilename = filenameCache.get(id);
-                filename = (cachedFilename || legacyCreateNZBName(filename)) + ".mp4";
-                downloads[uuid].filename = filename;
-            }
-            const progressLines = lines.filter((l) => progressRegex.exec(l));
-            if (progressLines.length > 0) {
-                const progressLine = progressLines.pop();
-                const match = progressRegex.exec(progressLine);
-                const [_, progress, size, speed, eta] = match;
-                downloads[uuid].progress = parseFloat(progress);
-                downloads[uuid].size = parseFloat(size);
-                downloads[uuid].speed = parseFloat(speed);
-                downloads[uuid].eta = eta;
+            if (downloads[uuid]){
+                socketService.emit('log', {id, message : data.toString(), timestamp : new Date()});
+                console.log(data.toString());
+                const lines = data.toString().split("\n");
+                const filenameLine = lines.find((l) => filenameRegex.exec(l));
+                if (filenameLine) {
+                    const filenameMatch = filenameRegex.exec(filenameLine);
+                    let filename = `${filenameMatch[1]} ${filenameMatch[2]}`;
+                    const cachedFilename = filenameCache.get(id);
+                    filename = (cachedFilename || legacyCreateNZBName(filename)) + ".mp4";
+                    downloads[uuid].filename = filename;
+                }
+                const progressLines = lines.filter((l) => progressRegex.exec(l));
+                if (progressLines.length > 0) {
+                    const progressLine = progressLines.pop();
+                    const match = progressRegex.exec(progressLine);
+                    const [_, progress, size, speed, eta] = match;
+                    downloads[uuid].progress = parseFloat(progress);
+                    downloads[uuid].size = parseFloat(size);
+                    downloads[uuid].speed = parseFloat(speed);
+                    downloads[uuid].eta = eta;
 
-                const percentFactor = (100 - parseFloat(progress)) / 100;
-                const sizeLeft = downloads[uuid].size * percentFactor;
-                downloads[uuid].sizeLeft = sizeLeft;
-            }
+                    const percentFactor = (100 - parseFloat(progress)) / 100;
+                    const sizeLeft = downloads[uuid].size * percentFactor;
+                    downloads[uuid].sizeLeft = sizeLeft;
+                }
 
-            queueService.updateQueue(id, downloads[uuid]);
-            socketService.emit('downloads', Object.values(downloads));
+                queueService.updateQueue(id, downloads[uuid]);
+                socketService.emit('downloads', Object.values(downloads));
+            }
         });
 
         downloadProcess.on('close', async (code) => {
@@ -173,7 +171,6 @@ const iplayerService = {
             }
             delete downloads[uuid];
             queueService.removeFromQueue(id);
-            delete processes[id];
         });
 
         return downloadProcess;

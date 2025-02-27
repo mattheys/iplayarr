@@ -1,7 +1,7 @@
 import { Builder } from "xml2js";
 
 export default async (req, res) => {
-    const { pid } = req.query;
+    const { pid, season, ep } = req.query;
 
     const date = new Date();
     date.setMinutes(date.getMinutes() - 720);
@@ -15,7 +15,11 @@ export default async (req, res) => {
         nzb: {
             $: { xmlns: "http://www.newzbin.com/DTD/2003/nzb" },
             head: {
-                title: pid
+                title: pid,
+                meta: [
+                    { $: { type: "season", _: season}},
+                    { $: { type: "episode", _: ep}}
+                ]
             },
             file: {
                 $: {
