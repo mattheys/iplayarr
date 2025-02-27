@@ -1,4 +1,4 @@
-# iPlayarr
+# <img src="frontend/public/iplayarr.png" alt="Description" width="45" style="margin-right: 1rem;"> iPlayarr
 
 iPlayarr is a companion for Sonarr (and the rest of the *arr stack) to simplify integrating get_iplayer for episode search and download.
 

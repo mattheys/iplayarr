@@ -1,7 +1,10 @@
 <template>
     <div class="NavBar">
         <div class="left">
-            iPlayarr
+            <div class="logoPanel">
+                <img src="/iplayarr.png" alt="Logo">
+                <p>iPlayarr</p>
+            </div>
         </div>
         <div class="middle">
 
@@ -21,7 +24,7 @@
 <style scoped>
     .NavBar {
         display: flex;
-        padding: 1rem;
+        padding: 0px 1rem;
         background-color: rgb(42, 42, 42);
     }
 
@@ -32,4 +35,21 @@
     .NavBar .right {
         text-align: right;
     }
+
+    .logoPanel {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .logoPanel img {
+        width: 32px;
+        height: auto;
+    }
+
+    .logoPanel p {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
 </style>
