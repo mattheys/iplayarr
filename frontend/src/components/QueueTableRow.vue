@@ -19,6 +19,9 @@
             <span v-if="history">
                 <font-awesome-icon class="clickable" :icon="['fas', 'trash']" @click="trash(item.id)" />
             </span>
+            <span v-if="!history">
+                <font-awesome-icon class="clickable" :icon="['fas', 'xmark']" @click="cancel(item.id)" />
+            </span>
         </td>
     </tr>
 </template>
@@ -41,6 +44,10 @@ defineProps({
 
 const trash = async (pid) => {
     await fetch(`/json-api/history?pid=${pid}`, { method: 'DELETE' });
+}
+
+const cancel = async (pid) => {
+    await fetch(`/json-api/queue?pid=${pid}`, { method: 'DELETE' });
 }
 </script>
 

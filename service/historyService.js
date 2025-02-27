@@ -17,7 +17,7 @@ const historyService = {
     },
 
     addHistory : async (item) => {
-        const historyItem = {...item, eta: "", speed: "", progress: ""}
+        const historyItem = {...item, eta: "", speed: "", progress: "100"}
         await initStorage();
         const history = await historyService.getHistory();
         history.push(historyItem);
