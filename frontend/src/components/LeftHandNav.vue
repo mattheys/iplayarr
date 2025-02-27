@@ -20,6 +20,14 @@
             </span>
           </RouterLink>
         </li>
+        <li>
+          <RouterLink to="/about">
+            <span @click="closeLHN">
+              <font-awesome-icon :icon="['fas', 'circle-info']" />
+              <span class="menuText">About</span>
+            </span>
+          </RouterLink>
+        </li>
       </ul>
     </div>
   </template>
