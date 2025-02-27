@@ -1,5 +1,6 @@
 import { Parser } from "xml2js";
 import iplayerService from "../service/iplayerService.js";
+import queueService from "../service/queueService.js";
 
 const parser = new Parser();
 
@@ -10,7 +11,7 @@ export default async (req, res) => {
         for (const file of files){
             const xmlString = file.buffer.toString('utf-8');
             const pid = await getPID(xmlString);
-            await iplayerService.download(pid);
+            queueService.addToQueue(pid);
             pids.push(pid);
         }
 

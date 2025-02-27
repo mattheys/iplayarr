@@ -9,6 +9,7 @@ import socketService from './socketService.js';
 import loggingService from './loggingService.js';
 import sonarrService from './sonarrService.js';
 import NodeCache from 'node-cache';
+import queueService from './queueService.js';
 
 const downloads = {};
 const timestampFile = 'iplayarr_timestamp';
@@ -124,6 +125,7 @@ const iplayerService = {
                 downloads[uuid].sizeLeft = sizeLeft;
             }
 
+            queueService.updateQueue(id, downloads[uuid]);
             socketService.emit('downloads', Object.values(downloads));
         });
 
@@ -150,7 +152,10 @@ const iplayerService = {
                 }
             }
             delete downloads[uuid];
+            queueService.removeFromQueue(id);
         });
+
+        return downloadProcess;
     },
 
     search: (term, season, episode) => {
