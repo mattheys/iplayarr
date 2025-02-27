@@ -42,7 +42,7 @@ onMounted(async () => {
   await updateQueue();
   socket.value = io();
 
-  socket.value.on('downloads', (data) => {
+  socket.value.on('queue', (data) => {
     queue.value = data;
   });
 

@@ -1,6 +1,7 @@
 import { getParameter } from "../service/configService.js";
 import historyService from "../service/historyService.js";
 import iplayerService from "../service/iplayerService.js";
+import queueService from "../service/queueService.js";
 import { formatBytes, formatTimeShort } from "../utils/utils.js";
 
 const queue_skeleton = {
@@ -27,8 +28,8 @@ export default async (req, res) => {
         iplayerService.cancel(value);
     }
     const { available, total } = { available: 107374182400, total: 107374182400}
-    const rawQueue = iplayerService.getQueue();
-    const iplayerQueue = rawQueue.filter(({filename}) => filename);
+    const queue = queueService.getQueue();
+    const downloading = queue.find(({status}) => status == 'Downloading')
     const iplayerComplete = await historyService.getHistory();
     const queueObj = {
         queue : {
@@ -36,26 +37,26 @@ export default async (req, res) => {
             diskspacetotal1: formatBytes(total, false),
             diskspace1_norm: formatBytes(available, true),
             ...queue_skeleton,
-            status : iplayerQueue.length > 0 ? 'Downloading' : "Idle",
-            noofslots_total : iplayerQueue.length,
-            noofslots : iplayerQueue.length,
+            status : downloading ? 'Downloading' : "Idle",
+            noofslots_total : queue.length,
+            noofslots : queue.length,
             finish: iplayerComplete.length,
-            slots : iplayerQueue.map((slot) => ({
-                "status": "Downloading",
+            slots : queue.map((slot) => ({
+                "status": slot.status == 'Downloading' ? "Downloading" : "Queued",
                 "index": 0,
                 "password": "",
                 "avg_age": "0d",
                 "script": "None",
                 "direct_unpack": "10/30",
-                "mb": slot.size,
-                "mbleft": slot.sizeLeft,
-                "filename": slot.filename,
+                "mb": slot.details?.size || "0",
+                "mbleft": slot.details?.sizeLeft || "100",
+                "filename": slot.nzbName,
                 "labels": [],
                 "priority": "Normal",
                 "cat": "iplayer",
-                "timeleft": slot.eta || "00:00:00",
-                "percentage": slot.progress,
-                "nzo_id": slot.id,
+                "timeleft": slot.details?.eta || "00:00:00",
+                "percentage": slot.details?.progress || "0",
+                "nzo_id": slot.pid,
                 "unpackopts": "3",
             }))
         }

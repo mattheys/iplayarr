@@ -37,8 +37,8 @@ export default async (req, res) => {
                           { $: { name: "files", value: "0" } },
                           { $: { name: "grabs", value: "0" } }
                         ],
-                        link: `${getBaseUrl(req)}/api?mode=nzb-download&pid=${id}&apikey=${req.query.apikey}`,
-                        enclosure: {$:{url : `${getBaseUrl(req)}/api?mode=nzb-download&pid=${id}&apikey=${req.query.apikey}`, length : "2147483648", type: "application/x-nzb"} } 
+                        link: `${getBaseUrl(req)}/api?mode=nzb-download&pid=${id}&nzbName=${nzbName}&apikey=${req.query.apikey}`,
+                        enclosure: {$:{url : `${getBaseUrl(req)}/api?mode=nzb-download&pid=${id}&nzbName=${nzbName}&apikey=${req.query.apikey}`, length : "2147483648", type: "application/x-nzb"} } 
                       }
                 ))
             }

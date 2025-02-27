@@ -1,26 +1,26 @@
 <template>
     <tr class=''>
         <td class='desktopOnly' data-title='ID'>
-            <RouterLink :to="{ path: '/logs', query: { filter: item.id } }">{{ item.id }}</RouterLink>
+            <RouterLink :to="{ path: '/logs', query: { filter: renderItem.id } }">{{ renderItem.id }}</RouterLink>
         </td>
         <td class='text' data-title='Filename'>
-            <RouterLink :to="{ path: '/logs', query: { filter: item.id } }">{{ item.filename }}</RouterLink>
+            <RouterLink :to="{ path: '/logs', query: { filter: renderItem.id } }">{{ renderItem.filename }}</RouterLink>
         </td>
-        <td class='desktopOnly' data-title='Start'>{{ item.start }}</td>
-        <td class='desktopOnly' data-title='Size'>{{ item.size }}</td>
+        <td class='desktopOnly' data-title='Start'>{{ renderItem.start }}</td>
+        <td class='desktopOnly' data-title='Size'>{{ renderItem.size }}</td>
         <td class='' data-title='Progress'>
-            <ProgressBar :progress="item.progress" :history="history" />
+            <ProgressBar :progress="renderItem.progress" :history="history" :idle="renderItem.status == 'Idle'"/>
         </td>
-        <td class='mobileOnly mobileInline' data-title='Start'>{{ item.start }}</td>
-        <td class='mobileOnly mobileInline' data-title='Size'>{{ item.size }}</td>
-        <td class='mobileInline' data-title='ETA'>{{ item.eta }}</td>
-        <td class='mobileInline' data-title='Speed'>{{ item.speed }}</td>
+        <td class='mobileOnly mobileInline' data-title='Start'>{{ renderItem.start }}</td>
+        <td class='mobileOnly mobileInline' data-title='Size'>{{ renderItem.size }}</td>
+        <td class='mobileInline' data-title='ETA'>{{ renderItem.eta }}</td>
+        <td class='mobileInline' data-title='Speed'>{{ renderItem.speed }} MB/s</td>
         <td class='actionCol' data-title='Action'>
             <span v-if="history">
-                <font-awesome-icon class="clickable" :icon="['fas', 'trash']" @click="trash(item.id)" />
+                <font-awesome-icon class="clickable" :icon="['fas', 'trash']" @click="trash(renderItem.id)" />
             </span>
             <span v-if="!history">
-                <font-awesome-icon class="clickable" :icon="['fas', 'xmark']" @click="cancel(item.id)" />
+                <font-awesome-icon class="clickable" :icon="['fas', 'xmark']" @click="cancel(renderItem.id)" />
             </span>
         </td>
     </tr>
@@ -28,9 +28,9 @@
 
 <script setup>
 import ProgressBar from './ProgressBar.vue';
-import { defineProps } from 'vue';
+import { defineProps, computed } from 'vue';
 
-defineProps({
+const props = defineProps({
     item: {
         type: Object,
         required: true
@@ -41,6 +41,33 @@ defineProps({
         require: true
     }
 });
+
+const renderItem = computed(() => {
+    if (props.history) {
+        return props.item;
+    } else {
+        let queueItem = {
+            ...props.item.details,
+            filename: props.item.nzbName,
+            status : props.item.status,
+            id: props.item.pid,            
+        };
+
+        if (!props.item.details?.start || queueItem.status == 'Idle'){
+            queueItem = {
+                ...queueItem,
+                start: queueItem.status == 'Idle' ? 'Queued' : 'Pending',
+                size: '?',
+                eta: '??:??:??',
+                speed: '0',
+                progress: '0'
+            }
+        }
+        return queueItem;
+    }
+});
+
+
 
 const trash = async (pid) => {
     await fetch(`/json-api/history?pid=${pid}`, { method: 'DELETE' });
