@@ -22,7 +22,7 @@ export default async (req, res) => {
     } catch (error) {
         res.status(500).json({
             status: false,
-            error: error.message
+            error: error?.message
         });
     }
 }
@@ -30,16 +30,24 @@ export default async (req, res) => {
 async function getDetails(xml) {
     return new Promise((resolve, reject) => {
         parser.parseString(xml, (err, result) => {
-            if (err || !result?.nzb?.head?.[0]?.title?.[0]) {
-                return reject(err);
+            if (err) {
+                return reject(new Error(`XML parsing failed: ${err.message || err}`));
             }
-            const nzbName = result.nzb.head[0].meta.find(({$}) => $.type === 'nzbName');
-            const details = {
-                "pid" : result.nzb.head[0].title[0],
-                "nzbName" : nzbName?.$?._,
 
+            if (!result?.nzb?.head?.[0]?.title?.[0]) {
+                return reject(new Error(`Unable to get title from NZB file, parsed XML: ${JSON.stringify(result, null, 2)}`));
             }
-            resolve(details);
+
+            const nzbName = result.nzb.head?.[0]?.meta?.find(({$}) => $.type === 'nzbName')?.$?._ || null;
+
+            if (!nzbName) {
+		    return reject(new Error(`Unable to get nzbName from NZB file, parsed XML: ${JSON.stringify(result, null, 2)}`));
+            }
+
+            resolve({
+                pid: result.nzb.head[0].title[0],
+                nzbName: nzbName
+            });
         });
     });
 }
