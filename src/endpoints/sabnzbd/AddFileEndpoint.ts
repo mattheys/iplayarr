@@ -17,7 +17,7 @@ interface NZBDetails {
 export default async (req : Request, res : Response) => {
     try {
         const { files } = req as any as AddFileRequest;
-        const pids = [];
+        const pids : string[] = [];
         for (const file of files){
             const xmlString = file.buffer.toString('utf-8');
             const {pid, nzbName} = await getDetails(xmlString);

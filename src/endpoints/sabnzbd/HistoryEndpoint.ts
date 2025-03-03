@@ -26,7 +26,7 @@ export default async (req : Request, res : Response, next : NextFunction) => {
             ...historySkeleton,
             slots : history.map((item) => createHistoryEntry(completeDir, item))
         } as SabNZBDHistoryResponse
-        res.json({histry : historyObject});
+        res.json({history : historyObject});
     }
 }
 

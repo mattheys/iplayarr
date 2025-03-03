@@ -30,7 +30,7 @@ router.delete('/history', async (req, res) => {
 
 router.delete('/queue', async (req, res) => {
     const {pid} = req.query as any as DeleteRequest;
-    queueService.removeFromQueue(pid);
+    queueService.cancelItem(pid);
     const queue : QueueEntry[] = queueService.getQueue() || [];
     socketService.emit("queue", queue);
     res.json(queue);

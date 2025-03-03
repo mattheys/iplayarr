@@ -32,6 +32,7 @@ const queueService = {
             const downloadProcess : ChildProcess = await iplayerService.download(next.pid);
             next.status = QueueEntryStatus.DOWNLOADING;
             next.process = downloadProcess;
+            next.details = {...next.details, start : new Date()};
 
             activeQueue.push(next);
 

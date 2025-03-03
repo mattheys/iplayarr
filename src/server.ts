@@ -7,9 +7,19 @@ import ApiRoute from './routes/ApiRoute';
 import JsonApiRoute from './routes/JsonApiRoute';
 import path from 'path';
 import socketService from './service/socketService';
+import cors from 'cors'
+import { getParameter } from './service/configService';
+import iplayerService from './service/iplayerService';
+import cron from 'node-cron';
+
+const isDebug = process.env.DEBUG == 'true';
 
 const app : Express = express();
 const port : number = parseInt(process.env[IplayarrParameter.PORT.toString()] || "4404");
+
+if (isDebug){
+    app.use(cors());
+}
 
 app.use(express.static(path.join(process.cwd(), 'frontend', 'dist')));
 
@@ -34,9 +44,17 @@ app.get('*', (req, res) => {
 // Start the server
 const server : Server = http.createServer(app);
 
-const io = new SocketIOServer(server);
+const io = isDebug ? new SocketIOServer(server, {cors : {}}) : new SocketIOServer(server);
 socketService.registerIo(io);
 
 server.listen(port, () => {
     loggingService.log(`Server running at http://localhost:${port}`);
 });
+
+//Cron
+getParameter(IplayarrParameter.REFRESH_SCHEDULE).then((schedule) => {
+    const cronSchedule = schedule || "0 * * * *";
+    cron.schedule(cronSchedule, () => {
+        iplayerService.refreshCache();
+    });
+})

@@ -21,9 +21,10 @@ const [queue, history, logs, socket] = [ref([]), ref([]), ref([]), ref(null)];
 const leftHandNav = ref(null);
 
 const updateQueue = async () => {
-  const queueResponse = await fetch("/json-api/queue");
+  const host = process.env.NODE_ENV != 'production' ? `http://${window.location.hostname}:4404` : '';
+  const queueResponse = await fetch(`${host}/json-api/queue`);
   queue.value = await queueResponse.json();
-  const historyResponse = await fetch("/json-api/history");
+  const historyResponse = await fetch(`${host}/json-api/history`);
   history.value = await historyResponse.json();
 }
 
@@ -40,7 +41,12 @@ provide('toggleLeftHandNav', toggleLeftHandNav);
 
 onMounted(async () => {
   await updateQueue();
-  socket.value = io();
+  if (process.env.NODE_ENV == 'production'){
+    socket.value = io();
+  } else {
+    const socketUrl = `http://${window.location.hostname}:4404`
+    socket.value = io(socketUrl);
+  }
 
   socket.value.on('queue', (data) => {
     queue.value = data;

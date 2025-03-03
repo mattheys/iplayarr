@@ -1,4 +1,6 @@
 import { Server, Socket } from "socket.io";
+import queueService from "./queueService";
+import historyService from "./historyService";
 
 const sockets : {
     [key : string] : Socket
@@ -14,8 +16,14 @@ const socketService = {
         });
     },
 
-    registerSocket : (socket : Socket) => {
+    registerSocket : async (socket : Socket) => {
         sockets[socket.id] = socket;
+
+        const queue = queueService.getQueue();
+        const history = await historyService.getHistory();
+
+        socket.emit('queue', queue);
+        socket.emit('history', history);
 
         socket.on('disconnect', () => {
             delete sockets[socket.id];

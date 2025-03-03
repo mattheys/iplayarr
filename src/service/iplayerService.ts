@@ -19,6 +19,8 @@ const episodeRegex = /([0-9]+:)[^a-zA-Z]([^,]+),[^a-zA-Z]([^,]+),[^a-zA-Z]([^,]+
 const progressRegex = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s) ETA: ([\d:]+).*$/;
 const searchCache : NodeCache = new NodeCache({stdTTL: 300, checkperiod: 60});
 
+const timestampFile = 'iplayarr_timestamp';
+
 const iplayerService = {
     download : async (pid : string) : Promise<ChildProcess> => {
         const uuid : string = v4();
@@ -27,7 +29,7 @@ const iplayerService = {
 
         const [exec, args] = await getIPlayerExec();
         fs.mkdirSync(`${downloadDir}/${uuid}`);
-        fs.writeFileSync(`${downloadDir}/${uuid}/iplayarr_timestamp`, '');
+        fs.writeFileSync(`${downloadDir}/${uuid}/${timestampFile}`, '');
         const allArgs = [...args, '--output', `${downloadDir}/${uuid}`, '--overwrite', '--force', '--log-progress', `--pid=${pid}`];
 
         loggingService.debug(`Executing get_iplayer with args: ${allArgs.join(" ")}`);
@@ -93,12 +95,19 @@ const iplayerService = {
         return downloadProcess;
     },
 
-    filmSearch : async (term : string) : Promise<IPlayerSearchResult[]> => {
+    filmSearch : async (inputTerm : string) : Promise<IPlayerSearchResult[]> => {
+        //Sanitize the term, BBC don't put years on their movies
+        const term = removeLastFourDigitNumber(inputTerm);
+
         //If we've searched before
         let results : IPlayerSearchResult[] | undefined = searchCache.get(term);
         if (!results){
-            results = await searchIPlayer(term);
+            results = await searchIPlayer(term, false);
             searchCache.set(term, results);
+        }
+
+        for (const result of results){
+            result.nzbName = inputTerm.replaceAll(" ",".")+".BBC.WEB-DL.AAC.2.0.H.264";
         }
 
         return results;
@@ -131,10 +140,54 @@ const iplayerService = {
         });
 
         return results;
-    }
+    },
+
+    refreshCache: async () => {
+        const downloadDir = await getParameter(IplayarrParameter.DOWNLOAD_DIR) as string;
+        const completeDir = await getParameter(IplayarrParameter.COMPLETE_DIR) as string;
+        const [exec, args] = await getIPlayerExec();
+
+        //Refresh the cache
+        loggingService.debug(`Executing get_iplayer with args: ${[...args].join(" ")} --cache-rebuild`);
+        spawn(exec as string, [...args, '--cache-rebuild'], { shell: true });
+        
+        //Delete failed jobs
+        const threeHoursAgo : number = Date.now() - 3 * 60 * 60 * 1000;
+        fs.readdir(downloadDir, { withFileTypes: true }, (err, entries) => {
+            if (err) {
+                console.error('Error reading directory:', err);
+                return;
+            }
+    
+            entries.forEach(entry => {
+                if (!entry.isDirectory()) return;
+    
+                const dirPath : string = path.join(downloadDir, entry.name);
+                const filePath : string = path.join(dirPath, timestampFile);
+    
+                fs.stat(filePath, (err, stats) => {
+                    if (err) {
+                        // Ignore missing files
+                        if (err.code !== 'ENOENT') console.error(`Error checking ${filePath}:`, err);
+                        return;
+                    }
+    
+                    if (stats.mtimeMs < threeHoursAgo) {
+                        fs.rm(dirPath, { recursive: true, force: true }, (err) => {
+                            if (err) {
+                                loggingService.error(`Error deleting ${dirPath}:`, err);
+                            } else {
+                                loggingService.log(`Deleted old directory: ${dirPath}`);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    },
 }
 
-async function searchIPlayer(term : string) : Promise<IPlayerSearchResult[]> {
+async function searchIPlayer(term : string, tv : boolean = true) : Promise<IPlayerSearchResult[]> {
     return new Promise(async (resolve, reject) => {
         const results : IPlayerSearchResult[] = []
         const [exec, args] = await getIPlayerExec();
@@ -164,8 +217,13 @@ async function searchIPlayer(term : string) : Promise<IPlayerSearchResult[]> {
         searchProcess.on('close', async (code) => {
             if (code === 0) {
                 for (let result of results){
-                    const nzbName : string | undefined = term != "*" ? (await createNZBName(term, result.request.line || legacyCreateNZBName(result.title))) : legacyCreateNZBName(result.title);
-                    result.nzbName =  nzbName;
+                    if (tv){
+                        const nzbName : string | undefined = term != "*" ? (await createNZBName(term, result.request.line || legacyCreateNZBName(result.title))) : legacyCreateNZBName(result.title);
+                        result.nzbName =  nzbName;
+                    } else {
+                        const nzbName = term;
+                        result.nzbName =  nzbName;
+                    }
                 }
                 resolve(results);
             } else {
@@ -182,6 +240,10 @@ async function getIPlayerExec() : Promise<(string | RegExpMatchArray)[]> {
     const exec : string = args.shift() as string;
 
     return [exec, args];
+}
+
+function removeLastFourDigitNumber(str : string) {
+    return str.replace(/\d{4}(?!.*\d{4})/, '').trim();
 }
 
 export default iplayerService;

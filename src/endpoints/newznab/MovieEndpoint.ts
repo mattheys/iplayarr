@@ -1,20 +1,18 @@
-import { Request, Response } from "express";
-import { Builder } from "xml2js"
-import iplayerService from "../../service/iplayerService";
-import { IPlayerSearchResult } from "../../types/IPlayerSearchResult";
-import { getBaseUrl } from "../../utils/Utils";
-import { TVSearchResponse } from "../../types/responses/newznab/TVSearchResponse";
+import {Request, Response} from 'express';
+import iplayerService from '../../service/iplayerService';
+import { TVSearchResponse } from '../../types/responses/newznab/TVSearchResponse';
+import { getBaseUrl } from '../../utils/Utils';
+import { Builder } from 'xml2js';
+import { IPlayerSearchResult } from '../../types/IPlayerSearchResult';
 
-interface TvSearchRequest {
-    q : string,
-    season : number,
-    ep : number
+interface FilmSearchRequest {
+    q : string
 }
 
 export default async (req : Request, res : Response) => {
-    const {q, season, ep} = req.query as any as TvSearchRequest;
+    const {q} = req.query as any as FilmSearchRequest;
     const searchTerm = q ?? '*';
-    const results : IPlayerSearchResult[] = await iplayerService.tvSearch(searchTerm, season, ep)
+    const results : IPlayerSearchResult[] = await iplayerService.filmSearch(searchTerm)
 
     const date : Date = new Date();
     date.setMinutes(date.getMinutes() - 720);
@@ -30,17 +28,17 @@ export default async (req : Request, res : Response) => {
         channel: {
             "atom:link": { $: { rel: "self", type: "application/rss+xml" } },
             title: "iPlayarr",
-            item: results.map(({title, pid, nzbName}) => (
+            item: results.map(({pid, nzbName}) => (
                 {
                     title: nzbName,
                     description: nzbName,
                     guid: `https://www.bbc.co.uk/iplayer/episodes/${pid}`,
                     size: "2147483648",
-                    category: ["5000", "5040"],
+                    category: ["2000", "2040"],
                     pubDate,
                     "newznab:attr": [
-                      { $: { name: "category", value: "5000" } },
-                      { $: { name: "category", value: "5040" } },
+                      { $: { name: "category", value: "2000" } },
+                      { $: { name: "category", value: "2040" } },
                       { $: { name: "language", value: "English" } },
                       { $: { name: "files", value: "1" } },
                       { $: { name: "grabs", value: "0" } }
