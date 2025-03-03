@@ -3,8 +3,10 @@ import { getParameter } from '../service/configService';
 import { IplayarrParameter } from '../types/IplayarrParameters';
 import { ApiError, ApiResponse } from '../types/responses/ApiResponse';
 import { EndpointDirectory, NewzNabEndpointDirectory, SabNZBDEndpointDirectory } from '../endpoints/EndpointDirectory';
+import multer, { Multer } from 'multer';
 
 const router : Router = Router();
+const upload : Multer = multer();
 
 interface ApiRequest {
     apikey : string;
@@ -12,7 +14,7 @@ interface ApiRequest {
     t? : string;
 }
 
-router.all('/', async (req : Request, res : Response, next : NextFunction) => {
+router.all('/', upload.any(), async (req : Request, res : Response, next : NextFunction) => {
     const {apikey : queryKey, mode, t} = req.query as any as ApiRequest;
     const envKey : string | undefined = await getParameter(IplayarrParameter.API_KEY);
     if (envKey && envKey == queryKey){
