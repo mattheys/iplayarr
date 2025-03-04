@@ -2,8 +2,10 @@
     <div class="NavBar">
         <div class="left">
             <div class="logoPanel">
-                <img src="/iplayarr.png" alt="Logo">
-                <p>iPlayarr</p>
+                <RouterLink to="/queue">
+                    <img src="/iplayarr.png" alt="Logo">
+                    <p>iPlayarr</p>
+                </RouterLink>
             </div>
         </div>
         <div class="middle">
@@ -40,7 +42,7 @@
         justify-content: flex-end;
     }
 
-    .logoPanel {
+    .logoPanel, .logoPanel a {
         display: flex;
         align-items: center;
         gap: 10px;
