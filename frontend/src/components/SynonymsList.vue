@@ -6,6 +6,9 @@
         <div class="synonymTarget">
             {{synonym.target}}
         </div>
+        <div class="synonymExemptions">
+            {{synonym.exemptions}}
+        </div>
         <div class="actionContainer">
             <button class="clickable" @click="removeSynonym(synonym)">
                 <font-awesome-icon :icon="['fas', 'trash']" />
@@ -95,6 +98,10 @@
 
     .synonymTarget {
         font-size: 18px;
+    }
+
+    .synonymExemptions {
+        font-size: 14px;
     }
 
     .actionContainer {

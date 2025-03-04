@@ -2,7 +2,7 @@
     <div class="form-group">
         <label>{{ name }}</label>
         <div :class="['inputBox', error ? 'error' : '']">
-            <input :type="typeOverride" v-model="localValue" />
+            <input :type="typeOverride" v-model="localValue" :placeholder="placeholder"/>
             <div class="error" v-if="error">
                 {{ error }}
             </div>
@@ -38,6 +38,10 @@ const props = defineProps({
         type: String,
         required: false,
         default: undefined
+    },
+    placeholder: {
+        type: String,
+        required: false
     }
 })
 

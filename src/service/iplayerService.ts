@@ -15,6 +15,7 @@ import path from "path";
 import historyService from "./historyService";
 import { QueueEntry } from "../types/QueueEntry";
 import synonymService from "./synonymService";
+import { Synonym } from "../types/Synonym";
 
 const episodeRegex = /([0-9]+:)[^a-zA-Z]([^,]+),[^a-zA-Z]([^,]+),[^a-zA-Z]([^,]+)(?:$|\n)/;
 const progressRegex = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s) ETA: ([\d:]+).*$/;
@@ -106,7 +107,7 @@ const iplayerService = {
         //If we've searched before
         let results : IPlayerSearchResult[] | undefined = searchCache.get(searchTerm);
         if (!results){
-            results = await searchIPlayer(searchTerm, false);
+            results = await searchIPlayer(searchTerm, synonym, false);
             searchCache.set(searchTerm, results);
         }
 
@@ -127,7 +128,7 @@ const iplayerService = {
         //If we've searched before
         let results : IPlayerSearchResult[] | undefined = searchCache.get(searchTerm);
         if (!results){
-            results = await searchIPlayer(searchTerm);
+            results = await searchIPlayer(searchTerm, synonym);
             searchCache.set(searchTerm, results);
         }
 
@@ -194,11 +195,19 @@ const iplayerService = {
     },
 }
 
-async function searchIPlayer(term : string, tv : boolean = true) : Promise<IPlayerSearchResult[]> {
+async function searchIPlayer(term : string, synonym? : Synonym, tv : boolean = true) : Promise<IPlayerSearchResult[]> {
     return new Promise(async (resolve, reject) => {
         const results : IPlayerSearchResult[] = []
         const [exec, args] = await getIPlayerExec();
-        const allArgs = [...args, `"${term}"`];
+        const exemptionArgs : string[] = [];
+        if (synonym && synonym.exemptions){
+            const exemptions = synonym.exemptions.split(",");
+            for (const exemption of exemptions){
+                exemptionArgs.push('--exclude');
+                exemptionArgs.push(`"${exemption}"`);
+            }
+        }
+        const allArgs = [...args, ...exemptionArgs, `"${term}"`];
 
         loggingService.debug(`Executing get_iplayer with args: ${allArgs.join(" ")}`);
         const searchProcess = spawn(exec as string, allArgs, { shell: true });
