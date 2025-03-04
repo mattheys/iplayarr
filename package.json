@@ -9,7 +9,7 @@
     "serve:frontend": "cd frontend && npm run serve",
     "start": "npm run build:frontend && npm run build:backend && node dist/server.js",
     "dev": "DEBUG=true concurrently \"nodemon src/server.ts\" \"npm run serve:frontend\"",
-    "test": "jest --reporters=jest-junit"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
