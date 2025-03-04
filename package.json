@@ -9,7 +9,7 @@
     "serve:frontend": "cd frontend && npm run serve",
     "start": "npm run build:frontend && npm run build:backend && node dist/server.js",
     "dev": "DEBUG=true concurrently \"nodemon src/server.ts\" \"npm run serve:frontend\"",
-    "test": "jest"
+    "test": "jest --reporters=jest-junit"
   },
   "author": "",
   "license": "ISC",
@@ -41,6 +41,7 @@
     "chokidar-cli": "^3.0.0",
     "concurrently": "^9.1.2",
     "jest": "^29.7.0",
+    "jest-junit": "^16.0.0",
     "nodemon": "^3.1.9",
     "ts-jest": "^29.2.6",
     "ts-node": "^10.9.2",
