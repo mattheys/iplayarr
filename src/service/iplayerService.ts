@@ -14,6 +14,7 @@ import { DownloadDetails } from "../types/DownloadDetails";
 import path from "path";
 import historyService from "./historyService";
 import { QueueEntry } from "../types/QueueEntry";
+import synonymService from "./synonymService";
 
 const episodeRegex = /([0-9]+:)[^a-zA-Z]([^,]+),[^a-zA-Z]([^,]+),[^a-zA-Z]([^,]+)(?:$|\n)/;
 const progressRegex = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s) ETA: ([\d:]+).*$/;
@@ -99,11 +100,14 @@ const iplayerService = {
         //Sanitize the term, BBC don't put years on their movies
         const term = removeLastFourDigitNumber(inputTerm);
 
+        const synonym = await synonymService.getSynonym(inputTerm);
+        const searchTerm = synonym ? synonym.target : term;
+
         //If we've searched before
-        let results : IPlayerSearchResult[] | undefined = searchCache.get(term);
+        let results : IPlayerSearchResult[] | undefined = searchCache.get(searchTerm);
         if (!results){
-            results = await searchIPlayer(term, false);
-            searchCache.set(term, results);
+            results = await searchIPlayer(searchTerm, false);
+            searchCache.set(searchTerm, results);
         }
 
         for (const result of results){
@@ -114,14 +118,17 @@ const iplayerService = {
     },
 
     tvSearch : async (term : string, season : number, episode : number) : Promise<IPlayerSearchResult[]> => {
+        const synonym = await synonymService.getSynonym(term);
+        let searchTerm = synonym ? synonym.target : term;
+        
         //If we've provided an episode, find the name from sonarr
         const episodeName : string | undefined = episode ? (await sonarrService.getEpisodeTitle(term, season, episode)) : undefined;
 
         //If we've searched before
-        let results : IPlayerSearchResult[] | undefined = searchCache.get(term);
+        let results : IPlayerSearchResult[] | undefined = searchCache.get(searchTerm);
         if (!results){
-            results = await searchIPlayer(term);
-            searchCache.set(term, results);
+            results = await searchIPlayer(searchTerm);
+            searchCache.set(searchTerm, results);
         }
 
         //Find the correct season and show

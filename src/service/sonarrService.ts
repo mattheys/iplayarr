@@ -32,9 +32,10 @@ const sonarrService = {
                 headers: {
                     'X-Api-Key': API_KEY
                 }
-            });  
-            if (data.length > 0){
-                const {id, seasons, title} = data[0];
+            });
+            const monitored = data.filter(({path} : any) => path);
+            if (monitored.length > 0){
+                const {id, seasons, title} = monitored[0];
                 return {id, seasons, title};
             }
         }

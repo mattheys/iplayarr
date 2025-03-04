@@ -15,12 +15,33 @@ import { CreateDownloadClientForm } from "../types/requests/form/CreateDownloadC
 import radarrService from "../service/radarrService";
 import { IndexerResponse } from "../types/responses/arr/IndexerResponse";
 import { CreateIndexerForm } from "../types/requests/form/CreateIndexerForm";
+import synonymService from "../service/synonymService";
+import { Synonym } from "../types/Synonym";
 
 const router : Router = Router();
 
 interface DeleteRequest {
     pid : string
 }
+
+router.get('/synonym', async (_, res : Response) => {
+    const synonyms = await synonymService.getAllSynonyms();
+    res.json(synonyms);
+});
+
+router.post('/synonym', async (req : Request, res : Response) => {
+    const synonym : Synonym = req.body as any as Synonym;
+    await synonymService.addSynonym(synonym);
+    const synonyms = await synonymService.getAllSynonyms();
+    res.json(synonyms);
+});
+
+router.delete('/synonym', async (req : Request, res : Response) => {
+    const {id} = req.body;
+    await synonymService.removeSynonym(id);
+    const synonyms = await synonymService.getAllSynonyms();
+    res.json(synonyms);
+});
 
 router.get('/config', async (_, res : Response) => {
     const configMap : ConfigMap = await getAllConfig();

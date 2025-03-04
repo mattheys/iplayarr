@@ -105,4 +105,9 @@ legend {
 legend.sub {
   font-size: 16px;
 }
+
+.block-reset {
+  display: block;
+  clear: both;
+}
 </style>

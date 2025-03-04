@@ -7,7 +7,7 @@
         <LeftHandNavLink label="Queue" icon="tasks" path="/queue" @option-clicked="closeLHN"/>
         <LeftHandNavLink label="Logs" icon="history" path="/logs" @option-clicked="closeLHN"/>
         <LeftHandNavLink label="Settings" icon="cog" path="/settings" @option-clicked="closeLHN"/>
-        <!-- <LeftHandNavLink label="Synonyms" icon="arrows-rotate" path="/synonyms" @option-clicked="closeLHN"/> -->
+        <LeftHandNavLink label="Synonyms" icon="arrows-rotate" path="/synonyms" @option-clicked="closeLHN"/>
         <LeftHandNavLink label="About" icon="circle-info" path="/about" @option-clicked="closeLHN"/>
       </ul>
     </div>
