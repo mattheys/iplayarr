@@ -8,7 +8,7 @@ on:
     branches:
       - main
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -26,11 +26,13 @@ jobs:
       run: npm install
 
     - name: Run Jest Tests
-      run: npm test
+      run: |
+        npm test
+        ls
 
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      if: always()
-      with:
-        files: |
-          test-results/*.xml    
+#   - name: Publish Test Results
+#     uses: EnricoMi/publish-unit-test-result-action@v2
+#     if: always()
+#     with:
+#       files: |
+#         test-results/*.xml    
