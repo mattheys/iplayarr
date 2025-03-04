@@ -6,8 +6,14 @@ dotenv.config();
 
 let isStorageInitialized : boolean = false;
 
-interface ConfigMap {
+export interface ConfigMap {
     [key: string] : string
+}
+
+const defaultConfigMap : ConfigMap = {
+    "DEBUG" : "false",
+    "ACTIVE_LIMIT" : "3",
+    "REFRESH_SCHEDULE" : "0 * * * *"
 }
 
 async function getConfigMap() : Promise<ConfigMap> {
@@ -20,13 +26,29 @@ async function getConfigMap() : Promise<ConfigMap> {
 
 export const getParameter = async (parameter: IplayarrParameter): Promise<string | undefined> => {
     const configMap = await getConfigMap();
-    return configMap[parameter.toString()] || process.env[parameter.toString()];
+    return configMap[parameter.toString()] || process.env[parameter.toString()] || defaultConfigMap[parameter.toString()];
 }
 
 export const setParameter = async (parameter: IplayarrParameter, value : string) : Promise<void> => {
     const configMap = await getConfigMap();
     configMap[parameter] = value;
     await storage.setItem('config', configMap);
+}
+
+export const removeParameter = async (parameter: IplayarrParameter) : Promise<void> => {
+    const configMap = await getConfigMap();
+    delete configMap[parameter];
+    await storage.setItem('config', configMap);
+}
+export const getAllConfig = async () : Promise<ConfigMap> =>  {
+    let configMap : ConfigMap = {};
+    for (const param of Object.values(IplayarrParameter)){
+        const parameter : string | undefined = await getParameter(param);
+        if (parameter){
+            configMap[param] = parameter;
+        }
+    }
+    return configMap;
 }
 
 // Function to reset storage initialization (for tests)

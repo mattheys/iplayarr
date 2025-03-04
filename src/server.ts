@@ -8,7 +8,7 @@ import JsonApiRoute from './routes/JsonApiRoute';
 import path from 'path';
 import socketService from './service/socketService';
 import cors from 'cors'
-import { getParameter } from './service/configService';
+import { getParameter, setParameter } from './service/configService';
 import iplayerService from './service/iplayerService';
 import cron from 'node-cron';
 
@@ -52,9 +52,8 @@ server.listen(port, () => {
 });
 
 //Cron
-getParameter(IplayarrParameter.REFRESH_SCHEDULE).then((schedule) => {
-    const cronSchedule = schedule || "0 * * * *";
-    cron.schedule(cronSchedule, () => {
+getParameter(IplayarrParameter.REFRESH_SCHEDULE).then((cronSchedule) => {
+    cron.schedule(cronSchedule as string, () => {
         iplayerService.refreshCache();
     });
-})
+});

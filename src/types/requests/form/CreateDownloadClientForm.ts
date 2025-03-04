@@ -5,5 +5,4 @@ export interface CreateDownloadClientForm {
     useSSL : boolean,
     urlBase? : string
     apiKey : string,
-
 }

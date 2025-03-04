@@ -8,7 +8,7 @@
     "watch:frontend": "chokidar 'frontend/src/**/*.{vue,js,css}' -c \"npm run build:frontend\"",
     "serve:frontend": "cd frontend && npm run serve",
     "start": "npm run build:frontend && npm run build:backend && node dist/src/server.js",
-    "dev": "concurrently \"nodemon src/server.ts\" \"npm run serve:frontend\"",
+    "dev": "DEBUG=true concurrently \"nodemon src/server.ts\" \"npm run serve:frontend\"",
     "test": "jest"
   },
   "author": "",

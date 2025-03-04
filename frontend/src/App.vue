@@ -67,7 +67,7 @@ body {
   padding: 0px;
   margin: 0px;
   font-family: "Roboto", "open sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-  color: white;
+  color: rgb(229, 229, 229);
   background-color: rgb(32, 32, 32);
   min-height: 100vh;
 }
@@ -76,7 +76,6 @@ body {
 }
 .content {
   width: 100%;
-  padding: 1rem;
 }
 .clickable {
   cursor: pointer;
@@ -94,5 +93,16 @@ body {
   .desktopOnly {
     display: none;
   }
+}
+
+legend {
+  font-size: 21px;
+  border-bottom: 1px solid rgb(229, 229, 229);
+  line-height: 32.1px;
+  margin-bottom: 21px;
+}
+
+legend.sub {
+  font-size: 16px;
 }
 </style>

@@ -66,7 +66,7 @@ const formatStorageSize = (mb) => {
 
 <style scoped>
 a {
-    color: white;
+    color: rgb(229, 229, 229);
     text-decoration: none;
 }
 
