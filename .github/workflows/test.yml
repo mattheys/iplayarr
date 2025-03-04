@@ -10,16 +10,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x, 18.x]
 
     steps:
     - uses: actions/checkout@v4
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 23
         cache: 'npm'
 
     - name: Install Dependencies
@@ -28,11 +25,11 @@ jobs:
     - name: Run Jest Tests
       run: |
         npm test
-        ls
+        ls test-results/
 
-#   - name: Publish Test Results
-#     uses: EnricoMi/publish-unit-test-result-action@v2
-#     if: always()
-#     with:
-#       files: |
-#         test-results/*.xml    
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        files: |
+          test-results/junit.xml    
