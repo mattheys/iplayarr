@@ -17,7 +17,7 @@ import { QueueEntry } from "../types/QueueEntry";
 import synonymService from "./synonymService";
 import { Synonym } from "../types/Synonym";
 
-const episodeRegex = /([0-9]+:)[^a-zA-Z]([^,]+),[^a-zA-Z]([^,]+),[^a-zA-Z]([^,]+)(?:$|\n)/;
+const episodeRegex = /^(\d+):\s*(.+?),\s*([^,]+),\s*(\w+)$/;
 const progressRegex = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s) ETA: ([\d:]+).*$/;
 const searchCache : NodeCache = new NodeCache({stdTTL: 300, checkperiod: 60});
 
@@ -125,7 +125,7 @@ const iplayerService = {
         //If we've provided an episode, find the name from sonarr
         const episodeName : string | undefined = episode ? (await sonarrService.getEpisodeTitle(term, season, episode)) : undefined;
 
-        //If we've searched before
+	//If we've searched before
         let results : IPlayerSearchResult[] | undefined = searchCache.get(searchTerm);
         if (!results){
             results = await searchIPlayer(searchTerm, synonym);

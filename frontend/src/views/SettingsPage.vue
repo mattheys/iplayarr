@@ -61,7 +61,7 @@
     });
 
     const saveConfig = async () => {
-        if (configChanges.value){
+        if (configChanges.value || sonarrChanges.value || radarrChanges.value){
             validationErrors.value.config = {};
 
             const configResponse = await fetch(`${host}/json-api/config`, {

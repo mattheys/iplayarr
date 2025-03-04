@@ -32,6 +32,7 @@ COPY frontend/package*.json ./frontend/
 RUN npm install
 RUN cd frontend && npm install
 COPY . .
-RUN cd frontend && npm run build
+RUN npm run build:frontend
+RUN npm run build:backend
 
 CMD ["npm", "run", "start"]
