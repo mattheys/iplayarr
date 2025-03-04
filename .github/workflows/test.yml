@@ -32,4 +32,4 @@ jobs:
       if: always()
       with:
         files: |
-          test-results/junit.xml    
+          ${{ github.workspace }}/test-results/junit.xml    
