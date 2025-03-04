@@ -96,8 +96,8 @@ router.get('/sonarr', async (req : Request, res : Response) =>{
         getParameter(IplayarrParameter.SONARR_HOST),
         getParameter(IplayarrParameter.SONARR_API_KEY),
     ]) as string[]
-    const download_client : DownloadClientResponse | undefined = await sonarrService.getDownloadClient();
-    const indexer : IndexerResponse | undefined = await sonarrService.getIndexer();
+    const download_client : DownloadClientResponse | undefined = url ? await sonarrService.getDownloadClient() : undefined;
+    const indexer : IndexerResponse | undefined = url ? await sonarrService.getIndexer() : undefined;
     const sonarrConfig : SonarrConfigResponse = {
         url,
         api_key,
@@ -112,8 +112,8 @@ router.get('/radarr', async (req : Request, res : Response) =>{
         getParameter(IplayarrParameter.RADARR_HOST),
         getParameter(IplayarrParameter.RADARR_API_KEY),
     ]) as string[]
-    const download_client : DownloadClientResponse | undefined = await radarrService.getDownloadClient();
-    const indexer : IndexerResponse | undefined = await radarrService.getIndexer();
+    const download_client : DownloadClientResponse | undefined = url ? await radarrService.getDownloadClient() : undefined;
+    const indexer : IndexerResponse | undefined = url ? await radarrService.getIndexer() : undefined;
     const radarrConfig : SonarrConfigResponse = {
         url,
         api_key,
