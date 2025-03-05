@@ -16,5 +16,6 @@
 <style>
     .queue-content {
         padding: 1rem;
+        overflow-x: auto;
     }
 </style>

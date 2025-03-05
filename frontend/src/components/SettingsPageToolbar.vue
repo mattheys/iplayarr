@@ -1,6 +1,6 @@
 <template>
     <div class="SettingsPageToolbar">
-        <button class="SettingsPageToolbar-button clickable" @click="save" :disabled="!enabled">
+        <button class="SettingsPageToolbar-button clickable" @click="save" :disabled="!enabled" v-if="icons.some((i) => i =='save')">
             <font-awesome-icon :icon="['fas', 'floppy-disk']" />
             <div class="SettingsPageToolbar-label">
                 {{enabled ? 'Save' : 'No'}} Changes
@@ -17,7 +17,12 @@
     defineProps({
         enabled : {
             type : Boolean,
-            requiered: true
+            required: true
+        },
+        icons : {
+            type : Array,
+            required: true,
+            default : () => []
         }
     })
 

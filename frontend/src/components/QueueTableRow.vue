@@ -1,17 +1,18 @@
 <template>
     <tr class=''>
+        <td>
+            <font-awesome-icon :class="[history ? 'complete' : '', item.status]" :icon="['fas', history ? 'download' : (item.status == 'Queued' ? 'cloud' : 'cloud-download')]"/>
+        </td>
         <td class='text' data-title='Filename'>
             <RouterLink :to="{ path: '/logs', query: { filter: item.pid } }">{{ item.nzbName }}</RouterLink>
         </td>
-        <td class='desktopOnly' data-title='Start'>{{ item.details.start }}</td>
-        <td class='desktopOnly' data-title='Size'>{{ formatStorageSize(item.details.size) }}</td>
-        <td class='' data-title='Progress'>
-            <ProgressBar :progress="item.details.progress" :history="history" :idle="item.status == 'Idle'"/>
+        <td class='' data-title='Start'>{{ item.details.start }}</td>
+        <td class='' data-title='Size'>{{ formatStorageSize(item.details.size) }}</td>
+        <td class='progress-column' data-title='Progress'>
+            <ProgressBar :progress="item.details.progress" :history="history" :idle="item.status == 'Queued'"/>
         </td>
-        <td class='mobileOnly mobileInline' data-title='Start'>{{ item.details.start }}</td>
-        <td class='mobileOnly mobileInline' data-title='Size'>{{ formatStorageSize(item.details.size) }}</td>
-        <td class='mobileInline' data-title='ETA'>{{ item.details.eta }}</td>
-        <td class='mobileInline' data-title='Speed'>{{ item.details.speed }} {{ item.details.speed != '' ? 'MB/s' : '' }}</td>
+        <td class='' data-title='ETA'>{{ item.details.eta }}</td>
+        <td class='' data-title='Speed'>{{ item.details.speed }} {{ item.details.speed != '' ? 'MB/s' : '' }}</td>
         <td class='actionCol' data-title='Action'>
             <span v-if="history">
                 <font-awesome-icon class="clickable" :icon="['fas', 'trash']" @click="trash(item.pid)" />
@@ -64,44 +65,7 @@ const formatStorageSize = (mb) => {
 </script>
 
 <style scoped>
-a {
-    color: rgb(229, 229, 229);
-    text-decoration: none;
-}
-
-a:hover {
-    font-weight: bold;
-}
-
-td {
-    padding: 0.8rem 0.5rem;
-}
-
-@media (min-width: 768px) {
-    .actionCol {
-        text-align: center;
+    .complete {
+        color: rgb(122, 67, 182);
     }
-}
-
-@media (max-width: 768px) {
-  td:not(.desktopOnly) {
-    display: block;
-    padding: 0.5em;
-  }
-
-  td.mobileInline {
-    display: inline-block;
-    padding: 0.5em;
-  }
-
-  td.text {
-    word-break: break-word; /* For modern browsers */
-    overflow-wrap: anywhere; /* Ensures long words wrap */
-  }
-
-  .actionCol span {
-    position: relative;
-    left: calc(100% - 16px);
-  }
-}
 </style>

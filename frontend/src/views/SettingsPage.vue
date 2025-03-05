@@ -1,5 +1,5 @@
 <template>
-    <SettingsPageToolbar @save="saveConfig" :enabled="saveEnabled"/>
+    <SettingsPageToolbar @save="saveConfig" :enabled="saveEnabled" :icons="['save']"/>
     <div class="settings-content">
         <legend>iPlayarr</legend>
         <SettingsTextInput name="Api Key" tooltip="API Key for access from *arr apps." v-model="config.API_KEY" :error="validationErrors.config?.API_KEY"/>
@@ -22,7 +22,7 @@
     import ArrSettings from '@/components/ArrSettings.vue';
 
     import { onMounted, ref, watch, computed } from 'vue';
-import { getHost } from '@/lib/utils';
+    import { getHost } from '@/lib/utils';
 
     const config = ref({});
     const configChanges = ref(false);
