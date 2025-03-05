@@ -42,7 +42,7 @@ const radarrService = {
     },
 
     getIndexer : async() : Promise<IndexerResponse | undefined> => {
-        const client_id = await getParameter(IplayarrParameter.SONARR_INDEXER_ID);
+        const client_id = await getParameter(IplayarrParameter.RADARR_INDEXER_ID);
         if (client_id){
             const config : ArrConfig = await radarrService.getConfig();
             return await arrService.getIndexer(parseInt(client_id), config);
