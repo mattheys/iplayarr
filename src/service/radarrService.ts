@@ -54,7 +54,7 @@ const radarrService = {
     createUpdateIndexer : async (form : CreateIndexerForm) : Promise<number> => {
         try {
             const config : ArrConfig = await radarrService.getConfig();
-            const id = await arrService.createUpdateIndexer(form, config, IplayarrParameter.SONARR_INDEXER_ID);
+            const id = await arrService.createUpdateIndexer(form, config, IplayarrParameter.RADARR_INDEXER_ID);
             return id;
         } catch (err){
             throw err;
