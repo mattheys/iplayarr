@@ -1,9 +1,15 @@
 <template>
     <div class="SettingsPageToolbar">
-        <button class="SettingsPageToolbar-button clickable" @click="save" :disabled="!enabled" v-if="icons.some((i) => i =='save')">
+        <button class="SettingsPageToolbar-button clickable" @click="emitEvent('save')" :disabled="!enabled" v-if="icons.some((i) => i =='save')">
             <font-awesome-icon :icon="['fas', 'floppy-disk']" />
             <div class="SettingsPageToolbar-label">
                 {{enabled ? 'Save' : 'No'}} Changes
+            </div>
+        </button>
+        <button class="SettingsPageToolbar-button clickable" @click="emitEvent('toggleAdvanced')" v-if="icons.some((i) => i =='advanced')">
+            <font-awesome-icon :icon="['fas', 'cog']" />
+            <div class="SettingsPageToolbar-label">
+                Toggle Advanced
             </div>
         </button>
     </div>
@@ -12,7 +18,7 @@
 <script setup>
     import { defineEmits, defineProps } from 'vue';
 
-    const emit = defineEmits(['save']);
+    const emit = defineEmits(['save', 'toggleAdvanced']);
 
     defineProps({
         enabled : {
@@ -26,8 +32,8 @@
         }
     })
 
-    const save = () => {
-        emit('save');
+    const emitEvent = (event) => {
+        emit(event);
     }
 </script>
 
@@ -47,7 +53,7 @@
         height: 100%;
     }
 
-    .SettingsPageToolbar:hover svg {
+    .SettingsPageToolbar-button:hover svg {
         color: rgb(225, 31, 119);
     }
 

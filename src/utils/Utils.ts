@@ -1,6 +1,10 @@
 import sonarrService from "../service/sonarrService";
 import { Request } from "express";
 import * as crypto from 'crypto';
+import { getParameter } from "../service/configService";
+import { IplayarrParameter } from "../types/IplayarrParameters";
+import Handlebars from 'handlebars';
+import { FilenameTemplateContext } from "../types/FilenameTemplateContext";
 
 const seasonRegex = /(?:Series|Season)\s(\d+)/;
 const episodeRegex = /(?:Episode|Ep)\s(\d+)/;
@@ -32,17 +36,24 @@ export async function createNZBName(title: string, line: string) : Promise<strin
     }
 
     if (season && episode) {
-        return `${title.replaceAll(" ", ".")}.S${season.toString().padStart(2, '0')}E${episode.toString().padStart(2, '0')}.WEB.H264-BBC`;
+        const tvFilenameTemplate : string = (await getParameter(IplayarrParameter.TV_FILENAME_TEMPLATE)) as string;
+        const context : FilenameTemplateContext= {
+            title : title.replaceAll(" ", "."),
+            season : season.toString().padStart(2, '0'),
+            episode : episode.toString().padStart(2, '0')
+        }
+        return  Handlebars.compile(tvFilenameTemplate)(context);
     }
 }
 
-export function legacyCreateNZBName(input: string) : string {
+export async function legacyCreateNZBName(input: string) : Promise<string> {
+    const suffix = getParameter(IplayarrParameter.FALLBACK_FILENAME_SUFFIX);
     let filename = input.replaceAll("_", ".");
     filename = filename.replaceAll(" ", ".");
     filename = filename.replaceAll(":", "");
     filename = formatInlineDates(filename);
     filename = formatSeriesString(filename);
-    return `${filename}.WEB.H264-BBC`;
+    return `${filename}.${suffix}`;
 }
 
 export function formatInlineDates(str: string) : string {

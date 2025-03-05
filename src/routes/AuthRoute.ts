@@ -32,14 +32,13 @@ export const addAuthMiddleware = (app : Express) => {
         cookie: sessionCookieSettings
     }));
 
-    // app.use("*", (req: Request, res: Response, next: NextFunction) => {    
-    //     if (req.originalUrl == '/auth/me' && !req.session?.user) {
-    //         res.status(401).json({ error : ApiError.NOT_AUTHORISED} as ApiResponse);
-    //         return;
-    //     } else {
-    //         return next();
-    //     }
-    // });
+    app.use("/json-api/*", (req: Request, res: Response, next: NextFunction) => {    
+        if (!req.session?.user) {
+            res.status(401).json({ error: ApiError.NOT_AUTHORISED } as ApiResponse);
+            return;
+        }
+        next();
+    });    
 }
 
 router.post('/login', async (req: Request, res: Response) => {

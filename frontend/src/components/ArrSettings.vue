@@ -6,19 +6,19 @@
         <div>
             <legend class="sub">Download Client</legend>
             <SettingsTextInput name="Name" :tooltip="`${name} Download Client Name`"
-                v-model="localValue.download_client.name" />
+                v-model="localValue.download_client.name" placeholder="iPlayer"/>
             <SettingsTextInput name="IPlayarr Host" :tooltip="`Host for ${name} to reach IPlayarr`"
-                v-model="localValue.download_client.host" />
+                v-model="localValue.download_client.host" :placeholder="placeholders.host"/>
             <SettingsTextInput name="IPlayarr Port" :tooltip="`Port for ${name} to reach IPlayarr`"
-                v-model="localValue.download_client.port" />
+                v-model="localValue.download_client.port" :placeholder="placeholders.port"/>
             <div class="button-container">
                 <button @click="unlinkDownload">Unlink Download Client</button>
             </div>    
         </div>
         <div>
             <legend class="sub">Indexer</legend>
-            <SettingsTextInput name="Name" :tooltip="`${name} Indexer Name`" v-model="localValue.indexer.name" />
-            <SettingsTextInput name="URL" :tooltip="`${name} iPlayerr URL`" v-model="localValue.indexer.url" />
+            <SettingsTextInput name="Name" :tooltip="`${name} Indexer Name`" v-model="localValue.indexer.name" placeholder="iPlayer"/>
+            <SettingsTextInput name="URL" :tooltip="`${name} iPlayerr URL`" v-model="localValue.indexer.url" :placeholder="`${placeholders.protocol}//${placeholders.host}:${placeholders.port}`"/>
             <div class="button-container">
                 <button @click="unlinkIndexer">Unlink Indexer</button>
             </div>
@@ -33,6 +33,12 @@ import SettingsTextInput from '@/components/SettingsTextInput.vue';
 import { getHost } from '@/lib/utils';
 
 const router = useRouter();
+
+const placeholders = ref({
+    host : window.location.hostname,
+    protocol : window.location.protocol,
+    port : window.location.port
+})
 
 const props = defineProps({
     name: {

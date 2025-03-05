@@ -16,6 +16,8 @@ import historyService from "./historyService";
 import { QueueEntry } from "../types/QueueEntry";
 import synonymService from "./synonymService";
 import { Synonym } from "../types/Synonym";
+import { FilenameTemplateContext } from "../types/FilenameTemplateContext";
+import Handlebars from "handlebars";
 
 const episodeRegex = /^(\d+):\s*(.+?),\s*([^,]+),\s*(\w+)$/;
 const progressRegex = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s) ETA: ([\d:]+).*$/;
@@ -111,8 +113,13 @@ const iplayerService = {
             searchCache.set(searchTerm, results);
         }
 
+        const movieFilenameTemplate : string = (await getParameter(IplayarrParameter.MOVIE_FILENAME_TEMPLATE)) as string;
+        const compiledTemplate = Handlebars.compile(movieFilenameTemplate);
         for (const result of results){
-            result.nzbName = inputTerm.replaceAll(" ",".")+".BBC.WEB-DL.AAC.2.0.H.264";
+            const context : FilenameTemplateContext = {
+                title : inputTerm.replaceAll(" ",".")
+            }
+            result.nzbName = compiledTemplate(context)
         }
 
         return results;
@@ -234,7 +241,7 @@ async function searchIPlayer(term : string, synonym? : Synonym, tv : boolean = t
             if (code === 0) {
                 for (let result of results){
                     if (tv){
-                        const nzbName : string | undefined = term != "*" ? (await createNZBName(term, result.request.line || legacyCreateNZBName(result.title))) : legacyCreateNZBName(result.title);
+                        const nzbName : string | undefined = term != "*" ? (await createNZBName(term, result.request.line || (await legacyCreateNZBName(result.title)))) : (await legacyCreateNZBName(result.title));
                         result.nzbName =  nzbName;
                     } else {
                         const nzbName = term;

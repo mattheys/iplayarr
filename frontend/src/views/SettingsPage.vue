@@ -1,11 +1,17 @@
 <template>
-    <SettingsPageToolbar @save="saveConfig" :enabled="saveEnabled" :icons="['save']"/>
+    <SettingsPageToolbar @save="saveConfig" @toggle-advanced="toggleAdvanced" :enabled="saveEnabled" :icons="['save', 'advanced']"/>
     <div class="settings-content">
         <legend>iPlayarr</legend>
         <SettingsTextInput name="Api Key" tooltip="API Key for access from *arr apps." v-model="config.API_KEY" :error="validationErrors.config?.API_KEY"/>
         <SettingsTextInput name="Download Directory" tooltip="Directory for in-progress Downloads." v-model="config.DOWNLOAD_DIR" :error="validationErrors.config?.DOWNLOAD_DIR"/>
         <SettingsTextInput name="Complete Directory" tooltip="Directory for completed Downloads." v-model="config.COMPLETE_DIR" :error="validationErrors.config?.COMPLETE_DIR"/>
         <SettingsTextInput name="Download Limit" tooltip="The number of simultaneous downloads." type-override="number" v-model="config.ACTIVE_LIMIT" :error="validationErrors.config?.ACTIVE_LIMIT"/>
+
+        <template v-if="showAdvanced">
+            <SettingsTextInput :advanced="true" name="Refresh Schedule" tooltip="Cron Expression for schedule refresh." v-model="config.REFRESH_SCHEDULE" :error="validationErrors.config?.REFRESH_SCHEDULE"/>
+            <SettingsTextInput :advanced="true" name="TV Filename Template" tooltip="Template for TV Filenames, {title, season, episode}." v-model="config.TV_FILENAME_TEMPLATE" :error="validationErrors.config?.TV_FILENAME_TEMPLATE"/>
+            <SettingsTextInput :advanced="true" name="Movie Filename Template" tooltip="Template for Movie Filenames, {title}." v-model="config.MOVIE_FILENAME_TEMPLATE" :error="validationErrors.config?.MOVIE_FILENAME_TEMPLATE"/>
+        </template>
 
         <legend class="sub">Authentication</legend>
         <SettingsTextInput name="Username" tooltip="The Login Username." v-model="config.AUTH_USERNAME" :error="validationErrors.config?.AUTH_USERNAME"/>
@@ -36,6 +42,7 @@
         indexer : {}
     });
     const radarrChanges = ref(false);
+    const showAdvanced = ref(false);
 
     const validationErrors = ref({
         config : {},
@@ -113,6 +120,10 @@
                 alert("Radarr Config saved OK");
             }
         }
+    }
+
+    const toggleAdvanced = () => {
+        showAdvanced.value = !showAdvanced.value;
     }
 </script>
 
