@@ -9,7 +9,7 @@
       </div>
       <ul ref="logView">
           <li v-for="log in filteredLogs" :key="`${log.id}_${log.timestamp}`">
-              [ {{ log.id }} ] - {{ log.timestamp }} - {{ log.message }}
+            <pre :class="log.level">[ {{ log.id }} ] - {{ log.timestamp }} - {{ log.message.trim() }}</pre>  
           </li>
       </ul>
     </div>
@@ -69,5 +69,20 @@ ul {
     max-height: 75vh;
     overflow-y: auto;
     max-width: 80%;
+}
+pre {
+  margin: 0px;
+}
+
+pre.INFO { 
+  color: #00853d;
+}
+
+pre.DEBUG {
+  color: #ffa500;
+}
+
+pre.ERROR {
+  color: #f05050;
 }
 </style>

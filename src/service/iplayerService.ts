@@ -18,6 +18,7 @@ import synonymService from "./synonymService";
 import { Synonym } from "../types/Synonym";
 import { FilenameTemplateContext } from "../types/FilenameTemplateContext";
 import Handlebars from "handlebars";
+import { LogLine, LogLineLevel } from "../types/LogLine";
 
 const episodeRegex = /^(\d+):\s*(.+?),\s*([^,]+),\s*(\w+)$/;
 const progressRegex = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s) ETA: ([\d:]+).*$/;
@@ -41,7 +42,8 @@ const iplayerService = {
 
         downloadProcess.stdout.on('data', (data) => {
             if (queueService.getFromQueue(pid)){
-                socketService.emit('log', {id : pid, message : data.toString(), timestamp : new Date()});
+                const logLine : LogLine = {level : LogLineLevel.INFO, id : pid, message : data.toString(), timestamp : new Date()}
+                socketService.emit('log', logLine);
                 console.log(data.toString());
                 const lines : string[] = data.toString().split("\n");
                 const progressLines : string[] = lines.filter((l) => progressRegex.exec(l));
@@ -220,7 +222,7 @@ async function searchIPlayer(term : string, synonym? : Synonym, tv : boolean = t
         const searchProcess = spawn(exec as string, allArgs, { shell: true });
 
         searchProcess.stdout.on('data', (data) => {
-            loggingService.debug(data.toString().trim());
+            loggingService.log(data.toString().trim());
             const lines = data.toString().split("\n");
             for (const line of lines) {
                 const match = episodeRegex.exec(line);
