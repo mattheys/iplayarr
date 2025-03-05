@@ -2,9 +2,10 @@ import User from '../types/User'
 import {Router, Express, Request, Response, NextFunction} from 'express';
 import session from 'express-session'
 import { ApiError, ApiResponse } from '../types/responses/ApiResponse';
-import { getParameter } from '../service/configService';
+import { defaultConfigMap, getParameter, setParameter } from '../service/configService';
 import { IplayarrParameter } from '../types/IplayarrParameters';
 import { md5 } from '../utils/Utils';
+import { v4 } from 'uuid';
 
 declare module 'express-session' {
     interface SessionData {
@@ -14,6 +15,9 @@ declare module 'express-session' {
 
 const isDebug = process.env.DEBUG == 'true';
 const router : Router = Router();
+
+let token : String = "";
+let resetTimer : NodeJS.Timeout | undefined;
 
 export const addAuthMiddleware = (app : Express) => {
     const sessionCookieSettings : any = {secure : false, maxAge: 1000 * 60 * 60 * 24}
@@ -70,6 +74,29 @@ router.get('/me', (req : Request, res : Response) => {
         res.json(req.session.user);
         return;
     }
+});
+
+router.get('/generateToken', (_ : Request, res : Response) => {
+    token = v4();
+    console.log(`FORGOT PASSWORD TOKEN: ${token} This expires in 5 minutes`);
+    if (resetTimer){
+        clearTimeout(resetTimer);
+    }
+    resetTimer = setTimeout(() => token="", 300000);
+    res.json(true);
+});
+
+router.post('/resetPassword', async (req : Request, res : Response) => {
+    const {key} = req.body;
+
+    if (token != "" && key == token){
+        token = "";
+        clearTimeout(resetTimer);
+        await setParameter(IplayarrParameter.AUTH_USERNAME, defaultConfigMap.AUTH_USERNAME);
+        await setParameter(IplayarrParameter.AUTH_PASSWORD, defaultConfigMap.AUTH_PASSWORD)
+    }
+
+    res.json(true);
 });
 
 export default router;

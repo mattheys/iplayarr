@@ -16,7 +16,7 @@ export interface ConfigMap {
     [key: string] : string
 }
 
-const defaultConfigMap : ConfigMap = {
+export const defaultConfigMap : ConfigMap = {
     "DEBUG" : "false",
     "ACTIVE_LIMIT" : "3",
     "REFRESH_SCHEDULE" : "0 * * * *",
