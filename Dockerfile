@@ -22,9 +22,11 @@ RUN wget -qO- https://github.com/get-iplayer/get_iplayer/archive/v${GET_IPLAYER_
     chmod +x ./get_iplayer
 
 ENV GET_IPLAYER_EXEC=/iplayer/get_iplayer
+ENV STORAGE_LOCATION=/config
 
 WORKDIR /app
 
+RUN mkdir /config
 COPY package*.json ./
 RUN mkdir frontend
 COPY frontend/package*.json ./frontend/
@@ -32,6 +34,7 @@ COPY frontend/package*.json ./frontend/
 RUN npm install
 RUN cd frontend && npm install
 COPY . .
-RUN cd frontend && npm run build
+RUN npm run build:frontend
+RUN npm run build:backend
 
 CMD ["npm", "run", "start"]

@@ -1,11 +1,9 @@
 <template>
     <div :class="['progress-bar', history ? 'history' : '']" v-if="!idle">
-        <span class="progressText">{{ progress }}%</span>
         <div class="progress" :style="{ width: progress + '%' }"></div>
     </div>
 
-    <div class="progress-bar idle" v-if="idle">
-        <span class="progressText">Idle</span>
+    <div :class="['progress-bar', history ? 'history' : '', 'idle']" v-if="idle">
         <div class="progress" style="width: 100%"></div>
     </div>
 </template>
@@ -34,46 +32,18 @@ defineProps({
 <style scoped>
 .progress-bar {
     width: 100%;
-    position: relative; /* Needed for absolute positioning of the text */
-    background-color: white;
-    border: 2px solid white;
+    position: relative;
+    background-color: rgb(38, 38, 38);
     border-radius: 5px;
     overflow: hidden;
 }
 
 .progress {
-    height: 20px;
-    background-color: blue;
+    height: 15px;
+    background-color: #5d9cec;
 }
 
-.progress-bar.history .progress {
-    background-color: green;
+.history .progress  {
+    background-color: rgb(122, 67, 182);
 }
-
-.progress-bar.idle .progress {
-    background-color: grey;
-}
-
-.progressText {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    text-align: center;
-    font-weight: bold;
-    color: white; /* Default color */
-    z-index: 2;
-    pointer-events: none;
-    mix-blend-mode: difference; /* Inverts color based on background */
-}
-
-.progress-bar.history .progressText {
-    mix-blend-mode: normal;
-}
-
-.progress-bar.idle .progressText {
-    mix-blend-mode: normal;
-}
-
 </style>

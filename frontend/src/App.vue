@@ -1,7 +1,7 @@
 <template>
   <NavBar />
   <div class="main-layout">
-    <LeftHandNav ref="leftHandNav"/>
+    <LeftHandNav ref="leftHandNav" v-if="authState.user"/>
     <div class="content">
       <RouterView />
     </div>
@@ -14,16 +14,18 @@ import LeftHandNav from './components/LeftHandNav.vue';
 import { RouterView } from 'vue-router';
 
 import { io } from "socket.io-client";
-import { ref, provide, onMounted } from 'vue';
+import { ref, provide, onMounted, inject } from 'vue';
+import { getHost } from './lib/utils';
 
+const authState = inject("authState");
 const [queue, history, logs, socket] = [ref([]), ref([]), ref([]), ref(null)];
 
 const leftHandNav = ref(null);
 
 const updateQueue = async () => {
-  const queueResponse = await fetch("/json-api/queue");
+  const queueResponse = await fetch(`${getHost()}/json-api/queue`, {credentials : "include"});
   queue.value = await queueResponse.json();
-  const historyResponse = await fetch("/json-api/history");
+  const historyResponse = await fetch(`${getHost()}/json-api/history`, {credentials : "include"});
   history.value = await historyResponse.json();
 }
 
@@ -40,7 +42,12 @@ provide('toggleLeftHandNav', toggleLeftHandNav);
 
 onMounted(async () => {
   await updateQueue();
-  socket.value = io();
+  if (process.env.NODE_ENV == 'production'){
+    socket.value = io();
+  } else {
+    const socketUrl = `http://${window.location.hostname}:4404`
+    socket.value = io(socketUrl);
+  }
 
   socket.value.on('queue', (data) => {
     queue.value = data;
@@ -61,7 +68,7 @@ body {
   padding: 0px;
   margin: 0px;
   font-family: "Roboto", "open sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-  color: white;
+  color: rgb(229, 229, 229);
   background-color: rgb(32, 32, 32);
   min-height: 100vh;
 }
@@ -70,7 +77,6 @@ body {
 }
 .content {
   width: 100%;
-  padding: 1rem;
 }
 .clickable {
   cursor: pointer;
@@ -88,5 +94,21 @@ body {
   .desktopOnly {
     display: none;
   }
+}
+
+legend {
+  font-size: 21px;
+  border-bottom: 1px solid rgb(229, 229, 229);
+  line-height: 32.1px;
+  margin-bottom: 21px;
+}
+
+legend.sub {
+  font-size: 16px;
+}
+
+.block-reset {
+  display: block;
+  clear: both;
 }
 </style>

@@ -2,15 +2,17 @@
     <div class="NavBar">
         <div class="left">
             <div class="logoPanel">
-                <img src="/iplayarr.png" alt="Logo">
-                <p>iPlayarr</p>
+                <RouterLink to="/queue">
+                    <img src="/iplayarr.png" alt="Logo">
+                    <p>iPlayarr</p>
+                </RouterLink>
             </div>
         </div>
         <div class="middle">
 
         </div>
         <div class="right">
-            <font-awesome-icon class="mobileOnly clickable" @click="toggleLeftHandNav" :icon="['fas', 'bars']" />
+            <font-awesome-icon class="mobileOnly clickable" @click="toggleLeftHandNav" :icon="['fas', 'bars']" v-if="authState.user"/>
         </div>
     </div>
 </template>
@@ -19,6 +21,7 @@
     import { inject } from 'vue';
 
     const toggleLeftHandNav = inject('toggleLeftHandNav');
+    const authState = inject("authState");
 </script>
 
 <style scoped>
@@ -40,7 +43,7 @@
         justify-content: flex-end;
     }
 
-    .logoPanel {
+    .logoPanel, .logoPanel a {
         display: flex;
         align-items: center;
         gap: 10px;

@@ -1,33 +1,35 @@
 <template>
     <tr class=''>
+        <td>
+            <font-awesome-icon :class="[history ? 'complete' : '', item.status]" :icon="['fas', history ? 'download' : (item.status == 'Queued' ? 'cloud' : 'cloud-download')]"/>
+        </td>
         <td class='text' data-title='Filename'>
-            <RouterLink :to="{ path: '/logs', query: { filter: renderItem.id } }">{{ renderItem.filename }}</RouterLink>
+            <RouterLink :to="{ path: '/logs', query: { filter: item.pid } }">{{ item.nzbName }}</RouterLink>
         </td>
-        <td class='desktopOnly' data-title='Start'>{{ renderItem.start }}</td>
-        <td class='desktopOnly' data-title='Size'>{{ formatStorageSize(renderItem.size) }}</td>
-        <td class='' data-title='Progress'>
-            <ProgressBar :progress="renderItem.progress" :history="history" :idle="renderItem.status == 'Idle'"/>
+        <td class='' data-title='Start'>{{ item.details.start }}</td>
+        <td class='' data-title='Size'>{{ formatStorageSize(item.details.size) }}</td>
+        <td class='progress-column' data-title='Progress'>
+            <ProgressBar :progress="item.details.progress" :history="history" :idle="item.status == 'Queued'"/>
         </td>
-        <td class='mobileOnly mobileInline' data-title='Start'>{{ renderItem.start }}</td>
-        <td class='mobileOnly mobileInline' data-title='Size'>{{ formatStorageSize(renderItem.size) }}</td>
-        <td class='mobileInline' data-title='ETA'>{{ renderItem.eta }}</td>
-        <td class='mobileInline' data-title='Speed'>{{ renderItem.speed }} {{ renderItem.speed != '' ? 'MB/s' : '' }}</td>
+        <td class='' data-title='ETA'>{{ item.details.eta }}</td>
+        <td class='' data-title='Speed'>{{ item.details.speed }} {{ item.details.speed != '' ? 'MB/s' : '' }}</td>
         <td class='actionCol' data-title='Action'>
             <span v-if="history">
-                <font-awesome-icon class="clickable" :icon="['fas', 'trash']" @click="trash(renderItem.id)" />
+                <font-awesome-icon class="clickable" :icon="['fas', 'trash']" @click="trash(item.pid)" />
             </span>
             <span v-if="!history">
-                <font-awesome-icon class="clickable" :icon="['fas', 'xmark']" @click="cancel(renderItem.id)" />
+                <font-awesome-icon class="clickable" :icon="['fas', 'xmark']" @click="cancel(item.pid)" />
             </span>
         </td>
     </tr>
 </template>
 
 <script setup>
+import { getHost } from '@/lib/utils';
 import ProgressBar from './ProgressBar.vue';
-import { defineProps, computed } from 'vue';
+import { defineProps } from 'vue';
 
-const props = defineProps({
+defineProps({
     item: {
         type: Object,
         required: true
@@ -39,92 +41,31 @@ const props = defineProps({
     }
 });
 
-const renderItem = computed(() => {
-    if (props.history) {
-        return props.item;
-    } else {
-        let queueItem = {
-            ...props.item.details,
-            filename: props.item.nzbName,
-            status : props.item.status,
-            id: props.item.pid,            
-        };
-
-        if (!props.item.details?.start || queueItem.status == 'Idle'){
-            queueItem = {
-                ...queueItem,
-                start: queueItem.status == 'Idle' ? 'Queued' : 'Pending',
-                size: '?',
-                eta: '??:??:??',
-                speed: '0',
-                progress: '0'
-            }
-        }
-        return queueItem;
-    }
-});
-
-
-
 const trash = async (pid) => {
     if (confirm("Are you sure you want to delete this history item?")) {
-        await fetch(`/json-api/history?pid=${pid}`, { method: 'DELETE' });
+        await fetch(`${getHost()}/json-api/history?pid=${pid}`, { method: 'DELETE', credentials : "include" });
     }
 }
 
 const cancel = async (pid) => {
     if (confirm("Are you sure you want to cancel this download?")) {
-        await fetch(`/json-api/queue?pid=${pid}`, { method: 'DELETE' });
+        await fetch(`${getHost()}/json-api/queue?pid=${pid}`, { method: 'DELETE', credentials : "include" });
     }
 }
 
 const formatStorageSize = (mb) => {
-    if (mb >= 1024) {
-        return (mb / 1024).toFixed(2) + " GB";
+    if (mb){
+        if (mb >= 1024) {
+            return (mb / 1024).toFixed(2) + " GB";
+        }
+        return mb.toFixed(2) + " MB";
     }
-    return mb.toFixed(2) + " MB";
+    return;
 }
 </script>
 
 <style scoped>
-a {
-    color: white;
-    text-decoration: none;
-}
-
-a:hover {
-    font-weight: bold;
-}
-
-td {
-    padding: 0.8rem 0.5rem;
-}
-
-@media (min-width: 768px) {
-    .actionCol {
-        text-align: center;
+    .complete {
+        color: rgb(122, 67, 182);
     }
-}
-
-@media (max-width: 768px) {
-  td:not(.desktopOnly) {
-    display: block;
-    padding: 0.5em;
-  }
-
-  td.mobileInline {
-    display: inline-block;
-    padding: 0.5em;
-  }
-
-  td.text {
-    word-break: break-word; /* For modern browsers */
-    overflow-wrap: anywhere; /* Ensures long words wrap */
-  }
-
-  .actionCol span {
-    position: relative;
-    left: calc(100% - 16px);
-  }
-}
 </style>

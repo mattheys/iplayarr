@@ -1,22 +1,22 @@
 # <img src="frontend/public/iplayarr.png" alt="Description" width="45" style="margin-right: 1rem;"> iPlayarr
 
-iPlayarr is a companion for Sonarr (and the rest of the *arr stack) to simplify integrating get_iplayer for episode search and download.
+iPlayarr is a companion for Sonarr and Radarr to simplify integrating get_iplayer for episode and movie search/download.
 
 ## Getting Started
 
 ### Download/Installation
 
-The simplest way to use iPlayarr is to use the dockerhub hosted one
+The simplest way to use iPlayarr is to use the docker image
 
 ```
-docker run -d --name nikorag/iplayarr:latest -v /path/to/incomplete:/incomplete -v /path/to/complete:/complete --env-file=env-file -p 4404:4404 iplayarr
+docker run -d --name iplayarr -v ./cache:/data -v ./config:/config -v /path/to/incomplete:/incomplete -v /path/to/complete:/complete --env-file=env-file -p 4404:4404 nikorag/iplayarr:latest
 ```
 
 OR you can use the bundled docker definition:
 
 ```
 docker build -t iplayarr .
-docker run -d --name iplayarr -v /path/to/incomplete:/incomplete -v /path/to/complete:/complete --env-file=env-file -p 4404:4404 iplayarr
+docker run -d --name iplayarr -v ./cache:/data -v ./config:/config -v /path/to/incomplete:/incomplete -v /path/to/complete:/complete --env-file=env-file -p 4404:4404 iplayarr
 ```
 
 OR you can use docker-compose.yml
@@ -36,10 +36,12 @@ services:
         - "4404:4404"
       volumes:
         - "/mnt/media:/mnt/media"
+        - "./cache:/data"
+        - "./config/config"
 ```
 
 
-This will require the following properties in the env file:
+You can pre-set the following environment variables, or you can set them in the Settings menu once the container is up.
 
 | Property     | Description                                  |
 | ------------ | -------------------------------------------- |
@@ -56,7 +58,19 @@ There's a few more optional settings too:
 
 ### Usage
 
-iplayarr presents as a newznab indexer and sabnzbd downloader on port 4404. In Sonarr you need to create a new SABnzbd download client with these settings:
+**Authentication**
+
+The default details are:
+
+| Username | Password |
+| -------- | ----- |
+| admin | password |
+
+**Sonarr and Radarr link**
+
+iplayarr presents as a newznab indexer and sabnzbd downloader on port 4404. In the settings menu of the app you can enter details to automatically create the download clients and indexers in both Sonarr and Radarr.
+
+Alternatively, you can create them manually:
 
 | Property | Value |
 | ---------| ----- |
@@ -78,7 +92,7 @@ Test and save this. Then create a new Newznab indexer with these settings:
 
 ## Sonarr Loop Back
 
-iPlayer doesn't always respond with episode numbers nice and neatly, sometimes it responds with episode names, but unfortuantely Sonarr only provides us the episode number in the search request. As such, there's a loop back mechanism in iPlayarr to ask Sonarr for more information on this episode. This isn't required, but will Vastly improve iPlayarr's ability to find results and requires the following settings:
+iPlayer doesn't always respond with episode numbers nice and neatly, sometimes it responds with episode names, but unfortuantely Sonarr only provides us the episode number in the search request. As such, there's a loop back mechanism in iPlayarr to ask Sonarr for more information on this episode. This isn't required, but will Vastly improve iPlayarr's ability to find results and requires the following settings (also available in settings):
 
 | Property            | Description                                                   |
 | ------------------- | ------------------------------------------------------------- |
@@ -88,6 +102,3 @@ iPlayer doesn't always respond with episode numbers nice and neatly, sometimes i
 ### Web Interface
 
 To access the web frontend browse to port 4044 on your host
-
-![Queue View](readme-images/queue.png)
-![Logs View](readme-images/logs.png)

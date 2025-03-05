@@ -15,8 +15,8 @@
 
 <style>
     .about-content {
-        width: 100%;
         text-align: center;
+        padding: 1rem;
     }
     
     .logo {
@@ -24,7 +24,7 @@
     }
 
     a {
-        color: white;
+        color: rgb(229, 229, 229);
         text-decoration: none;
     }
 </style>
