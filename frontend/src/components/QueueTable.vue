@@ -1,5 +1,4 @@
 <template>
-    <p class="mobileOnly" v-if="queue.length == 0 && history.length == 0">No Items in Queue</p>
     <div class='rg-container'>
         <table class='queueTable' summary='Hed'>
             <thead>

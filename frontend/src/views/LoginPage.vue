@@ -27,6 +27,9 @@
                     <div class="form-group">
                         <input type="text" class="form-input" placeholder="Code from Console" v-model="forgotForm.key" @keyup.enter="submitForgot"/>
                     </div>
+                    <div class="forgot-container">
+                        <a href="#" @click="hideForgot">Cancel</a>
+                    </div>
                     <button type="button" class="button" @click="submitForgot">Reset</button>
                 </div>
             </div>
@@ -72,6 +75,10 @@ const showForgot = async () => {
     await fetch(`${getHost()}/auth/generateToken`, {
         credentials : "include"
     });
+}
+
+const hideForgot = async () => {
+    forgot.value=false;
 }
 
 const submitForgot = async () => {
