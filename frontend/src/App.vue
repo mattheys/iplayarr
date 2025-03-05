@@ -1,7 +1,7 @@
 <template>
   <NavBar />
   <div class="main-layout">
-    <LeftHandNav ref="leftHandNav"/>
+    <LeftHandNav ref="leftHandNav" v-if="authState.user"/>
     <div class="content">
       <RouterView />
     </div>
@@ -14,17 +14,18 @@ import LeftHandNav from './components/LeftHandNav.vue';
 import { RouterView } from 'vue-router';
 
 import { io } from "socket.io-client";
-import { ref, provide, onMounted } from 'vue';
+import { ref, provide, onMounted, inject } from 'vue';
+import { getHost } from './lib/utils';
 
+const authState = inject("authState");
 const [queue, history, logs, socket] = [ref([]), ref([]), ref([]), ref(null)];
 
 const leftHandNav = ref(null);
 
 const updateQueue = async () => {
-  const host = process.env.NODE_ENV != 'production' ? `http://${window.location.hostname}:4404` : '';
-  const queueResponse = await fetch(`${host}/json-api/queue`);
+  const queueResponse = await fetch(`${getHost()}/json-api/queue`, {credentials : "include"});
   queue.value = await queueResponse.json();
-  const historyResponse = await fetch(`${host}/json-api/history`);
+  const historyResponse = await fetch(`${getHost()}/json-api/history`, {credentials : "include"});
   history.value = await historyResponse.json();
 }
 

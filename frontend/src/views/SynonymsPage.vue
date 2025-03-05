@@ -1,5 +1,4 @@
 <template>
-    <SettingsPageToolbar :enabled="false"/>
     <div class="synonym-container">
         <legend>Synonyms</legend>
         <p>BBC don't save their videos in an *arr friendly way. You can use synonyms to help you bridge the gap</p>
@@ -10,19 +9,17 @@
 </template>
 
 <script setup>
-    import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
     import SynonymsList from '@/components/SynonymsList.vue';
     import SynonymForm from '@/components/SynonymForm.vue';
 
-    const host = process.env.NODE_ENV != 'production' ? `http://${window.location.hostname}:4404` : '';
-
     import {ref, onMounted} from 'vue';
+import { getHost } from '@/lib/utils';
 
     const create = ref(false);
     const synonyms = ref([]);
 
     const refreshSynonyms = async () => {
-        const synonymResponse = await fetch(`${host}/json-api/synonym`);
+        const synonymResponse = await fetch(`${getHost()}/json-api/synonym`, {credentials : "include"});
         synonyms.value = await synonymResponse.json();
     }
 
@@ -34,19 +31,21 @@
 
     const newSynonym = async (synonym) => {
         create.value = false;
-        await fetch(`${host}/json-api/synonym`, {
+        await fetch(`${getHost()}/json-api/synonym`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(synonym),
+            credentials : "include"
         });
         refreshSynonyms();
     }
 
     const removeSynonym = async (id) => {
-        await fetch(`${host}/json-api/synonym`, {
+        await fetch(`${getHost()}/json-api/synonym`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({id}),
+            credentials : "include"
         });
         refreshSynonyms();
     }

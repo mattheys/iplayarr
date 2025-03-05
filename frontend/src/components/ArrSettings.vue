@@ -30,8 +30,8 @@
 import { defineProps, defineEmits, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import SettingsTextInput from '@/components/SettingsTextInput.vue';
+import { getHost } from '@/lib/utils';
 
-const host = process.env.NODE_ENV != 'production' ? `http://${window.location.hostname}:4404` : '';
 const router = useRouter();
 
 const props = defineProps({
@@ -63,14 +63,14 @@ watch(
 
 const unlinkDownload = async () => {
     if (confirm(`Are you sure you want to unlink ${props.name} Download Client? All changes will be lost`)){
-        await fetch(`${host}/json-api/${props.name.toLowerCase()}/download_client`, { method: 'DELETE' });
+        await fetch(`${getHost()}/json-api/${props.name.toLowerCase()}/download_client`, { method: 'DELETE', credentials : "include" });
         router.go(0);
     }
 }
 
 const unlinkIndexer = async () => {
     if (confirm(`Are you sure you want to unlink ${props.name} Indexer? All changes will be lost`)){
-        await fetch(`${host}/json-api/${props.name.toLowerCase()}/indexer`, { method: 'DELETE' });
+        await fetch(`${getHost()}/json-api/${props.name.toLowerCase()}/indexer`, { method: 'DELETE', credentials : "include" });
         router.go(0);
     }
 }

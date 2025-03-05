@@ -17,6 +17,7 @@ import { IndexerResponse } from "../types/responses/arr/IndexerResponse";
 import { CreateIndexerForm } from "../types/requests/form/CreateIndexerForm";
 import synonymService from "../service/synonymService";
 import { Synonym } from "../types/Synonym";
+import { md5 } from "../utils/Utils";
 
 const router : Router = Router();
 
@@ -60,7 +61,14 @@ router.put('/config', async (req, res : Response) => {
         return;
     }
     for (const key of Object.keys(req.body)){
-        await setParameter(key as IplayarrParameter, req.body[key]);
+        if (key != "AUTH_PASSWORD"){
+            await setParameter(key as IplayarrParameter, req.body[key]);
+        } else {
+            const existingPassword = await getParameter(IplayarrParameter.AUTH_PASSWORD);
+            if (existingPassword != req.body[key]){
+                await setParameter(key as IplayarrParameter, md5(req.body[key]));
+            }
+        }
     }
     res.json(req.body);
 });

@@ -1,4 +1,5 @@
 import express, {Express, NextFunction, Request, Response} from 'express';
+import session from 'express-session'
 import loggingService from './service/loggingService';
 import http, { Server } from 'http';
 import { Server as SocketIOServer } from "socket.io";
@@ -11,6 +12,7 @@ import cors from 'cors'
 import { getParameter, setParameter } from './service/configService';
 import iplayerService from './service/iplayerService';
 import cron from 'node-cron';
+import AuthRoute, { addAuthMiddleware } from './routes/AuthRoute';
 
 const isDebug = process.env.DEBUG == 'true';
 
@@ -18,13 +20,23 @@ const app : Express = express();
 const port : number = parseInt(process.env[IplayarrParameter.PORT.toString()] || "4404");
 
 if (isDebug){
-    app.use(cors());
+    app.use(cors({
+        origin: (origin, callback) => {
+            callback(null, origin)
+        },
+		credentials: true
+    }));
 }
+
+// Session and Auth
+app.use(express.json());
+addAuthMiddleware(app);
+app.use('/auth', AuthRoute);
+
 
 app.use(express.static(path.join(process.cwd(), 'frontend', 'dist')));
 
 // Middleware
-app.use(express.json());
 app.use((req : Request, _ : Response, next : NextFunction) => {
     loggingService.debug('Request received:');
     loggingService.debug('Method:', req.method);

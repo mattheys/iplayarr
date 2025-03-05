@@ -1,12 +1,12 @@
 <template>
-    <RouterLink :to="path">
+    <component :is="noLink ? 'span' : 'RouterLink'" :to="path">
         <li :class="[route.path === path ? 'active' : '', 'clickable']" @click="optionClicked">
             <span>
             <font-awesome-icon :icon="['fas', icon]" />
             <span class="menuText">{{label}}</span>
             </span>
         </li>
-    </RouterLink>
+    </component>
 </template>
 
 <script setup>
@@ -19,7 +19,7 @@
     defineProps({
         path : {
             type : String,
-            required: true
+            required: false
         },
         label : {
             type : String,
@@ -28,6 +28,11 @@
         icon : {
             type : String,
             required: true,
+        },
+        noLink : {
+            type : Boolean,
+            required : false,
+            default : false
         }
     });
 

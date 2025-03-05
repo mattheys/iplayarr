@@ -4,6 +4,12 @@ import storage from 'node-persist';
 
 let isStorageInitialized : boolean = false;
 
+const storageOptions : any = {};
+if (process.env.STORAGE_LOCATION){
+    storageOptions.dir = process.env.STORAGE_LOCATION;
+}
+
+
 const synonymService = {
     getSynonym : async (from : string) : Promise<Synonym | undefined> => {
         const allSynonyms = await synonymService.getAllSynonyms();
@@ -12,7 +18,7 @@ const synonymService = {
 
     getAllSynonyms : async () : Promise<Synonym[]> => {
         if (!isStorageInitialized) {
-            await storage.init();
+            await storage.init(storageOptions);
             isStorageInitialized = true;
         }
         return (await storage.getItem("synonyms")) || [];

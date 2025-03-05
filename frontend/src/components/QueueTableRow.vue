@@ -24,10 +24,9 @@
 </template>
 
 <script setup>
+import { getHost } from '@/lib/utils';
 import ProgressBar from './ProgressBar.vue';
 import { defineProps } from 'vue';
-
-const host = process.env.NODE_ENV != 'production' ? `http://${window.location.hostname}:4404` : '';
 
 defineProps({
     item: {
@@ -43,13 +42,13 @@ defineProps({
 
 const trash = async (pid) => {
     if (confirm("Are you sure you want to delete this history item?")) {
-        await fetch(`${host}/json-api/history?pid=${pid}`, { method: 'DELETE' });
+        await fetch(`${getHost()}/json-api/history?pid=${pid}`, { method: 'DELETE', credentials : "include" });
     }
 }
 
 const cancel = async (pid) => {
     if (confirm("Are you sure you want to cancel this download?")) {
-        await fetch(`${host}/json-api/queue?pid=${pid}`, { method: 'DELETE' });
+        await fetch(`${getHost()}/json-api/queue?pid=${pid}`, { method: 'DELETE', credentials : "include" });
     }
 }
 

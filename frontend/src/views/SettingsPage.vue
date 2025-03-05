@@ -7,6 +7,10 @@
         <SettingsTextInput name="Complete Directory" tooltip="Directory for completed Downloads." v-model="config.COMPLETE_DIR" :error="validationErrors.config?.COMPLETE_DIR"/>
         <SettingsTextInput name="Download Limit" tooltip="The number of simultaneous downloads." type-override="number" v-model="config.ACTIVE_LIMIT" :error="validationErrors.config?.ACTIVE_LIMIT"/>
 
+        <legend class="sub">Authentication</legend>
+        <SettingsTextInput name="Username" tooltip="The Login Username." v-model="config.AUTH_USERNAME" :error="validationErrors.config?.AUTH_USERNAME"/>
+        <SettingsTextInput name="Password" tooltip="The Login Password." type-override="password" v-model="config.AUTH_PASSWORD" :error="validationErrors.config?.AUTH_PASSWORD"/>
+
         <ArrSettings name="Sonarr" v-model="sonarrConfig"/>
         <ArrSettings name="Radarr" v-model="radarrConfig"/>
     </div>
@@ -18,6 +22,7 @@
     import ArrSettings from '@/components/ArrSettings.vue';
 
     import { onMounted, ref, watch, computed } from 'vue';
+import { getHost } from '@/lib/utils';
 
     const config = ref({});
     const configChanges = ref(false);
@@ -42,13 +47,11 @@
         return configChanges.value || sonarrChanges.value || radarrChanges.value;
     })
 
-    const host = process.env.NODE_ENV != 'production' ? `http://${window.location.hostname}:4404` : '';
-
     onMounted(async () => {
         const [configResponse, sonarrConfigResponse, radarrConfigResponse] = await Promise.all([
-            fetch(`${host}/json-api/config`),
-            fetch(`${host}/json-api/sonarr`),
-            fetch(`${host}/json-api/radarr`)
+            fetch(`${getHost()}/json-api/config`, {credentials : "include"}),
+            fetch(`${getHost()}/json-api/sonarr`, {credentials : "include"}),
+            fetch(`${getHost()}/json-api/radarr`, {credentials : "include"})
         ]);
         
         config.value = await configResponse.json();
@@ -64,10 +67,11 @@
         if (configChanges.value || sonarrChanges.value || radarrChanges.value){
             validationErrors.value.config = {};
 
-            const configResponse = await fetch(`${host}/json-api/config`, {
+            const configResponse = await fetch(`${getHost()}/json-api/config`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(config.value),
+                credentials : "include"
             });
 
             if (!configResponse.ok) {
@@ -79,10 +83,11 @@
         }
 
         if (sonarrChanges.value){
-            const sonarrResponse = await fetch(`${host}/json-api/sonarr`, {
+            const sonarrResponse = await fetch(`${getHost()}/json-api/sonarr`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(sonarrConfig.value),
+                credentials : "include"
             });
 
             if (!sonarrResponse.ok){
@@ -94,10 +99,11 @@
         }
 
         if (radarrChanges.value){
-            const radarrResponse = await fetch(`${host}/json-api/radarr`, {
+            const radarrResponse = await fetch(`${getHost()}/json-api/radarr`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(radarrConfig.value),
+                credentials : "include"
             });
 
             if (!radarrResponse.ok){

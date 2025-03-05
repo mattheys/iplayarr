@@ -4,10 +4,15 @@ import socketService from './socketService';
 
 let isStorageInitialized : boolean = false;
 
+const storageOptions : any = {};
+if (process.env.STORAGE_LOCATION){
+    storageOptions.dir = process.env.STORAGE_LOCATION;
+}
+
 const historyService = {
     getHistory : async() : Promise<QueueEntry[]> => {
         if (!isStorageInitialized) {
-            await storage.init();
+            await storage.init(storageOptions);
             isStorageInitialized = true;
         }
         return (await storage.getItem("history")) ?? [];

@@ -12,7 +12,7 @@
 
         </div>
         <div class="right">
-            <font-awesome-icon class="mobileOnly clickable" @click="toggleLeftHandNav" :icon="['fas', 'bars']" />
+            <font-awesome-icon class="mobileOnly clickable" @click="toggleLeftHandNav" :icon="['fas', 'bars']" v-if="authState.user"/>
         </div>
     </div>
 </template>
@@ -21,6 +21,7 @@
     import { inject } from 'vue';
 
     const toggleLeftHandNav = inject('toggleLeftHandNav');
+    const authState = inject("authState");
 </script>
 
 <style scoped>

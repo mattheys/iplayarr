@@ -1,5 +1,6 @@
 import sonarrService from "../service/sonarrService";
 import { Request } from "express";
+import * as crypto from 'crypto';
 
 const seasonRegex = /(?:Series|Season)\s(\d+)/;
 const episodeRegex = /(?:Episode|Ep)\s(\d+)/;
@@ -57,3 +58,7 @@ export function formatSeriesString(input: string) : string {
 export function getBaseUrl(req: Request) : string {
     return `${req.protocol}://${req.hostname}:${req.socket.localPort}`;
 };
+
+export function md5(input: string): string {
+    return crypto.createHash('md5').update(input).digest('hex');
+}

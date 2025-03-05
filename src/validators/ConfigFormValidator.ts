@@ -14,6 +14,12 @@ export class ConfigFormValidator extends Validator {
         } else if (input.ACTIVE_LIMIT < 0) {
             validatorError["ACTIVE_LIMIT"] = `Download limit must be a positive number`;
         }
+        if (!input.AUTH_USERNAME){
+            validatorError["AUTH_USERNAME"] = "Please provide a Username";
+        }
+        if (!input.AUTH_PASSWORD){
+            validatorError["AUTH_PASSWORD"] = "Please provide a Password";
+        }
         return validatorError;
     }
 }

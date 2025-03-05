@@ -6,6 +6,12 @@ dotenv.config();
 
 let isStorageInitialized : boolean = false;
 
+const storageOptions : any = {};
+if (process.env.STORAGE_LOCATION){
+    storageOptions.dir = process.env.STORAGE_LOCATION;
+}
+
+
 export interface ConfigMap {
     [key: string] : string
 }
@@ -13,12 +19,14 @@ export interface ConfigMap {
 const defaultConfigMap : ConfigMap = {
     "DEBUG" : "false",
     "ACTIVE_LIMIT" : "3",
-    "REFRESH_SCHEDULE" : "0 * * * *"
+    "REFRESH_SCHEDULE" : "0 * * * *",
+    "AUTH_USERNAME" : "admin",
+    "AUTH_PASSWORD" : "5f4dcc3b5aa765d61d8327deb882cf99"
 }
 
 async function getConfigMap() : Promise<ConfigMap> {
     if (!isStorageInitialized) {
-        await storage.init();
+        await storage.init(storageOptions);
         isStorageInitialized = true;
     }
     return (await storage.getItem("config")) || {};

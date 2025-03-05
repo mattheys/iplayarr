@@ -15,7 +15,6 @@
 
 <style>
     .about-content {
-        width: 100%;
         text-align: center;
         padding: 1rem;
     }

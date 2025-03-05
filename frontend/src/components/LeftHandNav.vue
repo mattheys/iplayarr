@@ -9,13 +9,18 @@
         <LeftHandNavLink label="Settings" icon="cog" path="/settings" @option-clicked="closeLHN"/>
         <LeftHandNavLink label="Synonyms" icon="arrows-rotate" path="/synonyms" @option-clicked="closeLHN"/>
         <LeftHandNavLink label="About" icon="circle-info" path="/about" @option-clicked="closeLHN"/>
+        <LeftHandNavLink label="Logout" icon="sign-out" noLink="true" @option-clicked="logout"/>
       </ul>
     </div>
   </template>
 
   <script setup>
     import {ref, defineExpose} from 'vue';
+    import { getHost } from '@/lib/utils';
     import LeftHandNavLink from './LeftHandNavLink.vue';
+    import { useRouter } from 'vue-router';
+
+    const router = useRouter();
 
     const lhn = ref(null);
 
@@ -28,6 +33,13 @@
     }
 
     defineExpose({ toggleLHN });
+
+    const logout = async () => {
+        const response = await fetch(`${getHost()}/auth/logout`, {credentials : "include"});
+        if (response.ok){
+          router.go(0);
+        }
+    }
   </script>
   
   <style>
