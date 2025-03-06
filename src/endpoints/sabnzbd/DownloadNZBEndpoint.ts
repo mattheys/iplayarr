@@ -1,14 +1,16 @@
 import { Request, Response } from "express";
 import { Builder } from "xml2js";
 import { NZBFileResponse } from "../../types/responses/newznab/NZBFileResponse";
+import { VideoType } from "../../types/IPlayerSearchResult";
 
 interface DownloadNZBRequest {
     pid : string,
-    nzbName : string
+    nzbName : string,
+    type : VideoType
 }
 
 export default async (req : Request, res : Response) => {
-    const { pid, nzbName } = req.query as any as DownloadNZBRequest;
+    const { pid, nzbName, type } = req.query as any as DownloadNZBRequest;
 
     const date : Date = new Date();
     date.setMinutes(date.getMinutes() - 720);
@@ -29,6 +31,12 @@ export default async (req : Request, res : Response) => {
                     $: {
                         type: "nzbName",
                         _: nzbName
+                    }
+                },
+                {
+                    $: {
+                        type: "type",
+                        _: type
                     }
                 }
             ]

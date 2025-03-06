@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
 import iplayerService from '../../service/iplayerService';
 import { TVSearchResponse } from '../../types/responses/newznab/TVSearchResponse';
-import { getBaseUrl } from '../../utils/Utils';
+import { createNZBDownloadLink, getBaseUrl } from '../../utils/Utils';
 import { Builder } from 'xml2js';
 import { IPlayerSearchResult } from '../../types/IPlayerSearchResult';
 
@@ -12,7 +12,7 @@ interface FilmSearchRequest {
 export default async (req : Request, res : Response) => {
     const {q} = req.query as any as FilmSearchRequest;
     const searchTerm = q ?? '*';
-    const results : IPlayerSearchResult[] = await iplayerService.filmSearch(searchTerm)
+    const results : IPlayerSearchResult[] = await iplayerService.search(searchTerm)
 
     const date : Date = new Date();
     date.setMinutes(date.getMinutes() - 720);
@@ -28,11 +28,11 @@ export default async (req : Request, res : Response) => {
         channel: {
             "atom:link": { $: { rel: "self", type: "application/rss+xml" } },
             title: "iPlayarr",
-            item: results.map(({pid, nzbName}) => (
+            item: results.map((result) => (
                 {
-                    title: nzbName,
-                    description: nzbName,
-                    guid: `https://www.bbc.co.uk/iplayer/episodes/${pid}`,
+                    title: result.nzbName,
+                    description: result.nzbName,
+                    guid: `https://www.bbc.co.uk/iplayer/episodes/${result.pid}`,
                     size: "2147483648",
                     category: ["2000", "2040"],
                     pubDate,
@@ -43,8 +43,8 @@ export default async (req : Request, res : Response) => {
                       { $: { name: "files", value: "1" } },
                       { $: { name: "grabs", value: "0" } }
                     ],
-                    link: `${getBaseUrl(req)}/api?mode=nzb-download&pid=${pid}&nzbName=${nzbName}&apikey=${req.query.apikey}`,
-                    enclosure: {$:{url : `${getBaseUrl(req)}/api?mode=nzb-download&pid=${pid}&nzbName=${nzbName}&apikey=${req.query.apikey}`, length : "2147483648", type: "application/x-nzb"} } 
+                    link: `${getBaseUrl(req)}${createNZBDownloadLink(result, req.query.apikey as string)}`,
+                    enclosure: {$:{url : `${getBaseUrl(req)}${createNZBDownloadLink(result, req.query.apikey as string)}`, length : "2147483648", type: "application/x-nzb"} } 
                   }
             ))
         }

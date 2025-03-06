@@ -1,5 +1,5 @@
 <template>
-    <div class="inner-content">
+    <div class="inner-content scroll-x">
         <QueueTable :queue="queue" :history="history" />
     </div>
 </template>

@@ -1,7 +1,7 @@
 <template>
-  <NavBar />
+  <NavBar ref="navBar"/>
   <div class="main-layout">
-    <LeftHandNav ref="leftHandNav" v-if="authState.user" />
+    <LeftHandNav ref="leftHandNav" v-if="authState.user" @clear-search="clearSearch"/>
     <div class="content">
       <RouterView />
     </div>
@@ -19,6 +19,8 @@ import { getHost } from './lib/utils';
 
 const authState = inject("authState");
 const [queue, history, logs, socket, hiddenSettings] = [ref([]), ref([]), ref([]), ref(null), ref({})];
+
+const navBar = ref(null);
 
 const leftHandNav = ref(null);
 
@@ -74,9 +76,9 @@ watch(authState, async (newAuthState) => {
   }
 }, {immediate : true});
 
-// onMounted(async () => {
-//   alert("on mounted");
-// });
+const clearSearch = () => {
+  navBar.value.clearSearch();
+}
 </script>
 
 <style lang="less">
@@ -111,13 +113,13 @@ body {
 
 @media (min-width: @mobile-breakpoint) {
   .mobileOnly {
-    display: none;
+    display: none !important;
   }
 }
 
 @media (max-width: @mobile-breakpoint) {
   .desktopOnly {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -135,5 +137,32 @@ legend {
 .block-reset {
   display: block;
   clear: both;
+}
+
+.scroll-x {
+  overflow-x: auto;
+}
+
+
+.pill {
+    padding: 1px 3px;
+    font-size: 11px;
+    border-radius: 2px;
+
+    background-color: @warn-color;
+    border-color: @warn-color;
+    color: @warn-text-color;
+
+    &.TV {
+        background-color: @primary-color;
+        border-color: @primary-color;
+        color: @primary-text-color;
+    }
+
+    &.MOVIE {
+        background-color: @error-color;
+        border-color: @error-color;
+        color: @error-text-color;
+    }
 }
 </style>
