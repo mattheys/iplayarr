@@ -91,15 +91,6 @@ Test and save this. Then create a new Newznab indexer with these settings:
 | API Key  | API_KEY from above |
 | Download Client  | iPlayarr (created above) |
 
-## Sonarr Loop Back
-
-iPlayer doesn't always respond with episode numbers nice and neatly, sometimes it responds with episode names, but unfortuantely Sonarr only provides us the episode number in the search request. As such, there's a loop back mechanism in iPlayarr to ask Sonarr for more information on this episode. This isn't required, but will Vastly improve iPlayarr's ability to find results and requires the following settings (also available in settings):
-
-| Property            | Description                                                   |
-| ------------------- | ------------------------------------------------------------- |
-| SONARR_HOST         | Protocol, Host and Port for Sonarr, e.g http://localhost:8989 |
-| SONARR_API_KEY      | API Key for Sonarr                                            |
-
 ### Web Interface
 
 To access the web frontend browse to port 4044 on your host

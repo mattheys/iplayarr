@@ -6,6 +6,8 @@ import AboutPage from '@/views/AboutPage.vue';
 import SettingsPage from '@/views/SettingsPage.vue';
 import SynonymsPage from '@/views/SynonymsPage.vue';
 import LoginPage from '@/views/LoginPage.vue';
+import SearchPage from '@/views/SearchPage.vue';
+import DownloadPage from '@/views/DownloadPage.vue';
 import { getHost } from '@/lib/utils';
 
 const routes = [
@@ -15,12 +17,17 @@ const routes = [
   { path: '/about', component: AboutPage },
   { path: '/settings', component: SettingsPage },
   { path: '/synonyms', component: SynonymsPage },
-  { path: '/login', component: LoginPage }
+  { path: '/login', component: LoginPage },
+  { path: '/search', component: SearchPage, name : "search" },
+  { path: '/download', component: DownloadPage, name : "download" }
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior() {
+    return {top : 0, behaviour : "smooth"};
+  }
 });
 
 router.beforeEach(async (to, _, next) => {

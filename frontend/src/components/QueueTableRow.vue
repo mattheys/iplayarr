@@ -1,18 +1,23 @@
 <template>
-    <tr class=''>
+    <tr>
         <td>
             <font-awesome-icon :class="[history ? 'complete' : '', item.status]" :icon="['fas', history ? 'download' : (item.status == 'Queued' ? 'cloud' : 'cloud-download')]"/>
         </td>
         <td class='text' data-title='Filename'>
             <RouterLink :to="{ path: '/logs', query: { filter: item.pid } }">{{ item.nzbName }}</RouterLink>
         </td>
-        <td class='' data-title='Start'>{{ item.details.start }}</td>
-        <td class='' data-title='Size'>{{ formatStorageSize(item.details.size) }}</td>
+        <td>
+            <span :class="['pill', item.type]">
+                {{ item.type }}
+            </span>
+        </td>
+        <td data-title='Start'>{{ item.details.start }}</td>
+        <td data-title='Size'>{{ formatStorageSize(item.details.size) }}</td>
         <td class='progress-column' data-title='Progress'>
             <ProgressBar :progress="item.details.progress" :history="history" :idle="item.status == 'Queued'"/>
         </td>
-        <td class='' data-title='ETA'>{{ item.details.eta }}</td>
-        <td class='' data-title='Speed'>{{ item.details.speed }} {{ item.details.speed != '' ? 'MB/s' : '' }}</td>
+        <td data-title='ETA'>{{ item.details.eta }}</td>
+        <td data-title='Speed'>{{ item.details.speed }} {{ item.details.speed != '' ? 'MB/s' : '' }}</td>
         <td class='actionCol' data-title='Action'>
             <span v-if="history">
                 <font-awesome-icon class="clickable" :icon="['fas', 'trash']" @click="trash(item.pid)" />

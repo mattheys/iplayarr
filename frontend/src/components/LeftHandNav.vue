@@ -15,14 +15,14 @@
 </template>
 
 <script setup>
-import { ref, defineExpose } from 'vue';
+import { ref, defineExpose, defineEmits } from 'vue';
 import { getHost } from '@/lib/utils';
 import LeftHandNavLink from './LeftHandNavLink.vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-
 const lhn = ref(null);
+const emit = defineEmits(['clear-search']);
 
 const toggleLHN = () => {
   lhn.value.classList.toggle('show');
@@ -30,6 +30,7 @@ const toggleLHN = () => {
 
 const closeLHN = () => {
   lhn.value.classList.remove('show');
+  emit('clear-search');
 }
 
 defineExpose({ toggleLHN });

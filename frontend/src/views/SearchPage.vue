@@ -1,0 +1,121 @@
+<template>
+    <SettingsPageToolbar />
+    <div class="inner-content scroll-x" v-if="!loading">
+        <table class="resultsTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Calculated Filename</th>
+                    <th>Channel</th>
+                    <th>PID</th>
+                    <th>
+                        <font-awesome-icon :icon="['fas', 'gears']" />
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="result of searchResults" v-bind:key="result.pid">
+                    <td>{{ result.number }}</td>
+                    <td>
+                        <span :class="['pill', result.type]">
+                            {{ result.type }}
+                        </span>
+                    </td>
+                    <td>{{ result.title }}</td>
+                    <td>{{ result.nzbName }}</td>
+                    <td>
+                        <span :class="['pill', result.channel.replaceAll(' ', '')]">
+                            {{ result.channel }}
+                        </span>
+                    </td>
+                    <td>{{ result.pid }}</td>
+                    <td>
+                        <font-awesome-icon :class="['clickable', result.downloading ? 'downloading' : '']" :icon="['fas', 'cloud-download']" @click="download(result)"/>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <LoadingIndicator v-if="loading"/>
+</template>
+
+<script setup>
+import { useRoute, useRouter } from 'vue-router';
+import { ref, watch } from 'vue';
+import { getHost } from '@/lib/utils';
+import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
+import LoadingIndicator from '@/components/LoadingIndicator.vue';
+
+const route = useRoute();
+const router = useRouter();
+
+const searchResults = ref([]);
+const searchTerm = ref("");
+const loading = ref(true);
+
+watch(() => route.query.searchTerm, async (newSearchTerm) => {
+    if (newSearchTerm) {
+        loading.value = true;
+        searchResults.value = [];
+        searchTerm.value = newSearchTerm;
+        const response = await fetch(`${getHost()}/json-api/search?q=${searchTerm.value}`, { credentials: "include" });
+        searchResults.value = await response.json();
+        loading.value = false;
+    }
+}, { immediate: true });
+
+const download = async(searchResult) => {
+    router.push({ name : 'download', query : {json : JSON.stringify(searchResult)}});
+}
+</script>
+
+<style lang="less" scoped>
+.resultsTable {
+    max-width: 100%;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    color: @table-text-color;
+
+    thead {
+        th {
+            padding: 8px;
+            border-bottom: 1px solid @table-border-color;
+            text-align: left;
+            font-weight: bold;
+        }
+    }
+
+    tbody {
+        tr {
+            transition: background-color 500ms;
+
+            &:hover {
+                background-color: @table-row-hover-color;
+            }
+
+            td {
+                padding: 8px;
+                border-top: 1px solid @table-border-color;
+                line-height: 1.52857143;
+            }
+        }
+    }
+}
+
+.pill {
+    &.BBCOne {
+        background-color: @error-color;
+        border-color: @error-color;
+        color: @error-text-color;
+    }
+
+    &.BBCTwo {
+        background-color: @primary-color;
+        border-color: @primary-color;
+        color: @primary-text-color;
+    }
+}
+</style>

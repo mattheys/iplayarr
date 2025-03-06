@@ -12,13 +12,19 @@
                 Toggle Advanced
             </div>
         </button>
+        <button class="SettingsPageToolbar-button clickable" @click="emitEvent('download')" v-if="icons.some((i) => i =='download')">
+            <font-awesome-icon :icon="['fas', 'download']" />
+            <div class="SettingsPageToolbar-label">
+                Download
+            </div>
+        </button>
     </div>
 </template>
 
 <script setup>
     import { defineEmits, defineProps } from 'vue';
 
-    const emit = defineEmits(['save', 'toggleAdvanced']);
+    const emit = defineEmits(['save', 'toggleAdvanced', 'download']);
 
     defineProps({
         enabled : {

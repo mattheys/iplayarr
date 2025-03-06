@@ -6,16 +6,18 @@ import { getParameter } from "./configService";
 import iplayerService from "./iplayerService";
 import socketService from "./socketService";
 import { DownloadDetails } from "../types/DownloadDetails";
+import { VideoType } from "../types/IPlayerSearchResult";
 
 let queue : QueueEntry[] = [];
 
 const queueService = {
-    addToQueue : (pid : string, nzbName : string) : void => {
+    addToQueue : (pid : string, nzbName : string, type : VideoType) : void => {
         const queueEntry : QueueEntry = {
             pid,
             status : QueueEntryStatus.QUEUED,
             nzbName,
-            details : {}
+            details : {},
+            type
         }
         queue.push(queueEntry);
         queueService.moveQueue();
