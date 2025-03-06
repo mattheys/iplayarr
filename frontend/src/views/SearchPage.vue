@@ -1,12 +1,12 @@
 <template>
     <SettingsPageToolbar />
-    <div class="search-content" v-if="!loading">
+    <div class="inner-content scroll-x" v-if="!loading">
         <table class="resultsTable">
             <thead>
                 <tr>
                     <th>#</th>
                     <th>Title</th>
-                    <th>Filename</th>
+                    <th>Calculated Filename</th>
                     <th>Channel</th>
                     <th>PID</th>
                     <th>
@@ -65,42 +65,37 @@ const download = async(searchResult) => {
 }
 </script>
 
-<style scoped>
-.search-content {
-    padding: 1rem;
-}
-
+<style lang="less" scoped>
 .resultsTable {
     max-width: 100%;
-    width: 100%;
     border-collapse: collapse;
     font-size: 14px;
-    color: rgb(204, 204, 204);
-}
+    color: @table-text-color;
 
-.resultsTable thead th {
-    padding: 8px;
-    border: none !important;
-    text-align: left;
-    font-weight: bold;
-}
+    thead {
+        th {
+            padding: 8px;
+            border-bottom: 1px solid @table-border-color;
+            text-align: left;
+            font-weight: bold;
+        }
+    }
 
-.resultsTable tbody tr {
-    transition: background-color 500ms;
-}
+    tbody {
+        tr {
+            transition: background-color 500ms;
 
-.resultsTable tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-}
+            &:hover {
+                background-color: @table-row-hover-color;
+            }
 
-.resultsTable tbody td {
-    padding: 8px;
-    border-top: 1px solid #858585;
-    line-height: 1.52857143;
-}
-
-.resultsTable .progress-column {
-    min-width: 75px;
+            td {
+                padding: 8px;
+                border-top: 1px solid @table-border-color;
+                line-height: 1.52857143;
+            }
+        }
+    }
 }
 
 .channelLabel {
@@ -108,20 +103,20 @@ const download = async(searchResult) => {
     font-size: 11px;
     border-radius: 2px;
 
-    background-color: #ffa500;
-    border-color: #ffa500;
-    color: white;
+    background-color: @warn-color;
+    border-color: @warn-color;
+    color: @warn-text-color;
 }
 
 .channelLabel.BBCOne {
-    background-color: #f05050;
-    border-color: #f05050;
-    color: white;
+    background-color: @error-color;
+    border-color: @error-color;
+    color: @error-text-color;
 }
 
 .channelLabel.BBCTwo {
-    background-color: #5d9cec;
-    border-color: #5d9cec;
-    color: white;
+    background-color: @primary-color;
+    border-color: @primary-color;
+    color: @primary-text-color;
 }
 </style>

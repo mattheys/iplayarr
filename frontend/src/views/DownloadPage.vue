@@ -1,6 +1,6 @@
 <template>
     <SettingsPageToolbar :icons="['download']" @download="download"/>
-    <div class="download-content">
+    <div class="inner-content">
         <legend>{{ searchResult.title }}</legend>
         <SettingsTextInput name="Filename" tooltip="Filename to Download as" v-model="searchResult.nzbName"/>
     </div>
@@ -30,9 +30,3 @@ const download = async () => {
     }
 }
 </script>
-
-<style>
-    .download-content {
-        padding: 1rem;
-    }
-</style>

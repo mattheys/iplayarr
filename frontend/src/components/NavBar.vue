@@ -16,10 +16,10 @@
         </div>
         <div class="right">
             <font-awesome-icon class="mobileOnly clickable" @click="toggleLeftHandNav" :icon="['fas', 'bars']" v-if="authState.user"/>
-            <a href="https://ko-fi.com/nikorag" aria-label="Donate" class="donateLink" target="_blank" v-if="!hiddenSettings.HIDE_DONATE">
+            <a href="https://ko-fi.com/nikorag" aria-label="Donate" class="desktopOnly donateLink" target="_blank" v-if="!hiddenSettings.HIDE_DONATE">
                 <font-awesome-icon class="desktopOnly clickable" :icon="['fas', 'heart']" v-if="authState.user"/>
             </a>
-            <a href="https://github.com/Nikorag/iplayarr" aria-label="GitHub" target="_blank">
+            <a href="https://github.com/Nikorag/iplayarr" class="desktopOnly" aria-label="GitHub" target="_blank">
                 <font-awesome-icon class="desktopOnly clickable" :icon="['fab', 'github']" v-if="authState.user"/>
             </a>
         </div>
@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-    import { inject, ref } from 'vue';
+    import { inject, ref, defineExpose } from 'vue';
     import { useRouter } from 'vue-router';
 
     const router = useRouter();
@@ -39,8 +39,13 @@
 
     const search = () => {
         router.push({ name : 'search', query : {searchTerm : searchTerm.value}});
+    }
+
+    const clearSearch = () => {
         searchTerm.value = "";
     }
+
+    defineExpose({clearSearch});
 </script>
 
 <style lang="less" scoped>
