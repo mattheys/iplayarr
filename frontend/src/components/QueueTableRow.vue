@@ -64,8 +64,8 @@ const formatStorageSize = (mb) => {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
     .complete {
-        color: rgb(122, 67, 182);
+        color: @complete-color;
     }
 </style>

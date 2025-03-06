@@ -27,6 +27,12 @@ interface DeleteRequest {
     pid : string
 }
 
+router.get('/hiddenSettings', (_, res : Response) => {
+    res.json(
+        {"HIDE_DONATE" : process.env.HIDE_DONATE || false}
+    )
+})
+
 router.get('/synonym', async (_, res : Response) => {
     const synonyms = await synonymService.getAllSynonyms();
     res.json(synonyms);

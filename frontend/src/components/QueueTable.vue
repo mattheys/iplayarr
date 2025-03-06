@@ -39,37 +39,39 @@
     });
 </script>
 
-<style>
+<style lang="less">
   .queueTable {
     max-width: 100%;
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
-    color: rgb(204, 204, 204);
-  }
+    color: @table-text-color;
 
-  .queueTable thead th {
-    padding: 8px;
-    border: none !important;
-    text-align: left;
-    font-weight: bold;
-  }
+    th {
+      padding: 8px;
+      border: none !important;
+      text-align: left;
+      font-weight: bold;
+    }
 
-  .queueTable tbody tr {
-    transition: background-color 500ms;
-  }
+    tbody {
+      tr {
+        transition: background-color 500ms;
 
-  .queueTable tbody tr:hover {
-    background-color: rgba(255,255,255,0.08);
-  }
+        &:hover {
+          background-color: @table-row-hover-color;
+        }
+      }
 
-  .queueTable tbody td {
-    padding: 8px;
-    border-top: 1px solid #858585;
-    line-height: 1.52857143;
-  }
+      td {
+        padding: 8px;
+        border-top: 1px solid @table-border-color;
+        line-height: 1.5;
+      }
+    }
 
-  .queueTable .progress-column {
-    min-width: 75px;
+    .progress-column {
+      min-width: 75px;
+    }
   }
 </style>

@@ -55,6 +55,7 @@ There's a few more optional settings too:
 | -------- | ----------- |
 | ACTIVE_LIMIT | How many downloads are allowed simultaneously, defaults to 3 |
 | REFRESH_SCHEDULE | Cron expression for when to pro-actively refresh schedule, defaults to hourly, on the hour |
+| HIDE_DONATE | If you don't like the Kofi donate links you can hide them |
 
 ### Usage
 

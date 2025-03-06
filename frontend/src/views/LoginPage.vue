@@ -93,14 +93,14 @@ const submitForgot = async () => {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 .login-content {
     display: flex;
     justify-content: center;
-}
 
-.login-content>div {
-    flex: 0 0 325px;
+    >div {
+        flex: 0 0 325px;
+    }
 }
 
 .panel {
@@ -114,7 +114,7 @@ const submitForgot = async () => {
     padding: 10px;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
-    background-color: #494949;
+    background-color: @login-panel-header-color;
 }
 
 .logo {
@@ -126,7 +126,7 @@ const submitForgot = async () => {
     padding: 20px;
     border-bottom-right-radius: 4px;
     border-bottom-left-radius: 4px;
-    background-color: #111;
+    background-color: @login-panel-body-color;
 }
 
 .sign-in {
@@ -143,11 +143,11 @@ const submitForgot = async () => {
     padding: 6px 16px;
     width: 100%;
     height: 35px;
-    background-color: #333;
-    border: 1px solid #dde6e9;
+    background-color: @input-background-color;
+    border: 1px solid @input-border-color;
     border-radius: 4px;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    color: #ccc;
+    box-shadow: inset 0 1px 1px @primary-box-shadow;
+    color: @input-text-color;
 }
 
 .button {
@@ -156,10 +156,10 @@ const submitForgot = async () => {
     padding: 10px 0;
     width: 100%;
     border: 1px solid;
-    border-color: #5899eb;
+    border-color: @login-button-border-color;
     border-radius: 4px;
-    background-color: #5d9cec;
-    color: var(--white);
+    background-color: @login-button-background-color;
+    color: @primary-text-color;
     vertical-align: middle;
     text-align: center;
     white-space: nowrap;
@@ -168,18 +168,18 @@ const submitForgot = async () => {
 
 .login-failed {
     margin-top: 20px;
-    color: #f05050;
+    color: @error-color;
     font-size: 14px;
 }
 
 .forgot-container {
     display: flex;
-}
 
-.forgot-container a {
-    margin-left: auto;
-    color: #737d83;
-    text-decoration: none;
-    font-size: 13px;
+    a {
+        margin-left: auto;
+        color: @subtle-text-color;
+        text-decoration: none;
+        font-size: 13px;
+    }
 }
 </style>

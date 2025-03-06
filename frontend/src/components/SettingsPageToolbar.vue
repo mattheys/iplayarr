@@ -43,33 +43,35 @@
     }
 </script>
 
-<style>
+<style lang="less">
     .SettingsPageToolbar {
         height: 60px;
-        background-color: rgb(38, 38, 38);
-    }
+        background-color: @toolbar-background-color;
 
-    .SettingsPageToolbar-button {
-        padding-top: 4px;
-        min-width: 60px;
-        width: min-content;
-        text-align: center;
-        background-color: rgba(0, 0, 0, 0);
-        border: 0px;
-        height: 100%;
-    }
+        button {
+            padding-top: 4px;
+            min-width: 60px;
+            width: min-content;
+            text-align: center;
+            background-color: transparent;
+            border: 0px;
+            height: 100%;
 
-    .SettingsPageToolbar-button:hover svg {
-        color: rgb(225, 31, 119);
-    }
+            &:hover {
+                svg {
+                    color: @brand-color;
+                }
+            }
 
-    .SettingsPageToolbar-button svg {
-        color: rgb(153, 153, 153);
-        height: 21px;
-    }
+            svg {
+                color: @toolbar-text-color;
+                height: 21px;
+            }
+        }
 
-    .SettingsPageToolbar-label {
-        color: rgb(229, 229, 229);
-        font-size: 11px;
+        .SettingsPageToolbar-label {
+            color: @primary-text-color;
+            font-size: 11px;
+        }
     }
 </style>

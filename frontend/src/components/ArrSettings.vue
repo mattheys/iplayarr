@@ -82,14 +82,14 @@ const unlinkIndexer = async () => {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 @media (min-width: 768px) {
     .arrContainer {
         display: flex;
-    }
 
-    .arrContainer div {
-        flex: 1;
+        div {
+            flex: 1
+        }
     }
 }
 
@@ -100,16 +100,16 @@ const unlinkIndexer = async () => {
 }
 
 button {
-    background-color: #333;
-    border: 1px solid #393f45;
+    background-color: @settings-button-background-color;
+    border: 1px solid @settings-button-border-color;
     padding: 6px 16px;
     font-size: 14px;
-    color: white;
+    color: @primary-text-color;
     border-radius: 4px;
-}
 
-button:hover {
-    border-color: #5a6265;
-    background-color: #444;
+    &:hover {
+        border-color: @settings-button-hover-border-color;
+        background-color: @settings-button-hover-background-color;
+    }
 }
 </style>
