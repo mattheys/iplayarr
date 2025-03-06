@@ -88,6 +88,7 @@
                         border-bottom: 1px solid white;
                         padding: 5px 5px;
                         color: white;
+                        border-radius: 0px;
                         transition: border-bottom-color 0.3s ease-out;
 
                         &:focus {
