@@ -1,6 +1,6 @@
 <template>
     <SettingsPageToolbar @save="saveConfig" @toggle-advanced="toggleAdvanced" :enabled="saveEnabled" :icons="['save', 'advanced']"/>
-    <div class="settings-content">
+    <div class="settings-content" v-if="!loading">
         <legend>iPlayarr</legend>
         <SettingsTextInput name="Api Key" tooltip="API Key for access from *arr apps." v-model="config.API_KEY" :error="validationErrors.config?.API_KEY"/>
         <SettingsTextInput name="Download Directory" tooltip="Directory for in-progress Downloads." v-model="config.DOWNLOAD_DIR" :error="validationErrors.config?.DOWNLOAD_DIR"/>
@@ -20,6 +20,7 @@
         <ArrSettings name="Sonarr" v-model="sonarrConfig"/>
         <ArrSettings name="Radarr" v-model="radarrConfig"/>
     </div>
+    <LoadingIndicator v-if="loading"/>
 </template>
 
 <script setup>
@@ -29,6 +30,8 @@
 
     import { onMounted, ref, watch, computed } from 'vue';
     import { getHost } from '@/lib/utils';
+
+    const loading = ref(false);
 
     const config = ref({});
     const configChanges = ref(false);
@@ -71,6 +74,7 @@
     });
 
     const saveConfig = async () => {
+        loading.value = true;
         if (configChanges.value || sonarrChanges.value || radarrChanges.value){
             validationErrors.value.config = {};
 
@@ -120,6 +124,7 @@
                 alert("Radarr Config saved OK");
             }
         }
+        loading.value = false;
     }
 
     const toggleAdvanced = () => {

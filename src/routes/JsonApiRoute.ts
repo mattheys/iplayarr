@@ -18,6 +18,8 @@ import { CreateIndexerForm } from "../types/requests/form/CreateIndexerForm";
 import synonymService from "../service/synonymService";
 import { Synonym } from "../types/Synonym";
 import { md5 } from "../utils/Utils";
+import { IPlayerSearchResult } from "../types/IPlayerSearchResult";
+import iplayerService from "../service/iplayerService";
 
 const router : Router = Router();
 
@@ -234,6 +236,18 @@ router.delete("/sonarr/indexer", (_, res : Response) => {
 
 router.delete("/radarr/indexer", (_, res : Response) => {
     removeParameter(IplayarrParameter.RADARR_INDEXER_ID);
+    res.json(true)
+});
+
+router.get("/search", async (req : Request, res : Response) => {
+    const {q} = req.query as any;
+    const result : IPlayerSearchResult[] = await iplayerService.filmSearch(q);
+    res.json(result);
+});
+
+router.get("/download", async (req : Request, res : Response) => {
+    const {pid, nzbName} = req.query as any;
+    queueService.addToQueue(pid, nzbName);
     res.json(true)
 });
 
