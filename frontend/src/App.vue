@@ -79,13 +79,13 @@ watch(authState, async (newAuthState) => {
 // });
 </script>
 
-<style>
+<style lang="less">
 body {
   padding: 0px;
   margin: 0px;
   font-family: "Roboto", "open sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-  color: rgb(229, 229, 229);
-  background-color: rgb(32, 32, 32);
+  color: @primary-text-color;
+  background-color: @page-background-color;
   min-height: 100vh;
 }
 
@@ -95,6 +95,10 @@ body {
 
 .content {
   width: 100%;
+
+  .inner-content {
+    padding: 1rem;
+  }
 }
 
 .clickable {
@@ -105,13 +109,13 @@ body {
   text-align: right;
 }
 
-@media (min-width: 768px) {
+@media (min-width: @mobile-breakpoint) {
   .mobileOnly {
     display: none;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: @mobile-breakpoint) {
   .desktopOnly {
     display: none;
   }
@@ -119,13 +123,13 @@ body {
 
 legend {
   font-size: 21px;
-  border-bottom: 1px solid rgb(229, 229, 229);
+  border-bottom: 1px solid @primary-text-color;
   line-height: 32.1px;
   margin-bottom: 21px;
-}
 
-legend.sub {
-  font-size: 16px;
+  &.sub {
+    font-size: 16px;
+  }
 }
 
 .block-reset {

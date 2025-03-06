@@ -31,49 +31,52 @@
     const hiddenSettings = inject("hiddenSettings");
 </script>
 
-<style scoped>
+<style lang="less" scoped>
     .NavBar {
         display: flex;
         padding: 0px 20px;
-        background-color: rgb(42, 42, 42);
+        background-color: @nav-background-color;
         height: 60px;
-    }
 
-    .NavBar div {
-        flex: 1;
-    }
+        >div {
+            flex: 1;
+            &.right {
+                text-align: right;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
 
-    .NavBar .right {
-        text-align: right;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-    }
+                a {
+                    width: 30px;
+                    height: 60px;
+                    text-align: center;
+                    display: flex;
+                    align-items: center;
+                }
+            }
+        }
 
-    .logoPanel, .logoPanel a {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        height: 100%;
-    }
+        .logoPanel {
+            a {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                height: 100%;
+            }
 
-    .logoPanel img {
-        width: 32px;
-        height: auto;
-    }
+            img {
+                width: 32px;
+                height: auto;
+            }
 
-    .logoPanel p {
-        font-size: 16px;
-        font-weight: bold;
-    }
-    .right a {
-        width: 30px;
-        height: 60px;
-        text-align: center;
-        display: flex;
-        align-items: center;
-    }
-    .donateLink {
-        color: red;
+            p {
+                font-size: 16px;
+                font-weight: bold;
+            }
+        }
+
+        .donateLink {
+            color: @error-color;
+        }
     }
 </style>

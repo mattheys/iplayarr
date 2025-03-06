@@ -44,62 +44,62 @@ const logout = async () => {
 }
 </script>
 
-<style>
+<style lang="less">
 .LeftHandNav {
   width: 210px;
-  background-color: rgb(42, 42, 42);
-  color: rgb(225, 226, 227);
+  background-color: @nav-background-color;
+  color: @nav-text-color;
   height: 100vh;
   z-index: 3;
   font-size: 14px;
   flex-shrink: 0;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    padding: 12px 24px;
+
+    &.active {
+      background-color: @nav-active-background-color;
+      color: @brand-color;
+    }
+
+    .menuText {
+      margin-left: 1rem;
+    }
+  }
+
+  a {
+    color: @nav-link-color;
+    text-decoration: none;
+
+    &:hover {
+      color: @brand-color;
+    }
+  }
 }
 
-@media (max-width: 768px) {
+@media (max-width: @mobile-breakpoint) {
   .LeftHandNav {
     display: none;
+
+    &.show {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+    }
+
+    li {
+      border-bottom: 1px solid @nav-border-color;
+      padding-bottom: 1rem;
+    }
   }
-
-  .LeftHandNav.show {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-  }
-
-  .LeftHandNav li {
-    border-bottom: 1px solid rgb(229, 229, 229);
-    padding-bottom: 1rem;
-  }
-}
-
-.LeftHandNav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.LeftHandNav li {
-  padding: 12px 24px;
-}
-
-.LeftHandNav a {
-  color: rgb(225, 226, 227);
-  text-decoration: none;
-}
-
-.active {
-  background-color: rgb(51, 51, 51);
-  color: rgb(225, 31, 119);
-}
-
-.LeftHandNav a:hover {
-  color: rgb(225, 31, 119);
-}
-
-.menuText {
-  margin-left: 1rem;
 }
 </style>

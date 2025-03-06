@@ -1,5 +1,5 @@
 <template>
-    <div class="about-content">
+    <div class="inner-content about-content">
         <img src="/iplayarr.png" alt="Logo" class="logo">
         <h3>iPlayarr</h3>
         <p>2025</p>
@@ -35,10 +35,9 @@
     const hiddenSettings = inject("hiddenSettings");
 </script>
 
-<style>
+<style lang="less">
 .about-content {
     text-align: center;
-    padding: 1rem;
 }
 
 .logo {
@@ -46,30 +45,27 @@
 }
 
 a {
-    color: rgb(229, 229, 229);
+    color: @primary-text-color;
     text-decoration: none;
 }
 
 .buttons {
     display: flex;
     justify-content: center;
-    /* Align the buttons horizontally in the center */
     gap: 10px;
-    /* Adds space between the buttons */
-}
 
-.buttons div {
-    display: inline-block;
-    /* Optional, this keeps divs inline if needed, but is not necessary with flex */
-}
+    div {
+        display: inline-block;
+    }
 
-.githubButton {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-    height: 36px;
-    border-radius: 8px;
-    border: none;
-    color: white;
-    background-color: black;
+    .githubButton {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        height: 36px;
+        border-radius: 8px;
+        border: none;
+        color: white;
+        background-color: black;
+    }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="synonym-container">
+    <div class="inner-content">
         <legend>Synonyms</legend>
         <p>BBC don't save their videos in an *arr friendly way. You can use synonyms to help you bridge the gap</p>
         <SynonymsList @create-synonym="openForm" @remove-synonym="removeSynonym" :synonyms="synonyms"/>
@@ -50,9 +50,3 @@ import { getHost } from '@/lib/utils';
         refreshSynonyms();
     }
 </script>
-
-<style>
-    .synonym-container {
-        padding: 1rem;
-    }
-</style>
