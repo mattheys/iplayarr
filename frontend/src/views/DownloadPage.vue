@@ -24,7 +24,7 @@ watch(() => route.query.json, (newJson) => {
 
 
 const download = async () => {
-    const response = await fetch(`${getHost()}/json-api/download?pid=${searchResult.value.pid}&nzbName=${searchResult.value.nzbName}`, {credentials : "include"});
+    const response = await fetch(`${getHost()}/json-api/download?pid=${searchResult.value.pid}&nzbName=${searchResult.value.nzbName}&type=${searchResult.value.type}`, {credentials : "include"});
     if (response.ok){
         router.push("/queue");
     }

@@ -142,4 +142,27 @@ legend {
 .scroll-x {
   overflow-x: auto;
 }
+
+
+.pill {
+    padding: 1px 3px;
+    font-size: 11px;
+    border-radius: 2px;
+
+    background-color: @warn-color;
+    border-color: @warn-color;
+    color: @warn-text-color;
+
+    &.TV {
+        background-color: @primary-color;
+        border-color: @primary-color;
+        color: @primary-text-color;
+    }
+
+    &.MOVIE {
+        background-color: @error-color;
+        border-color: @error-color;
+        color: @error-text-color;
+    }
+}
 </style>

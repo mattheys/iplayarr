@@ -4,8 +4,8 @@ import NodeCache from "node-cache";
 import { getParameter } from "./configService";
 import { IplayarrParameter } from "../types/IplayarrParameters";
 import loggingService from "./loggingService";
-import { IPlayerSearchResult } from "../types/IPlayerSearchResult";
-import { createNZBName, legacyCreateNZBName } from "../utils/Utils";
+import { IPlayerSearchResult, VideoType } from "../types/IPlayerSearchResult";
+import { createNZBName } from "../utils/Utils";
 import { v4 } from "uuid";
 import fs from 'fs';
 import queueService from "./queueService";
@@ -16,12 +16,13 @@ import historyService from "./historyService";
 import { QueueEntry } from "../types/QueueEntry";
 import synonymService from "./synonymService";
 import { Synonym } from "../types/Synonym";
-import { FilenameTemplateContext } from "../types/FilenameTemplateContext";
-import Handlebars from "handlebars";
 import { LogLine, LogLineLevel } from "../types/LogLine";
 
-const episodeRegex = /^(\d+):\s*(.+?),\s*([^,]+),\s*(\w+)$/;
 const progressRegex = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s) ETA: ([\d:]+).*$/;
+
+const seriesRegex : RegExp = /: (?:Series|Season) (\d+)/
+const listFormat : string = "RESULT|:|<pid>|:|<name>|:|<seriesnum>|:|<episodenum>|:|<index>|:|<channel>"
+
 const searchCache : NodeCache = new NodeCache({stdTTL: 300, checkperiod: 60});
 
 const timestampFile = 'iplayarr_timestamp';
@@ -101,89 +102,29 @@ const iplayerService = {
         return downloadProcess;
     },
 
-    uiSearch : async (inputTerm : string) : Promise<IPlayerSearchResult[]> => {
+    search : async (inputTerm : string, season? : number, episode? : number) : Promise<IPlayerSearchResult[]> => {
         //Sanitize the term, BBC don't put years on their movies
-        const term = removeLastFourDigitNumber(inputTerm);
+        const term = !season ? removeLastFourDigitNumber(inputTerm) : inputTerm;
 
         const synonym = await synonymService.getSynonym(inputTerm);
         const searchTerm = synonym ? synonym.target : term;
 
-        //If we've searched before
-        let results : IPlayerSearchResult[] | undefined = searchCache.get(searchTerm);
-        if (!results){
-            results = await searchIPlayer(searchTerm, synonym, false);
-            searchCache.set(searchTerm, results);
-        }
-
-        for (const result of results){
-            const nzbName = await sonarrService.reverseSearch(inputTerm, result.title);
-            result.nzbName = nzbName;
-        }
-
-        return results;
-    },
-
-    filmSearch : async (inputTerm : string) : Promise<IPlayerSearchResult[]> => {
-        //Sanitize the term, BBC don't put years on their movies
-        const term = removeLastFourDigitNumber(inputTerm);
-
-        const synonym = await synonymService.getSynonym(inputTerm);
-        const searchTerm = synonym ? synonym.target : term;
-
-        //If we've searched before
-        let results : IPlayerSearchResult[] | undefined = searchCache.get(searchTerm);
-        if (!results){
-            results = await searchIPlayer(searchTerm, synonym, false);
-            searchCache.set(searchTerm, results);
-        }
-
-        const movieFilenameTemplate : string = (await getParameter(IplayarrParameter.MOVIE_FILENAME_TEMPLATE)) as string;
-        const compiledTemplate = Handlebars.compile(movieFilenameTemplate);
-        for (const result of results){
-            const context : FilenameTemplateContext = {
-                title : inputTerm.replaceAll(" ",".")
-            }
-            result.nzbName = compiledTemplate(context)
-        }
-
-        return results;
-    },
-
-    tvSearch : async (term : string, season : number, episode : number) : Promise<IPlayerSearchResult[]> => {
-        const synonym = await synonymService.getSynonym(term);
-        let searchTerm = synonym ? synonym.target : term;
-        
-        //If we've provided an episode, find the name from sonarr
-        const episodeName : string | undefined = episode ? (await sonarrService.getEpisodeTitle(term, season, episode)) : undefined;
-
-	//If we've searched before
+        //Check the cache
         let results : IPlayerSearchResult[] | undefined = searchCache.get(searchTerm);
         if (!results){
             results = await searchIPlayer(searchTerm, synonym);
             searchCache.set(searchTerm, results);
         }
 
-        //Find the correct season and show
-        results = results.filter(({title}) => {
-            if (season && !title.includes(`Series ${season}`) && !title.includes(`Season ${season}`)) {
-                return false;
-            }
-            if (episode) {
-                const episodeFoundByNumber : boolean = title.includes(`Episode ${episode}`);
-                const episodeFoundByName : boolean = episodeName != undefined && title.includes(episodeName);
-                if (!episodeFoundByNumber && !episodeFoundByName) {
-                    return false;
-                }
-            }
-            return true;
-        });
-
-        return results;
+        if (season && episode){
+            return results.filter((result) => result.series == season && result.episode == episode);
+        } else {
+            return results;
+        }
     },
 
     refreshCache: async () => {
         const downloadDir = await getParameter(IplayarrParameter.DOWNLOAD_DIR) as string;
-        const completeDir = await getParameter(IplayarrParameter.COMPLETE_DIR) as string;
         const [exec, args] = await getIPlayerExec();
 
         //Refresh the cache
@@ -226,7 +167,7 @@ const iplayerService = {
     },
 }
 
-async function searchIPlayer(term : string, synonym? : Synonym, tv : boolean = true) : Promise<IPlayerSearchResult[]> {
+async function searchIPlayer(term : string, synonym? : Synonym) : Promise<IPlayerSearchResult[]> {
     return new Promise(async (resolve, reject) => {
         const results : IPlayerSearchResult[] = []
         const [exec, args] = await getIPlayerExec();
@@ -238,21 +179,30 @@ async function searchIPlayer(term : string, synonym? : Synonym, tv : boolean = t
                 exemptionArgs.push(`"${exemption}"`);
             }
         }
-        const allArgs = [...args, ...exemptionArgs, `"${term}"`];
+        const allArgs = [...args, "--listformat", `"${listFormat}"`, ...exemptionArgs, `"${term}"`];
 
         loggingService.debug(`Executing get_iplayer with args: ${allArgs.join(" ")}`);
         const searchProcess = spawn(exec as string, allArgs, { shell: true });
 
         searchProcess.stdout.on('data', (data) => {
             loggingService.log(data.toString().trim());
-            const lines = data.toString().split("\n");
-            for (const line of lines) {
-                const match = episodeRegex.exec(line);
-                if (match) {
-                    let [_, number, title, channel, pid] = match;
-                    title = title.replace(/ - -$/g, '');
-                    results.push({ 
-                        number : parseInt(number), title, channel, pid, request : {term, line} });
+            const lines : string[] = data.toString().split('\n');
+            for (const line of lines){
+                if (line.startsWith("RESULT|:|")){
+                    let [_, pid, rawTitle, seriesStr, episodeStr, number, channel] = line.split("|:|");
+                    const episode : number | undefined = (episodeStr == "" ? undefined : parseInt(episodeStr));
+                    const [title, series] = (seriesStr == "" ? [rawTitle, undefined] : extractSeriesNumber(rawTitle, seriesStr))
+                    const type : VideoType = episode && series ? VideoType.TV : VideoType.MOVIE;
+                    results.push({
+                        pid,
+                        title,
+                        channel,
+                        number: parseInt(number),
+                        request: {term, line},
+                        episode,
+                        series,
+                        type
+                    });
                 }
             }
         });
@@ -264,20 +214,28 @@ async function searchIPlayer(term : string, synonym? : Synonym, tv : boolean = t
         searchProcess.on('close', async (code) => {
             if (code === 0) {
                 for (let result of results){
-                    if (tv){
-                        const nzbName : string | undefined = term != "*" ? (await createNZBName(term, result.request.line || (await legacyCreateNZBName(result.title)))) : (await legacyCreateNZBName(result.title));
-                        result.nzbName =  nzbName;
-                    } else {
-                        const nzbName = term;
-                        result.nzbName =  nzbName;
-                    }
+                    const nzbName = await createNZBName(result.type, {
+                        title: result.title.replaceAll(" ", "."),
+                        season: result.series ? result.series.toString().padStart(2, '0') : undefined,
+                        episode: result.episode ? result.episode.toString().padStart(2, '0') : undefined,
+                    });
+                    result.nzbName = nzbName;
                 }
                 resolve(results);
             } else {
                 reject(new Error(`Process exited with code ${code}`));
             }
         });
-    })
+    });
+}
+
+function extractSeriesNumber(title : string, series : string) : any[]{
+    const match = seriesRegex.exec(title);
+    if (match){
+        return [title.replace(seriesRegex, ''), parseInt(match[1])];
+    } else {
+        return [title, parseInt(series)];
+    }
 }
 
 async function getIPlayerExec() : Promise<(string | RegExpMatchArray)[]> {

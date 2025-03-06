@@ -2,6 +2,7 @@ import { Parser } from "xml2js";
 import { Request, Response } from "express";
 import queueService from "../../service/queueService";
 import { NZBMetaEntry } from "../../types/responses/newznab/NZBFileResponse";
+import { VideoType } from "../../types/IPlayerSearchResult";
 
 const parser = new Parser();
 
@@ -11,7 +12,8 @@ interface AddFileRequest {
 
 interface NZBDetails {
     pid : string,
-    nzbName : string
+    nzbName : string,
+    type : VideoType
 }
 
 export default async (req : Request, res : Response) => {
@@ -20,8 +22,8 @@ export default async (req : Request, res : Response) => {
         const pids : string[] = [];
         for (const file of files){
             const xmlString = file.buffer.toString('utf-8');
-            const {pid, nzbName} = await getDetails(xmlString);
-            queueService.addToQueue(pid, nzbName);
+            const {pid, nzbName, type} = await getDetails(xmlString);
+            queueService.addToQueue(pid, nzbName, type);
             pids.push(pid);
         }
 
@@ -44,10 +46,11 @@ async function getDetails(xml : string) : Promise<NZBDetails> {
                 return reject(err);
             }
             const nzbName : NZBMetaEntry = result.nzb.head[0].meta.find(({$} : any) => $.type === 'nzbName');
+            const type : NZBMetaEntry = result.nzb.head[0].meta.find(({$} : any) => $.type === 'type');
             const details : NZBDetails = {
                 "pid" : result.nzb.head[0].title[0],
                 "nzbName" : nzbName?.$?._,
-
+                "type" : (type?.$?._) as VideoType
             }
             resolve(details);
         });

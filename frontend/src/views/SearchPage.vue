@@ -6,6 +6,7 @@
                 <tr>
                     <th>#</th>
                     <th>Title</th>
+                    <th>Type</th>
                     <th>Calculated Filename</th>
                     <th>Channel</th>
                     <th>PID</th>
@@ -17,10 +18,15 @@
             <tbody>
                 <tr v-for="result of searchResults" v-bind:key="result.pid">
                     <td>{{ result.number }}</td>
+                    <td>
+                        <span :class="['pill', result.type]">
+                            {{ result.type }}
+                        </span>
+                    </td>
                     <td>{{ result.title }}</td>
                     <td>{{ result.nzbName }}</td>
                     <td>
-                        <span :class="['channelLabel', result.channel.replaceAll(' ', '')]">
+                        <span :class="['pill', result.channel.replaceAll(' ', '')]">
                             {{ result.channel }}
                         </span>
                     </td>
@@ -99,25 +105,17 @@ const download = async(searchResult) => {
     }
 }
 
-.channelLabel {
-    padding: 1px 3px;
-    font-size: 11px;
-    border-radius: 2px;
+.pill {
+    &.BBCOne {
+        background-color: @error-color;
+        border-color: @error-color;
+        color: @error-text-color;
+    }
 
-    background-color: @warn-color;
-    border-color: @warn-color;
-    color: @warn-text-color;
-}
-
-.channelLabel.BBCOne {
-    background-color: @error-color;
-    border-color: @error-color;
-    color: @error-text-color;
-}
-
-.channelLabel.BBCTwo {
-    background-color: @primary-color;
-    border-color: @primary-color;
-    color: @primary-text-color;
+    &.BBCTwo {
+        background-color: @primary-color;
+        border-color: @primary-color;
+        color: @primary-text-color;
+    }
 }
 </style>

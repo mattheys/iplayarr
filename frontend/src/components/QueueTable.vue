@@ -3,12 +3,13 @@
       <thead>
           <tr>
               <th></th>
-              <th class=''>Filename</th>
-              <th class=''>Start</th>
-              <th class=''>Size</th>
+              <th>Filename</th>
+              <th>Type</th>
+              <th>Start</th>
+              <th>Size</th>
               <th class='progress-column'>Progress</th>
-              <th class=''>ETA</th>
-              <th class=''>Speed</th>
+              <th>ETA</th>
+              <th>Speed</th>
               <th class='center'><font-awesome-icon :icon="['fas', 'cog']" /></th>
           </tr>
       </thead>
