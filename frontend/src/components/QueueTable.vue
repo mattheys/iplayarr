@@ -40,6 +40,7 @@
 <style lang="less">
   .queueTable {
     max-width: 100%;
+    width: 100%;
     border-collapse: collapse;
     font-size: 14px;
     color: @table-text-color;

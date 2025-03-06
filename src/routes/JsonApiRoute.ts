@@ -247,7 +247,7 @@ router.delete("/radarr/indexer", (_, res : Response) => {
 
 router.get("/search", async (req : Request, res : Response) => {
     const {q} = req.query as any;
-    const result : IPlayerSearchResult[] = await iplayerService.filmSearch(q);
+    const result : IPlayerSearchResult[] = await iplayerService.uiSearch(q);
     res.json(result);
 });
 

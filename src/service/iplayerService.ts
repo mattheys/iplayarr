@@ -101,6 +101,28 @@ const iplayerService = {
         return downloadProcess;
     },
 
+    uiSearch : async (inputTerm : string) : Promise<IPlayerSearchResult[]> => {
+        //Sanitize the term, BBC don't put years on their movies
+        const term = removeLastFourDigitNumber(inputTerm);
+
+        const synonym = await synonymService.getSynonym(inputTerm);
+        const searchTerm = synonym ? synonym.target : term;
+
+        //If we've searched before
+        let results : IPlayerSearchResult[] | undefined = searchCache.get(searchTerm);
+        if (!results){
+            results = await searchIPlayer(searchTerm, synonym, false);
+            searchCache.set(searchTerm, results);
+        }
+
+        for (const result of results){
+            const nzbName = await sonarrService.reverseSearch(inputTerm, result.title);
+            result.nzbName = nzbName;
+        }
+
+        return results;
+    },
+
     filmSearch : async (inputTerm : string) : Promise<IPlayerSearchResult[]> => {
         //Sanitize the term, BBC don't put years on their movies
         const term = removeLastFourDigitNumber(inputTerm);

@@ -1,3 +1,4 @@
+import { FilenameTemplateContext } from "../types/FilenameTemplateContext";
 import { IplayarrParameter } from "../types/IplayarrParameters";
 import { CreateDownloadClientForm } from "../types/requests/form/CreateDownloadClientForm";
 import { CreateIndexerForm } from "../types/requests/form/CreateIndexerForm";
@@ -7,6 +8,10 @@ import { SonarrEpisodeResponse, SonarrSeriesResponse } from "../types/responses/
 import arrService, { ArrConfig } from "./arrService";
 import { getParameter } from "./configService";
 import axios, { AxiosResponse } from "axios";
+import Handlebars from "handlebars";
+
+const findSeriesRegex : RegExp = /(?:Season|Series) (\d+)/
+const findEpisodeRegex : RegExp = /(?:Episode) (\d+)/
 
 const sonarrService = {
     getConfig : async () : Promise<ArrConfig> => {
@@ -120,7 +125,63 @@ const sonarrService = {
         } catch (err){
             throw err;
         }
-    }
+    },
+
+    /* This method is for the search feature, it looks to find the series and episode etc from sonarr based on a line from get_iplayer */
+    reverseSearch : async(term : string, result : string) : Promise<string> => {
+        const {API_KEY, HOST} = await sonarrService.getConfig();
+        if (API_KEY && HOST){
+            //See if we can find the series, without that there's no point
+            const seriesMatch : RegExpExecArray | null = findSeriesRegex.exec(result);
+            if (seriesMatch){
+                const seriesNumber : number = parseInt(seriesMatch[1]);
+
+                const allSeries : SonarrSeriesResponse[] = await sonarrService.getAllSeries();
+                const matchingSeries: SonarrSeriesResponse | undefined = allSeries
+                    .sort((a, b) => b.title.length - a.title.length)
+                    .find(({ title }) => result.toLowerCase().includes(title.toLowerCase()));
+                if (matchingSeries){
+                    let episodeNumber : number | undefined = undefined;
+                    const episodeMatch : RegExpExecArray | null = findEpisodeRegex.exec(result);
+                    if (episodeMatch) {
+                        episodeNumber = parseInt(episodeMatch[1])
+                    } else {
+                        episodeNumber = await sonarrService.getEpisodeFromTitle(matchingSeries.title, seriesNumber, result);
+                    }
+                    if (episodeNumber){
+                        const tvFilenameTemplate : string = (await getParameter(IplayarrParameter.TV_FILENAME_TEMPLATE)) as string;
+                        const context : FilenameTemplateContext = {
+                            title : matchingSeries.title.replaceAll(" ", "."),
+                            season : seriesNumber.toString().padStart(2, '0'),
+                            episode : episodeNumber.toString().padStart(2, '0')
+                        }
+                        return  Handlebars.compile(tvFilenameTemplate)(context);
+                    }
+                }
+            }
+        }
+        const movieFilenameTemplate : string = (await getParameter(IplayarrParameter.MOVIE_FILENAME_TEMPLATE)) as string;
+        const compiledTemplate = Handlebars.compile(movieFilenameTemplate);
+        const context : FilenameTemplateContext = {
+            title : term.split(' ')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join('.')
+        }
+        return compiledTemplate(context)
+    },
+
+    getAllSeries : async() : Promise<SonarrSeriesResponse[]> => {
+        const {API_KEY, HOST} = await sonarrService.getConfig();
+
+        const url : string = `${HOST}/api/v3/series?apikey=${API_KEY}`;
+        const {data} : AxiosResponse<SonarrSeriesResponse[]> = await axios.get(url, {
+            headers: {
+                'X-Api-Key': API_KEY
+            }
+        });
+        
+        return data;
+    } 
 }
 
 export default sonarrService;

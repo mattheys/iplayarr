@@ -68,6 +68,7 @@ const download = async(searchResult) => {
 <style lang="less" scoped>
 .resultsTable {
     max-width: 100%;
+    width: 100%;
     border-collapse: collapse;
     font-size: 14px;
     color: @table-text-color;
