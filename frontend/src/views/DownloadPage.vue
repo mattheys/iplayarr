@@ -2,7 +2,7 @@
     <SettingsPageToolbar :icons="['download']" @download="download"/>
     <div class="infoBanner" :style="{'background-image' : `url(${details.thumbnail})`}">
         <div class="infoContainer">
-            <h1>{{ searchResult.title }}{{ searchResult.episode ? ` - Series ${searchResult.series}, Episode ${searchResult.episode}` : '' }}</h1>
+            <h1>{{ searchResult.title }}{{ searchResult.episode ? ` - Series ${searchResult.series || 'Unknown'}, Episode ${searchResult.episode}` : '' }}</h1>
             <div class="seriesDetails" v-if="details.category">
                 <span>{{ details.runtime }} Minutes</span>
                 <span>{{ details.category }}</span>
