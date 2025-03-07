@@ -7,7 +7,7 @@ const loggingService = {
     log: (...params : any[]) => {
         console.log(...params);
         const message = joinOrReturn(params);
-        const logLine : LogLine = {level : LogLineLevel.INFO, id: 'SYSTEM', message, timestamp : new Date()}
+        const logLine : LogLine = {level : LogLineLevel.INFO, id: 'INFO', message, timestamp : new Date()}
         socketService.emit('log', logLine);
     },
 
