@@ -20,6 +20,7 @@ import { Synonym } from "../types/Synonym";
 import { md5 } from "../utils/Utils";
 import { IPlayerSearchResult } from "../types/IPlayerSearchResult";
 import iplayerService from "../service/iplayerService";
+import arrService from "../service/arrService";
 
 const router : Router = Router();
 
@@ -244,6 +245,16 @@ router.delete("/radarr/indexer", (_, res : Response) => {
     removeParameter(IplayarrParameter.RADARR_INDEXER_ID);
     res.json(true)
 });
+
+router.post("/arr/test", async (req : Request, res : Response) => {
+    const {API_KEY, HOST} = req.body;
+    const result : string | boolean = await arrService.testConnection({API_KEY, HOST});
+    if (result == true){
+        res.json(true);
+    } else {
+        res.status(500).json({error: ApiError.INTERNAL_ERROR, message : result} as ApiResponse)
+    }
+})
 
 router.get("/search", async (req : Request, res : Response) => {
     const {q} = req.query as any;

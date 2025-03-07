@@ -107,8 +107,7 @@ const arrService = {
         }
     },
 
-    getDownloadClient : async(id : number, config : ArrConfig) : Promise<DownloadClientResponse | undefined> => {
-        const {API_KEY, HOST} = config;
+    getDownloadClient : async(id : number, {API_KEY, HOST} : ArrConfig) : Promise<DownloadClientResponse | undefined> => {
         const url : string = `${HOST}/api/v3/downloadclient/${id}?apikey=${API_KEY}`;
 
         try {
@@ -214,8 +213,7 @@ const arrService = {
         }
     },
 
-    getIndexer : async(id : number, config : ArrConfig) : Promise<IndexerResponse | undefined> => {
-        const {API_KEY, HOST} = config;
+    getIndexer : async(id : number, {API_KEY, HOST} : ArrConfig) : Promise<IndexerResponse | undefined> => {
         const url : string = `${HOST}/api/v3/indexer/${id}?apikey=${API_KEY}`;
 
         try {
@@ -238,6 +236,25 @@ const arrService = {
                 return;
             }
             throw error;
+        }
+    },
+
+    testConnection : async({API_KEY, HOST} : ArrConfig) : Promise<string | boolean> => {
+        const url : string = `${HOST}/api?apikey=${API_KEY}`;
+
+        try {
+            const response = await axios.get(url, {
+                headers: {
+                    'X-Api-Key' : API_KEY
+                }
+            });
+            if (response.status == 200) return true;
+            return false;
+        } catch (error) {
+            if (axios.isAxiosError(error)){
+                return error.message;
+            }
+            return false;
         }
     }
 }

@@ -2,6 +2,19 @@
     <legend>{{ name }}</legend>
     <SettingsTextInput name="URL" :tooltip="`${name} Hostname`" v-model="localValue.url" />
     <SettingsTextInput name="API Key" :tooltip="`${name} API Key`" v-model="localValue.api_key" />
+    <div class="button-container">
+        <button class="test-button" @click="test">
+            <template v-if="testStatus == 'INITIAL'">
+                Test {{ name }}
+            </template>
+            <template v-if="testStatus == 'PENDING'">
+                <font-awesome-icon class="test-pending" :icon="['fas', 'spinner']" />
+            </template>
+            <template v-if="testStatus == 'SUCCESS'">
+                <font-awesome-icon class="test-success" :icon="['fas', 'check']" />
+            </template>
+        </button>
+    </div>
     <div class="arrContainer">
         <div>
             <legend class="sub">Download Client</legend>
@@ -38,7 +51,9 @@ const placeholders = ref({
     host : window.location.hostname,
     protocol : window.location.protocol,
     port : window.location.port
-})
+});
+
+const testStatus = ref("INITIAL");
 
 const props = defineProps({
     name: {
@@ -80,6 +95,26 @@ const unlinkIndexer = async () => {
         router.go(0);
     }
 }
+
+const test = async () => {
+    testStatus.value = "PENDING";
+    const testResponse = await fetch(`${getHost()}/json-api/arr/test`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            HOST : localValue.value.url,
+            API_KEY : localValue.value.api_key
+        }),
+        credentials: "include"
+    });
+    if (!testResponse.ok){
+        const errorBody = await testResponse.json();
+        alert(`Error Connecting to ${props.name} : ${errorBody.message}`);
+        testStatus.value = "INITIAL";
+    } else {
+        testStatus.value = "SUCCESS";
+    }
+}
 </script>
 
 <style lang="less" scoped>
@@ -97,19 +132,40 @@ const unlinkIndexer = async () => {
     justify-content: flex-end;
     text-align: right;
     max-width: 650px;
+
+    button {
+        background-color: @settings-button-background-color;
+        border: 1px solid @settings-button-border-color;
+        padding: 6px 16px;
+        font-size: 14px;
+        color: @primary-text-color;
+        border-radius: 4px;
+
+        &:hover {
+            border-color: @settings-button-hover-border-color;
+            background-color: @settings-button-hover-background-color;
+        }
+
+        .test-success {
+            color: @success-color;
+        }
+        
+        .test-pending {
+            animation: spin 1.25s linear infinite;
+        }
+
+        &.test-button {
+            width: 115px;
+        }
+    }
 }
 
-button {
-    background-color: @settings-button-background-color;
-    border: 1px solid @settings-button-border-color;
-    padding: 6px 16px;
-    font-size: 14px;
-    color: @primary-text-color;
-    border-radius: 4px;
-
-    &:hover {
-        border-color: @settings-button-hover-border-color;
-        background-color: @settings-button-hover-background-color;
-    }
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
