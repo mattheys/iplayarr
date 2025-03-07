@@ -33,9 +33,9 @@ export default async (req : Request, res : Response) => {
                     title: result.nzbName,
                     description: result.nzbName,
                     guid: `https://www.bbc.co.uk/iplayer/episodes/${result.pid}`,
-                    size: "2147483648",
+                    size:  result.size ? String(result.size * 1048576) : "2147483648",
                     category: ["2000", "2040"],
-                    pubDate,
+                    pubDate : result.pubDate ? result.pubDate.toUTCString().replace("GMT", "+0000") : pubDate,
                     "newznab:attr": [
                       { $: { name: "category", value: "2000" } },
                       { $: { name: "category", value: "2040" } },
@@ -44,7 +44,7 @@ export default async (req : Request, res : Response) => {
                       { $: { name: "grabs", value: "0" } }
                     ],
                     link: `${getBaseUrl(req)}${createNZBDownloadLink(result, req.query.apikey as string)}`,
-                    enclosure: {$:{url : `${getBaseUrl(req)}${createNZBDownloadLink(result, req.query.apikey as string)}`, length : "2147483648", type: "application/x-nzb"} } 
+                    enclosure: {$:{url : `${getBaseUrl(req)}${createNZBDownloadLink(result, req.query.apikey as string)}`, length :  result.size ? String(result.size * 1048576) : "2147483648", type: "application/x-nzb"} } 
                   }
             ))
         }

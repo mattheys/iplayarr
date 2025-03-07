@@ -12,7 +12,9 @@ export interface IPlayerSearchResult {
     nzbName? : string,
     type : VideoType
     series? : number,
-    episode? : number
+    episode? : number,
+    size? : number,
+    pubDate? : Date
 }
 
 export interface IplayerSearchResultRequest {

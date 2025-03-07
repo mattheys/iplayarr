@@ -19,11 +19,12 @@ import { Synonym } from "../types/Synonym";
 import { LogLine, LogLineLevel } from "../types/LogLine";
 import { IPlayerDetails } from "../types/IPlayerDetails";
 
+const sizeFactor : number = 0.7;
 const progressRegex : RegExp = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s) ETA: ([\d:]+).*$/;
 const seriesRegex : RegExp = /: (?:Series|Season) (\d+)/
 const detailsRegex : RegExp = /^([a-z+]+): +(.*)$/;
 
-const listFormat : string = "RESULT|:|<pid>|:|<name>|:|<seriesnum>|:|<episodenum>|:|<index>|:|<channel>"
+const listFormat : string = "RESULT|:|<pid>|:|<name>|:|<seriesnum>|:|<episodenum>|:|<index>|:|<channel>|:|<duration>|:|<available>"
 
 const searchCache : NodeCache = new NodeCache({stdTTL: 300, checkperiod: 60});
 const detailsCache : NodeCache = new NodeCache({stdTTL: 86400, checkperiod: 3600});
@@ -251,10 +252,11 @@ async function searchIPlayer(term : string, synonym? : Synonym) : Promise<IPlaye
             const lines : string[] = data.toString().split('\n');
             for (const line of lines){
                 if (line.startsWith("RESULT|:|")){
-                    let [_, pid, rawTitle, seriesStr, episodeStr, number, channel] = line.split("|:|");
+                    let [_, pid, rawTitle, seriesStr, episodeStr, number, channel, durationStr, onlineFrom] = line.split("|:|");
                     const episode : number | undefined = (episodeStr == "" ? undefined : parseInt(episodeStr));
                     const [title, series] = (seriesStr == "" ? [rawTitle, undefined] : extractSeriesNumber(rawTitle, seriesStr))
                     const type : VideoType = episode && series ? VideoType.TV : VideoType.MOVIE;
+		    const size : number | undefined = durationStr ? parseInt(durationStr) * sizeFactor : undefined;
                     results.push({
                         pid,
                         title,
@@ -263,7 +265,9 @@ async function searchIPlayer(term : string, synonym? : Synonym) : Promise<IPlaye
                         request: {term, line},
                         episode,
                         series,
-                        type
+                        type,
+			size,
+			pubDate : onlineFrom ? new Date(onlineFrom) : undefined
                     });
                 }
             }
