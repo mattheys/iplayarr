@@ -42,9 +42,11 @@ export default async (req : Request, res : Response) => {
 async function getDetails(xml : string) : Promise<NZBDetails> {
     return new Promise((resolve, reject) => {
         parser.parseString(xml, (err, result) => {
-            if (err || !result?.nzb?.head?.[0]?.title?.[0]) {
+            if (err) {
                 return reject(err);
-            }
+            } else if (!result?.nzb?.head?.[0]?.title?.[0]){
+                return reject(new Error("Invalid iPlayarr NZB File");
+	    }
             const nzbName : NZBMetaEntry = result.nzb.head[0].meta.find(({$} : any) => $.type === 'nzbName');
             const type : NZBMetaEntry = result.nzb.head[0].meta.find(({$} : any) => $.type === 'type');
             const details : NZBDetails = {
