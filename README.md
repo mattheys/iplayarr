@@ -30,8 +30,6 @@ services:
         - "API_KEY=1234"
         - "DOWNLOAD_DIR=/mnt/media/iplayarr/incomplete"
         - "COMPLETE_DIR=/mnt/media/iplayarr/complete"
-        - "SONARR_HOST=http://localhost:8989"
-        - "SONARR_API_KEY=xxxxxxxxx"
       ports:
         - "4404:4404"
       volumes:
