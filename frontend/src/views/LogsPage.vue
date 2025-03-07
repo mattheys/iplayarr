@@ -86,6 +86,8 @@ ul {
 
   pre {
     margin: 0px;
+    white-space: pre-wrap; /* Ensure text wraps inside pre, but still scroll horizontally when necessary */
+    word-wrap: break-word; /* Prevent long words from breaking the layout */
 
     &.INFO {
       color: @success-color;
