@@ -1,5 +1,5 @@
 <template>
-    <SettingsPageToolbar />
+    <SettingsPageToolbar :icons="['filter']" :filter-options="availableFilters" :selected-filter="filter" :filter-enabled="filter != 'All'" @select-filter="selectFilter"/>
     <div class="inner-content scroll-x" v-if="!loading">
         <table class="resultsTable">
             <thead>
@@ -16,7 +16,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="result of searchResults" v-bind:key="result.pid">
+                <tr v-for="result of filteredResults" v-bind:key="result.pid">
                     <td>{{ result.number }}</td>
                     <td>
                         <span :class="['pill', result.type]">
@@ -43,7 +43,7 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { getHost } from '@/lib/utils';
 import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
 import LoadingIndicator from '@/components/LoadingIndicator.vue';
@@ -54,9 +54,16 @@ const router = useRouter();
 const searchResults = ref([]);
 const searchTerm = ref("");
 const loading = ref(true);
+const availableFilters = ref(['All', 'TV', 'Movie']);
+const filter = ref('All');
+
+const filteredResults = computed(() => {
+    return filter.value == 'All' ? searchResults.value : searchResults.value.filter(({type}) => type == filter.value.toUpperCase());
+})
 
 watch(() => route.query.searchTerm, async (newSearchTerm) => {
     if (newSearchTerm) {
+        filter.value = 'All';
         loading.value = true;
         searchResults.value = [];
         searchTerm.value = newSearchTerm;
@@ -68,6 +75,10 @@ watch(() => route.query.searchTerm, async (newSearchTerm) => {
 
 const download = async(searchResult) => {
     router.push({ name : 'download', query : {json : JSON.stringify(searchResult)}});
+}
+
+const selectFilter = (option) => {
+    filter.value = option;
 }
 </script>
 
