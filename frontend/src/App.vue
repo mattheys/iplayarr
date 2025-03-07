@@ -45,6 +45,7 @@ provide('hiddenSettings', hiddenSettings);
 
 const pageSetup = async () => {
   if (socket.value == null){
+    document.body.scrollTop = document.documentElement.scrollTop = 0;
     await updateQueue();
     if (process.env.NODE_ENV == 'production') {
       socket.value = io();

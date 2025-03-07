@@ -8,6 +8,7 @@
       <LeftHandNavLink label="Logs" icon="history" path="/logs" @option-clicked="closeLHN" />
       <LeftHandNavLink label="Settings" icon="gears" path="/settings" @option-clicked="closeLHN" />
       <LeftHandNavLink label="Synonyms" icon="arrows-rotate" path="/synonyms" @option-clicked="closeLHN" />
+      <LeftHandNavLink label="Refresh Index" icon="address-book" noLink="true" @option-clicked="refreshCache" />
       <LeftHandNavLink label="About" icon="circle-info" path="/about" @option-clicked="closeLHN" />
       <LeftHandNavLink label="Logout" icon="sign-out" noLink="true" @option-clicked="logout" />
     </ul>
@@ -41,6 +42,13 @@ const logout = async () => {
     if (response.ok) {
       router.go(0);
     }
+  }
+}
+
+const refreshCache = async () => {
+  await fetch(`${getHost()}/json-api/cache-refresh`, { credentials: "include"});
+  if(confirm("Cache Refresh Started, Would you like to view the logs?")){
+    router.push("/logs");
   }
 }
 </script>

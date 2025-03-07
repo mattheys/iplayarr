@@ -129,7 +129,15 @@ const iplayerService = {
 
         //Refresh the cache
         loggingService.debug(`Executing get_iplayer with args: ${[...args].join(" ")} --cache-rebuild`);
-        spawn(exec as string, [...args, '--cache-rebuild'], { shell: true });
+        const refreshService = spawn(exec as string, [...args, '--cache-rebuild'], { shell: true });
+
+        refreshService.stdout.on('data', (data) => {
+            loggingService.log(data.toString());
+        });
+
+        refreshService.stderr.on('data', (data) => {
+            loggingService.error(data.toString());
+        });
         
         //Delete failed jobs
         const threeHoursAgo : number = Date.now() - 3 * 60 * 60 * 1000;

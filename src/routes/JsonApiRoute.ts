@@ -268,5 +268,10 @@ router.get("/download", async (req : Request, res : Response) => {
     res.json(true)
 });
 
+router.get("/cache-refresh", async (_, res : Response) => {
+    iplayerService.refreshCache();
+    res.json(true);
+})
+
 
 export default router;
