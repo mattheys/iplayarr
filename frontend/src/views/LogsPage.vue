@@ -1,12 +1,9 @@
 <template>
+  <SettingsPageToolbar :icons="['follow']" :follow-status="followlog" @toggle-follow="toggleFollow"/>
   <div class="inner-content">
     <p v-if="filter.length > 0">
       Applied Filters: {{ filter.join(",") }}
     </p>
-    <div>
-      <label for="follow">Follow?</label>
-      <input type="checkbox" id="follow" v-model="followlog" />
-    </div>
     <ul ref="logView">
       <li v-for="log in filteredLogs" :key="`${log.id}_${log.timestamp}`">
         <pre :class="log.level">[ {{ log.id }} ] - {{ log.timestamp }} - {{ log.message.trim() }}</pre>
@@ -16,6 +13,7 @@
 </template>
 
 <script setup>
+import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
 import { inject, computed, ref, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -50,6 +48,10 @@ watch(filteredLogs, () => {
     scrollToBottom();
   }
 }, { deep: true });
+
+const toggleFollow = () => {
+  followlog.value = !followlog.value
+}
 
 </script>
 

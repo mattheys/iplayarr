@@ -18,13 +18,19 @@
                 Download
             </div>
         </button>
+        <button class="SettingsPageToolbar-button clickable" @click="emitEvent('toggleFollow')" v-if="icons.some((i) => i =='follow')">
+            <font-awesome-icon :icon="['fas', followStatus ? 'person-walking' : 'person']" />
+            <div class="SettingsPageToolbar-label">
+                {{followStatus ? 'Following' : 'Not Following'}}
+            </div>
+        </button>
     </div>
 </template>
 
 <script setup>
     import { defineEmits, defineProps } from 'vue';
 
-    const emit = defineEmits(['save', 'toggleAdvanced', 'download']);
+    const emit = defineEmits(['save', 'toggleAdvanced', 'download', 'toggleFollow']);
 
     defineProps({
         enabled : {
@@ -35,6 +41,11 @@
             type : Array,
             required: true,
             default : () => []
+        },
+        followStatus : {
+            type : Boolean,
+            required : false,
+            default : true
         }
     })
 
