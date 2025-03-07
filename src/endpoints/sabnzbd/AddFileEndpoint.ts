@@ -45,7 +45,7 @@ async function getDetails(xml : string) : Promise<NZBDetails> {
             if (err) {
                 return reject(err);
             } else if (!result?.nzb?.head?.[0]?.title?.[0]){
-                return reject(new Error("Invalid iPlayarr NZB File");
+                return reject(new Error("Invalid iPlayarr NZB File"));
 	    }
             const nzbName : NZBMetaEntry = result.nzb.head[0].meta.find(({$} : any) => $.type === 'nzbName');
             const type : NZBMetaEntry = result.nzb.head[0].meta.find(({$} : any) => $.type === 'type');
