@@ -1,5 +1,5 @@
 <template>
-    <SettingsPageToolbar @save="saveConfig" @toggle-advanced="toggleAdvanced" :enabled="saveEnabled" :icons="['save', 'advanced']"/>
+    <SettingsPageToolbar @save="saveConfig" @toggle-advanced="toggleAdvanced" :save-enabled="saveEnabled" :icons="['save', 'advanced']"/>
     <div class="inner-content" v-if="!loading">
         <legend>iPlayarr</legend>
         <SettingsTextInput name="Api Key" tooltip="API Key for access from *arr apps." v-model="config.API_KEY" :error="validationErrors.config?.API_KEY"/>
@@ -27,6 +27,7 @@
     import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
     import SettingsTextInput from '@/components/SettingsTextInput.vue';
     import ArrSettings from '@/components/ArrSettings.vue';
+    import LoadingIndicator from '@/components/LoadingIndicator.vue';
 
     import { onMounted, ref, watch, computed } from 'vue';
     import { getHost } from '@/lib/utils';

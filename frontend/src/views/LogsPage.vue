@@ -1,10 +1,7 @@
 <template>
-  <SettingsPageToolbar :icons="['follow']" :follow-status="followlog" @toggle-follow="toggleFollow"/>
+  <SettingsPageToolbar :icons="['follow', 'filter']" :follow-status="followlog" @toggle-follow="toggleFollow" :filter-enabled="filter != null" :filter-options="availableFilters" :selected-filter="selectedFilter" @select-filter="selectFilter"/>
   <div class="inner-content">
-    <p v-if="filter.length > 0">
-      Applied Filters: {{ filter.join(",") }}
-    </p>
-    <ul ref="logView">
+    <ul ref="logView overflow-x">
       <li v-for="log in filteredLogs" :key="`${log.id}_${log.timestamp}`">
         <pre :class="log.level">[ {{ log.id }} ] - {{ log.timestamp }} - {{ log.message.trim() }}</pre>
       </li>
@@ -17,22 +14,37 @@ import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
 import { inject, computed, ref, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 
-const logs = inject('logs');
 const route = useRoute();
+
+const logs = inject('logs');
 const logView = ref(null);
 const followlog = ref(true);
 
-const filter = ref([]);
+const filter = ref(null);
+const defaultAvailableFilter = [
+  'ALL',
+  'INFO',
+  'DEBUG',
+  'ERROR'
+];
+const availableFilters = ref(defaultAvailableFilter);
 
-// Update filter when the route query changes
 watch(() => route.query.filter, (newFilter) => {
-  filter.value = newFilter ? newFilter.split(',') : [];
+  availableFilters.value = defaultAvailableFilter;
+  if (newFilter){
+    availableFilters.value.push(newFilter);
+    filter.value = newFilter;
+  } else {
+    filter.value = null;
+  }
 }, { immediate: true });
 
+const selectedFilter = computed(() => {
+  return filter.value == null ? 'ALL' : filter.value;
+});
+
 const filteredLogs = computed(() =>
-  filter.value.length === 0
-    ? logs.value
-    : logs.value.filter(log => filter.value.includes(log.id))
+  filter.value == null ? logs.value : logs.value.filter(log => filter.value == log.id)
 );
 
 const scrollToBottom = () => {
@@ -51,6 +63,10 @@ watch(filteredLogs, () => {
 
 const toggleFollow = () => {
   followlog.value = !followlog.value
+}
+
+const selectFilter = (option) => {
+  filter.value = option == 'ALL' ? null : option;
 }
 
 </script>

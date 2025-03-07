@@ -14,7 +14,7 @@ const loggingService = {
     error: (...params : any[]) => {
         console.error(params);
         const message = joinOrReturn(params);
-        const logLine : LogLine = {level : LogLineLevel.ERROR, id: 'SYSTEM-ERROR', message, timestamp : new Date()};
+        const logLine : LogLine = {level : LogLineLevel.ERROR, id: 'ERROR', message, timestamp : new Date()};
         socketService.emit('log', logLine);
     },
 
@@ -23,7 +23,7 @@ const loggingService = {
             const message = joinOrReturn(params);
             if (debug && debug.toLowerCase() == 'true'){
                 console.log(...params);
-                const logLine : LogLine = {level : LogLineLevel.DEBUG, id: 'SYSTEM-DEBUG', message, timestamp : new Date()};
+                const logLine : LogLine = {level : LogLineLevel.DEBUG, id: 'DEBUG', message, timestamp : new Date()};
                 socketService.emit('log', logLine);
             }
         });
