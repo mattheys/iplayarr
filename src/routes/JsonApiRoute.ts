@@ -262,6 +262,12 @@ router.get("/search", async (req : Request, res : Response) => {
     res.json(result);
 });
 
+router.get("/details", async (req : Request, res : Response) => {
+    const {pid} = req.query as any;
+    const details = await iplayerService.details(pid);
+    res.json(details);
+});
+
 router.get("/download", async (req : Request, res : Response) => {
     const {pid, nzbName, type} = req.query as any;
     queueService.addToQueue(pid, nzbName, type);

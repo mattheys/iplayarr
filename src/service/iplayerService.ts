@@ -17,13 +17,16 @@ import { QueueEntry } from "../types/QueueEntry";
 import synonymService from "./synonymService";
 import { Synonym } from "../types/Synonym";
 import { LogLine, LogLineLevel } from "../types/LogLine";
+import { IPlayerDetails } from "../types/IPlayerDetails";
 
-const progressRegex = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s) ETA: ([\d:]+).*$/;
-
+const progressRegex : RegExp = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s) ETA: ([\d:]+).*$/;
 const seriesRegex : RegExp = /: (?:Series|Season) (\d+)/
+const detailsRegex : RegExp = /^([a-z+]+): +(.*)$/;
+
 const listFormat : string = "RESULT|:|<pid>|:|<name>|:|<seriesnum>|:|<episodenum>|:|<index>|:|<channel>"
 
 const searchCache : NodeCache = new NodeCache({stdTTL: 300, checkperiod: 60});
+const detailsCache : NodeCache = new NodeCache({stdTTL: 86400, checkperiod: 3600});
 
 const timestampFile = 'iplayarr_timestamp';
 
@@ -173,6 +176,57 @@ const iplayerService = {
             });
         });
     },
+
+    details : async (pid : string) : Promise<IPlayerDetails | undefined> => {
+        let detail : IPlayerDetails | undefined = detailsCache.get(pid);
+        if (!detail){
+            detail = await new Promise(async (resolve, reject) => {
+                const detailMap : {[key:string] : string} = {};
+                const [exec, args] = await getIPlayerExec();
+                const allArgs = [...args, "-i", `--pid="${pid}"`];
+    
+                loggingService.debug(`Executing get_iplayer with args: ${allArgs.join(" ")}`);
+                const detailsProcess = spawn(exec as string, allArgs, { shell: true });
+    
+                detailsProcess.stdout.on('data', (data) => {
+                    loggingService.debug(data.toString());
+                    const lines : string[] = data.toString().split("\n");
+                    for (const line of lines){
+                        const match = detailsRegex.exec(line);
+                        if (match){
+                            const key = match[1];
+                            const value = match[2];
+                            detailMap[key] = value;
+                        }
+                    }
+                });
+    
+                detailsProcess.on('close', () => {
+                    if (Object.keys(detailMap).length > 0){
+                        detail = {
+                            pid: detailMap['pid'],
+                            title: detailMap['nameshort'] || detailMap['name'],
+                            channel : detailMap['channel'],
+                            category : detailMap['category'],
+                            description : detailMap['desc'],
+                            runtime : detailMap['runtime'] ? parseInt(detailMap['runtime']) : undefined,
+                            firstBroadcast : detailMap['firstbcastdate'],
+                            link : detailMap['player'],
+                            thumbnail : detailMap['thumbnail']
+                        }
+                        resolve(detail);
+                    } else {
+                        resolve(undefined);
+                    }
+                })
+            })
+            if (detail){
+                detailsCache.set(pid, detail);
+            }
+        }
+
+        return detail;
+    }
 }
 
 async function searchIPlayer(term : string, synonym? : Synonym) : Promise<IPlayerSearchResult[]> {

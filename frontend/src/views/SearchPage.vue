@@ -23,8 +23,8 @@
                             {{ result.type }}
                         </span>
                     </td>
-                    <td>{{ result.title }}</td>
-                    <td>{{ result.nzbName }}</td>
+                    <td class="clickable" @click="download(result)">{{ result.title }}</td>
+                    <td class="clickable" @click="download(result)">{{ result.nzbName }}</td>
                     <td>
                         <span :class="['pill', result.channel.replaceAll(' ', '')]">
                             {{ result.channel }}
