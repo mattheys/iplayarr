@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { inject } from 'vue';
 import QueuePage from '@/views/QueuePage.vue';
+import QueueInfoPage from '@/views/QueueInfoPage.vue';
 import LogsPage from '@/views/LogsPage.vue';
 import AboutPage from '@/views/AboutPage.vue';
 import SettingsPage from '@/views/SettingsPage.vue';
@@ -13,6 +14,7 @@ import { getHost } from '@/lib/utils';
 const routes = [
   { path: '/', redirect: '/queue' },
   { path: '/queue', component: QueuePage },
+  { path: '/info', component: QueueInfoPage, name : "queueInfo"},
   { path: '/logs', component: LogsPage },
   { path: '/about', component: AboutPage },
   { path: '/settings', component: SettingsPage },

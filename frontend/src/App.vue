@@ -166,4 +166,10 @@ legend {
         color: @error-text-color;
     }
 }
+
+input:focus, textarea:focus, select:focus, button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 </style>

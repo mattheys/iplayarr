@@ -1,6 +1,13 @@
 <template>
     <div class="SettingsPageToolbar">
         <div>
+            <button class="SettingsPageToolbar-button clickable" @click="emitEvent('deleteQueueItem')"
+                v-if="icons.some((i) => i == 'delete')">
+                <font-awesome-icon :icon="['fas', 'trash']" />
+                <div class="SettingsPageToolbar-label">
+                    Stop
+                </div>
+            </button>
             <button class="SettingsPageToolbar-button clickable" @click="emitEvent('save')" :disabled="!saveEnabled"
                 v-if="icons.some((i) => i == 'save')">
                 <font-awesome-icon :icon="['fas', 'floppy-disk']" />
@@ -58,7 +65,7 @@
 <script setup>
 import { defineEmits, defineProps, ref, onBeforeUnmount } from 'vue';
 
-const emit = defineEmits(['save', 'toggleAdvanced', 'download', 'toggleFollow', 'selectFilter']);
+const emit = defineEmits(['save', 'toggleAdvanced', 'download', 'toggleFollow', 'selectFilter', 'deleteQueueItem']);
 const showFilterDropdown = ref(false);
 const dropdownDiv = ref(null);
 

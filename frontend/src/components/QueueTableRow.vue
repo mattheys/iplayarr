@@ -4,7 +4,7 @@
             <font-awesome-icon :class="[history ? 'complete' : '', item.status]" :icon="['fas', history ? 'download' : (item.status == 'Queued' ? 'cloud' : 'cloud-download')]"/>
         </td>
         <td class='text' data-title='Filename'>
-            <RouterLink :to="{ path: '/logs', query: { filter: item.pid } }">{{ item.nzbName }}</RouterLink>
+            <RouterLink :to="{ path: '/info', query: { item : JSON.stringify(item) } }">{{ item.nzbName }}</RouterLink>
         </td>
         <td>
             <span :class="['pill', item.type]">
