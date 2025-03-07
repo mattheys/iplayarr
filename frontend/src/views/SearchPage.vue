@@ -5,8 +5,8 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Title</th>
                     <th>Type</th>
+                    <th>Title</th>
                     <th>Calculated Filename</th>
                     <th>Channel</th>
                     <th>PID</th>
