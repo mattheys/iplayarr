@@ -24,7 +24,7 @@ OR you can use docker-compose.yml
 ```
 services:
     iplayarr:
-      image: "nikorag/iplayarr"
+      image: "nikorag/iplayarr:latest"
       container_name: "iplayarr"
       environment:
         - "API_KEY=1234"
@@ -35,7 +35,7 @@ services:
       volumes:
         - "/mnt/media:/mnt/media"
         - "./cache:/data"
-        - "./config/config"
+        - "./config:/config"
 ```
 
 
