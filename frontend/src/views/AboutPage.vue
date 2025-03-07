@@ -23,7 +23,11 @@
             </div>
         </div>
         <h2>Credit To</h2>
-        <p><b>Phil Lewis</b> for development of get_iplayer</p>
+        <p>
+            <a href="https://github.com/get-iplayer/get_iplayer">
+                <b>Phil Lewis</b> for development of get_iplayer
+            </a>
+        </p>
         <p>The Entire Development team behind Sonarr</p>
         <p>The 2024 (World Champion) Philadelphia Eagles</p>
     </div>

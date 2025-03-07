@@ -46,9 +46,11 @@ const logout = async () => {
 }
 
 const refreshCache = async () => {
-  await fetch(`${getHost()}/json-api/cache-refresh`, { credentials: "include"});
-  if(confirm("Cache Refresh Started, Would you like to view the logs?")){
-    router.push("/logs");
+  if (confirm("Are you sure you want to refresh the index?")) {
+    await fetch(`${getHost()}/json-api/cache-refresh`, { credentials: "include" });
+    if (confirm("Cache Refresh Started, Would you like to view the logs?")) {
+      router.push("/logs");
+    }
   }
 }
 </script>
@@ -75,6 +77,11 @@ const refreshCache = async () => {
     &.active {
       background-color: @nav-active-background-color;
       color: @brand-color;
+
+      a, span {
+        color: @brand-color !important;
+        text-decoration: none;
+      }
     }
 
     .menuText {
@@ -82,7 +89,7 @@ const refreshCache = async () => {
     }
   }
 
-  a {
+  a, span {
     color: @nav-link-color;
     text-decoration: none;
 

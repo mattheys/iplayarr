@@ -32,7 +32,7 @@
                     </td>
                     <td>{{ result.pid }}</td>
                     <td>
-                        <font-awesome-icon :class="['clickable', result.downloading ? 'downloading' : '']" :icon="['fas', 'cloud-download']" @click="download(result)"/>
+                        <font-awesome-icon :class="['clickable', result.downloading ? 'downloading' : '']" :icon="['fas', 'cloud-download']" @click="immediateDownload(result)"/>
                     </td>
                 </tr>
             </tbody>
@@ -75,6 +75,13 @@ watch(() => route.query.searchTerm, async (newSearchTerm) => {
 
 const download = async(searchResult) => {
     router.push({ name : 'download', query : {json : JSON.stringify(searchResult)}});
+}
+
+const immediateDownload = async({pid, nzbName, type}) => {
+    const response = await fetch(`${getHost()}/json-api/download?pid=${pid}&nzbName=${nzbName}&type=${type}`, {credentials : "include"});
+    if (response.ok){
+        router.push("/queue");
+    }
 }
 
 const selectFilter = (option) => {
