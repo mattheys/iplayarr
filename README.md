@@ -3,6 +3,16 @@
 
 iPlayarr is a companion tool for **Sonarr** and **Radarr**, making it easy to integrate **get_iplayer** for searching and downloading iPlayer content directly. It acts as both an **indexer** and a **download client**, allowing seamless automation of TV and movie downloads. 
 
+## 📸 Screenshots
+
+<img src="https://raw.githubusercontent.com/Nikorag/iplayarr/refs/heads/main/readme-media/login.png" alt="Login View" width="200" style="margin-right: 1rem; display: inline-block;">
+
+<img src="https://raw.githubusercontent.com/Nikorag/iplayarr/refs/heads/main/readme-media/queue.png" alt="Queue View" width="200" style="margin-right: 1rem; display: inline-block;">
+
+<img src="https://raw.githubusercontent.com/Nikorag/iplayarr/refs/heads/main/readme-media/search.png" alt="Search View" width="200" style="margin-right: 1rem; display: inline-block;">
+
+<img src="https://raw.githubusercontent.com/Nikorag/iplayarr/refs/heads/main/readme-media/details.png" alt="Details View" width="200" style="margin-right: 1rem; display: inline-block;">
+
 ## Why iPlayarr?
 
 iPlayer offers a wide range of high-quality content, but integrating it with Sonarr and Radarr has always been tricky. iPlayarr solves this problem by:
@@ -21,7 +31,7 @@ This project started as an experiment: Could I integrate iPlayer with Sonarr/Rad
 
 Most existing solutions rely on torrents or Usenet, but I wanted something that could get media from a reliable source. iPlayarr functions like a personal DVR for iPlayer, making it easier to automate downloads without needing traditional PVR software.
 
-## Getting Started
+## Getting Startedi
 
 ### Download/Installation
 
