@@ -15,6 +15,7 @@ interface NewzNabTVFeedItem {
     title: string;
     description: string;
     guid: string;
+    comments: string;
     size: string;
     category: string[];
     pubDate: string;

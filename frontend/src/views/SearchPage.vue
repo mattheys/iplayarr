@@ -135,5 +135,23 @@ const selectFilter = (option) => {
         border-color: @primary-color;
         color: @primary-text-color;
     }
+
+    &.BBCThree {
+        background-color: @brand-color;
+        border-color: @brand-color;
+        color: @primary-text-color;
+    }
+
+    &.CBeebies {
+        background-color: @complete-color;
+        border-color: @complete-color;
+        color: @primary-text-color;
+    }
+
+    &.CBBC {
+        background-color: @success-color;
+        border-color: @success-color;
+        color: @primary-text-color;
+    }
 }
 </style>

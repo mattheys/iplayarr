@@ -149,10 +149,11 @@ legend {
     padding: 1px 3px;
     font-size: 11px;
     border-radius: 2px;
-
+    display: inline-block;
     background-color: @warn-color;
     border-color: @warn-color;
     color: @warn-text-color;
+    text-align: center;
 
     &.TV {
         background-color: @primary-color;

@@ -35,6 +35,7 @@ export default async (req : Request, res : Response) => {
                     title: result.nzbName,
                     description: result.nzbName,
                     guid: `https://www.bbc.co.uk/iplayer/episodes/${result.pid}`,
+                    comments: `https://www.bbc.co.uk/iplayer/episodes/${result.pid}`,
                     size: result.size ? String(result.size * 1048576) : "2147483648",
                     category: ["5000", "5040"],
                     pubDate : result.pubDate ? result.pubDate.toUTCString().replace("GMT", "+0000") : pubDate,
