@@ -1,6 +1,6 @@
 <template>
     <legend>{{ name }}</legend>
-    <SettingsTextInput name="URL" :tooltip="`${name} Hostname`" v-model="localValue.url" />
+    <SettingsTextInput name="URL" :tooltip="`${name} URL, including protocol & port`" v-model="localValue.url" />
     <SettingsTextInput name="API Key" :tooltip="`${name} API Key`" v-model="localValue.api_key" />
     <div class="button-container">
         <button class="test-button" @click="test">
