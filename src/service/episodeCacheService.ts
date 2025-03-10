@@ -24,9 +24,15 @@ const episodeCacheService = {
 
     getEpisodeCache : async (term : string) : Promise<IPlayerSearchResult[]> => {
         await episodeCacheService.initStorage();
-        return await storage.getItem(term) || [];
+        return (await storage.getItem(term))?.results || [];
     },
 
+    getEpisodeCacheForUrl : async (url : string) : Promise<IPlayerSearchResult[]> => {
+        await episodeCacheService.initStorage();
+        const allStorage = await storage.values();
+        const episodeCache = allStorage.find((item) => item.url && item.url == url);
+        return episodeCache?.results || [];
+    },
     getCachedSeries : async () : Promise<EpisodeCacheDefinition[]> => {
         await episodeCacheService.initStorage();
         return (await storage.getItem('series-cache-definition')) || [];
@@ -70,6 +76,9 @@ const episodeCacheService = {
         await episodeCacheService.initStorage();
         const {sizeFactor} = await getQualityPofile();
         const url = removeAllQueryParams(inputUrl);
+
+        const alreadyCached = await episodeCacheService.getEpisodeCacheForUrl(url);
+
         const seriesOverview : IPlayerDataLayerResponse | undefined = await episodeCacheService.getDetailScript(url);
         if (seriesOverview){
             const seriesIDs = seriesOverview.header.availableSlices
@@ -82,6 +91,10 @@ const episodeCacheService = {
             for (const series of seriesResponses){
                 episodes = [...episodes, ...(series as any).entities.results.map((s : any) => s.episode.id)];
             }
+
+            //filter out only new ones
+            episodes = episodes.filter((e) => !alreadyCached?.some(({pid}) => pid == e));
+
             const chunks = splitArrayIntoChunks(episodes, 20);
             const infos : IPlayerDetails[] = await chunks.reduce(async (accPromise, chunk) => {
                 const acc = await accPromise; // Ensure previous results are awaited
@@ -92,7 +105,7 @@ const episodeCacheService = {
             if (infos.length > 0){
                 const title = infos[0].title;
                 const results = await Promise.all(infos.map((info : IPlayerDetails) => createResult(title, info, sizeFactor)));
-                await storage.setItem(title.toLowerCase(), results);
+                await storage.setItem(title.toLowerCase(), {results : [...alreadyCached, ...results], url});
                 return true;
             }
         }
