@@ -8,6 +8,7 @@
                     <th>Type</th>
                     <th>Title</th>
                     <th>Calculated Filename</th>
+                    <th>Est. Size</th>
                     <th>Channel</th>
                     <th>PID</th>
                     <th>
@@ -25,6 +26,7 @@
                     </td>
                     <td class="clickable" @click="download(result)">{{ result.title }}</td>
                     <td class="clickable" @click="download(result)">{{ result.nzbName }}</td>
+                    <td>{{ formatStorageSize(result.size) }}</td>
                     <td>
                         <span :class="['pill', result.channel.replaceAll(' ', '')]">
                             {{ result.channel }}
@@ -47,6 +49,7 @@ import { ref, watch, computed } from 'vue';
 import { ipFetch } from '@/lib/ipFetch';
 import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
 import LoadingIndicator from '@/components/LoadingIndicator.vue';
+import { formatStorageSize } from '@/lib/utils';
 
 const route = useRoute();
 const router = useRouter();

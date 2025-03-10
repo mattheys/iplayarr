@@ -5,7 +5,7 @@ import { getParameter } from "./configService";
 import { IplayarrParameter } from "../types/IplayarrParameters";
 import loggingService from "./loggingService";
 import { IPlayerSearchResult, VideoType } from "../types/IPlayerSearchResult";
-import { createNZBName } from "../utils/Utils";
+import { createNZBName, getQualityPofile } from "../utils/Utils";
 import { v4 } from "uuid";
 import fs from 'fs';
 import queueService from "./queueService";
@@ -19,7 +19,6 @@ import { Synonym } from "../types/Synonym";
 import { LogLine, LogLineLevel } from "../types/LogLine";
 import { IPlayerDetails } from "../types/IPlayerDetails";
 
-const sizeFactor : number = 0.7;
 const progressRegex : RegExp = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s) ETA: ([\d:]+).*video\]$/;
 const seriesRegex : RegExp = /: (?:Series|Season) (\d+)/
 const detailsRegex : RegExp = /^([a-z+]+): +(.*)$/;
@@ -232,6 +231,7 @@ const iplayerService = {
 }
 
 async function searchIPlayer(term : string, synonym? : Synonym) : Promise<IPlayerSearchResult[]> {
+    const {sizeFactor} = await getQualityPofile();
     return new Promise(async (resolve, reject) => {
         const results : IPlayerSearchResult[] = []
         const [exec, args] = await getIPlayerExec();

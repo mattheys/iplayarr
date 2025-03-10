@@ -33,6 +33,7 @@
 import { ipFetch } from '@/lib/ipFetch';
 import ProgressBar from './ProgressBar.vue';
 import { defineProps } from 'vue';
+import { formatStorageSize } from '@/lib/utils';
 
 defineProps({
     item: {
@@ -56,16 +57,6 @@ const cancel = async (pid) => {
     if (confirm("Are you sure you want to cancel this download?")) {
         ipFetch(`json-api/queue?pid=${pid}`, 'DELETE');
     }
-}
-
-const formatStorageSize = (mb) => {
-    if (mb){
-        if (mb >= 1024) {
-            return (mb / 1024).toFixed(2) + " GB";
-        }
-        return mb.toFixed(2) + " MB";
-    }
-    return;
 }
 </script>
 
