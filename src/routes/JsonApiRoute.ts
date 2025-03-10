@@ -66,7 +66,7 @@ router.get('/config', async (_, res : Response) => {
 
 router.put('/config', async (req, res : Response) => {
     const validator : Validator = new ConfigFormValidator();
-    const validationResult : {[key:string] : string} = validator.validate(req.body);
+    const validationResult : {[key:string] : string} = await validator.validate(req.body);
     if (Object.keys(validationResult).length > 0){
         const apiResponse : ApiResponse = {
             error : ApiError.INVALID_INPUT,

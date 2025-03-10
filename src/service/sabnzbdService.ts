@@ -1,6 +1,7 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { getParameter } from "./configService";
 import { IplayarrParameter } from "../types/IplayarrParameters";
+import FormData from "form-data";
 
 const sabzbdService = {
     test : async () : Promise<boolean> => {
@@ -19,7 +20,7 @@ const sabzbdService = {
         const SABNZBD_URL = await getParameter(IplayarrParameter.SABNZBD_URL) as string;
         const SABNSBD_API_KEY = await getParameter(IplayarrParameter.SABNZBD_API_KEY) as string;
 
-        return `${SABNZBD_URL}/api?mode=addfile&apikey=${SABNSBD_API_KEY}`;
+        return `${SABNZBD_URL}/api?mode=addfile&cat=iplayer&priority=-100&apikey=${SABNSBD_API_KEY}`;
     },
 
     testConnection : async(sabnzbdUrl : string, apikey : string) : Promise<string | boolean> => {
@@ -35,6 +36,28 @@ const sabzbdService = {
             }
             return false;
         }
+    },
+
+    addFile : async(files : Express.Multer.File[]) : Promise<AxiosResponse> => {
+        const url = await sabzbdService.getAddFileUrl();
+
+        const formData = new FormData();
+        if (files) {
+            files.forEach((file) => {
+                formData.append("nzbfile", file.buffer, {
+                    filename: file.originalname,
+                    contentType: file.mimetype,
+                });
+            });
+        }
+
+        const response = await axios.post(url, formData, {
+            headers: {
+                'Content-Type' : 'multipart/form-data'
+            }
+        });
+
+        return response;
     }
 }
 

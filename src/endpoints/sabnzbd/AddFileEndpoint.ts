@@ -20,8 +20,9 @@ interface NZBDetails {
 }
 
 export default async (req : Request, res : Response) => {
+    const { files } = req as any as AddFileRequest;
     try {
-        const { files } = req as any as AddFileRequest;
+        
         const pids : string[] = [];
         for (const file of files){
             const xmlString = file.buffer.toString('utf-8');
@@ -38,29 +39,7 @@ export default async (req : Request, res : Response) => {
         //If we get an error, assume it's a real NZB and forward
         const validSAB = await sabzbdService.test();
         if (validSAB){
-            const url = await sabzbdService.getAddFileUrl();
-
-            const formData = new FormData();
-            const { files } = req as any as AddFileRequest;
-            if (files) {
-                files.forEach((file) => {
-                    formData.append("files", file.buffer, {
-                        filename: file.originalname,
-                        contentType: file.mimetype,
-                    });
-                });
-            }
-
-            Object.keys(req.body).forEach((key) => {
-                formData.append(key, req.body[key]);
-            });
-
-            const response = await axios.post(url, formData, {
-                headers: {
-                    ...formData.getHeaders()
-                }
-            });
-
+            const response = await sabzbdService.addFile(files);
             res.status(response.status).send(response.data);
             return;
         }
