@@ -21,6 +21,7 @@ import { md5 } from "../utils/Utils";
 import { IPlayerSearchResult } from "../types/IPlayerSearchResult";
 import iplayerService from "../service/iplayerService";
 import arrService from "../service/arrService";
+import { qualityProfiles } from "../types/QualityProfiles";
 
 const router : Router = Router();
 
@@ -51,6 +52,10 @@ router.delete('/synonym', async (req : Request, res : Response) => {
     await synonymService.removeSynonym(id);
     const synonyms = await synonymService.getAllSynonyms();
     res.json(synonyms);
+});
+
+router.get('/qualityProfiles', (_, res : Response) => {
+    res.json(qualityProfiles);
 });
 
 router.get('/config', async (_, res : Response) => {
