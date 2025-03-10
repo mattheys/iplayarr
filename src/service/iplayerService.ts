@@ -1,5 +1,4 @@
 import { ChildProcess, spawn } from "child_process";
-import sonarrService from "./sonarrService";
 import NodeCache from "node-cache";
 import { getParameter } from "./configService";
 import { IplayarrParameter } from "../types/IplayarrParameters";
@@ -18,10 +17,12 @@ import synonymService from "./synonymService";
 import { Synonym } from "../types/Synonym";
 import { LogLine, LogLineLevel } from "../types/LogLine";
 import { IPlayerDetails } from "../types/IPlayerDetails";
+import episodeCacheService from "./episodeCacheService";
 
 const progressRegex : RegExp = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s) ETA: ([\d:]+).*video\]$/;
 const seriesRegex : RegExp = /: (?:Series|Season) (\d+)/
 const detailsRegex : RegExp = /^([a-z+]+): +(.*)$/;
+const processingRegex : RegExp = /INFO: Processing (?:.*)\(([0-9a-z]+)\)'$/;
 
 const listFormat : string = "RESULT|:|<pid>|:|<name>|:|<seriesnum>|:|<episodenum>|:|<index>|:|<channel>|:|<duration>|:|<available>"
 
@@ -120,11 +121,23 @@ const iplayerService = {
             searchCache.set(searchTerm, results);
         }
 
+        let returnResults : IPlayerSearchResult[] = [];
         if (season && episode){
-            return results.filter((result) => result.series == season && result.episode == episode);
+            returnResults = results.filter((result) => result.series == season && result.episode == episode);
         } else {
-            return results;
+            returnResults = results;
         }
+
+        //Get the out of schedule results form cache
+        const episodeCache : IPlayerSearchResult[] = await episodeCacheService.getEpisodeCache(inputTerm.toLowerCase());
+        for (const episode of episodeCache){
+            const exists = returnResults.some(({pid}) => pid == episode.pid);
+            if (!exists){
+                returnResults.push(episode);
+            }
+        }
+
+        return returnResults;
     },
 
     refreshCache: async () => {
@@ -178,55 +191,59 @@ const iplayerService = {
         });
     },
 
-    details : async (pid : string) : Promise<IPlayerDetails | undefined> => {
-        let detail : IPlayerDetails | undefined = detailsCache.get(pid);
-        if (!detail){
-            detail = await new Promise(async (resolve, reject) => {
-                const detailMap : {[key:string] : string} = {};
-                const [exec, args] = await getIPlayerExec();
-                const allArgs = [...args, "-i", `--pid="${pid}"`];
-    
-                loggingService.debug(`Executing get_iplayer with args: ${allArgs.join(" ")}`);
-                const detailsProcess = spawn(exec as string, allArgs, { shell: true });
-    
-                detailsProcess.stdout.on('data', (data) => {
-                    loggingService.debug(data.toString());
-                    const lines : string[] = data.toString().split("\n");
-                    for (const line of lines){
-                        const match = detailsRegex.exec(line);
-                        if (match){
-                            const key = match[1];
-                            const value = match[2];
-                            detailMap[key] = value;
-                        }
-                    }
-                });
-    
-                detailsProcess.on('close', () => {
-                    if (Object.keys(detailMap).length > 0){
-                        detail = {
-                            pid: detailMap['pid'],
-                            title: detailMap['nameshort'] || detailMap['name'],
-                            channel : detailMap['channel'],
-                            category : detailMap['category'],
-                            description : detailMap['desc'],
-                            runtime : detailMap['runtime'] ? parseInt(detailMap['runtime']) : undefined,
-                            firstBroadcast : detailMap['firstbcastdate'],
-                            link : detailMap['player'],
-                            thumbnail : detailMap['thumbnail']
-                        }
-                        resolve(detail);
-                    } else {
-                        resolve(undefined);
-                    }
-                })
-            })
-            if (detail){
-                detailsCache.set(pid, detail);
+    details : async (pids : string[]) : Promise<IPlayerDetails[]> => {
+        return new Promise(async (resolve, reject) => {
+            const details : IPlayerDetails[] = [];
+            const toSearch : string[] = [];
+            for (const pid of pids){
+                const cachedDetail : IPlayerDetails | undefined = detailsCache.get(pid);
+                if (cachedDetail){
+                    details.push(cachedDetail);
+                } else {
+                    toSearch.push(pid);
+                }
             }
-        }
 
-        return detail;
+            let detailMap : {[key : string] : string} = {};
+            let processingPid : string = "";
+            const [exec, args] = await getIPlayerExec();
+            const allArgs = [...args, "-i", `--pid="${pids.join(",")}"`];
+
+            loggingService.debug(`Executing get_iplayer with args: ${allArgs.join(" ")}`);
+            const detailsProcess = spawn(exec as string, allArgs, { shell: true });
+
+            detailsProcess.stdout.on('data', (data) => {
+                loggingService.debug(data.toString());
+                const lines : string[] = data.toString().split("\n");
+                for (const line of lines){
+                    const processingMatch = processingRegex.exec(line);
+                    if (processingMatch){
+                        if (processingPid != "" && Object.keys(detailMap).length > 0){
+                            const detail : IPlayerDetails = createDetailsObject(detailMap);
+                            details.push(detail);
+                            detailsCache.set(processingPid, detail);
+                            detailMap = {};
+                        }
+                        processingPid = processingMatch[1]
+                    }
+                    const match = detailsRegex.exec(line);
+                    if (match){
+                        const key = match[1];
+                        const value = match[2];
+                        detailMap[key] = value;
+                    }
+                }
+            });
+
+            detailsProcess.on('close', () => {
+                if (processingPid != "" && Object.keys(detailMap).length > 0){
+                    const detail : IPlayerDetails = createDetailsObject(detailMap);
+                    details.push(detail);
+                    detailsCache.set(processingPid, detail);
+                }
+                resolve(details);
+            })
+        });
     }
 }
 
@@ -257,7 +274,7 @@ async function searchIPlayer(term : string, synonym? : Synonym) : Promise<IPlaye
                     const episode : number | undefined = (episodeStr == "" ? undefined : parseInt(episodeStr));
                     const [title, series] = (seriesStr == "" ? [rawTitle, undefined] : extractSeriesNumber(rawTitle, seriesStr))
                     const type : VideoType = episode && series ? VideoType.TV : VideoType.MOVIE;
-		    const size : number | undefined = durationStr ? parseInt(durationStr) * sizeFactor : undefined;
+		            const size : number | undefined = durationStr ? parseInt(durationStr) * sizeFactor : undefined;
                     results.push({
                         pid,
                         title,
@@ -294,6 +311,22 @@ async function searchIPlayer(term : string, synonym? : Synonym) : Promise<IPlaye
             }
         });
     });
+}
+
+function createDetailsObject(detailMap : {[key:string] : string}) : IPlayerDetails {
+    return {
+        pid: detailMap['pid'],
+        title: detailMap['nameshort'] || detailMap['name'],
+        channel : detailMap['channel'],
+        category : detailMap['category'],
+        description : detailMap['desc'],
+        runtime : detailMap['runtime'] ? parseInt(detailMap['runtime']) : undefined,
+        firstBroadcast : detailMap['firstbcastdate'],
+        link : detailMap['player'],
+        thumbnail : detailMap['thumbnail'],
+        series : detailMap['seriesnum'] ? parseInt(detailMap['seriesnum']) : undefined,
+        episode : detailMap['episodenum'] ? parseInt(detailMap['episodenum']) : undefined,
+    }
 }
 
 function extractSeriesNumber(title : string, series : string) : any[]{

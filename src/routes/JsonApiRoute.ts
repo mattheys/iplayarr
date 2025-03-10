@@ -23,6 +23,8 @@ import iplayerService from "../service/iplayerService";
 import arrService from "../service/arrService";
 import sabzbdService from "../service/sabnzbdService";
 import { qualityProfiles } from "../types/QualityProfiles";
+import episodeCacheService from "../service/episodeCacheService";
+import { EpisodeCacheDefinition } from "../types/responses/EpisodeCacheTypes";
 
 const router : Router = Router();
 
@@ -280,8 +282,8 @@ router.get("/search", async (req : Request, res : Response) => {
 
 router.get("/details", async (req : Request, res : Response) => {
     const {pid} = req.query as any;
-    const details = await iplayerService.details(pid);
-    res.json(details);
+    const details = await iplayerService.details([pid]);
+    res.json(details[0]);
 });
 
 router.get("/download", async (req : Request, res : Response) => {
@@ -293,7 +295,31 @@ router.get("/download", async (req : Request, res : Response) => {
 router.get("/cache-refresh", async (_, res : Response) => {
     iplayerService.refreshCache();
     res.json(true);
-})
+});
 
+router.get("/offSchedule", async (_, res : Response) => {
+    const cachedSeries : EpisodeCacheDefinition[] = await episodeCacheService.getCachedSeries();
+    res.json(cachedSeries);
+});
+
+router.post("/offSchedule", async (req : Request, res : Response) => {
+    const {name, url} = req.body;
+    await episodeCacheService.addCachedSeries(url, name);
+    const cachedSeries : EpisodeCacheDefinition[] = await episodeCacheService.getCachedSeries();
+    res.json(cachedSeries);
+});
+
+router.delete("/offSchedule", async (req : Request, res : Response) => {
+    const {id} = req.body;
+    await episodeCacheService.removeCachedSeries(id);
+    const cachedSeries : EpisodeCacheDefinition[] = await episodeCacheService.getCachedSeries();
+    res.json(cachedSeries);
+});
+
+router.post("/offSchedule/refresh", async (req : Request, res : Response) => {
+    const def : EpisodeCacheDefinition = req.body;
+    episodeCacheService.recacheSeries(def);
+    res.json(true);
+});
 
 export default router;

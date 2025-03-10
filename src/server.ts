@@ -1,5 +1,4 @@
 import express, {Express, NextFunction, Request, Response} from 'express';
-import session from 'express-session'
 import loggingService from './service/loggingService';
 import http, { Server } from 'http';
 import { Server as SocketIOServer } from "socket.io";
@@ -13,6 +12,7 @@ import { getParameter, setParameter } from './service/configService';
 import iplayerService from './service/iplayerService';
 import cron from 'node-cron';
 import AuthRoute, { addAuthMiddleware } from './routes/AuthRoute';
+import episodeCacheService from './service/episodeCacheService';
 
 const isDebug = process.env.DEBUG == 'true';
 
@@ -67,5 +67,6 @@ server.listen(port, () => {
 getParameter(IplayarrParameter.REFRESH_SCHEDULE).then((cronSchedule) => {
     cron.schedule(cronSchedule as string, () => {
         iplayerService.refreshCache();
+        episodeCacheService.recacheAllSeries();
     });
 });

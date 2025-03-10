@@ -10,6 +10,7 @@ import LoginPage from '@/views/LoginPage.vue';
 import SearchPage from '@/views/SearchPage.vue';
 import DownloadPage from '@/views/DownloadPage.vue';
 import { getHost } from '@/lib/utils';
+import OffSchedulePage from '@/views/OffSchedulePage.vue';
 
 const routes = [
   { path: '/', redirect: '/queue' },
@@ -21,7 +22,8 @@ const routes = [
   { path: '/synonyms', component: SynonymsPage },
   { path: '/login', component: LoginPage },
   { path: '/search', component: SearchPage, name : "search" },
-  { path: '/download', component: DownloadPage, name : "download" }
+  { path: '/download', component: DownloadPage, name : "download" },
+  { path: '/offSchedule', component: OffSchedulePage}
 ];
 
 const router = createRouter({
