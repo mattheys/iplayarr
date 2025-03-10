@@ -2,11 +2,12 @@ import { template } from "handlebars";
 import { Validator } from "./Validator";
 import Handlebars from "handlebars";
 import { FilenameTemplateContext } from "../types/FilenameTemplateContext";
+import sabzbdService from "../service/sabnzbdService";
 
 const cronRegex : RegExp = /^(\*|([0-5]?[0-9])) (\*|([01]?[0-9]|2[0-3])) (\*|([01]?[1-9]|[12][0-9]|3[01])) (\*|([1-9]|1[0-2])) (\*|([0-6]))(\s(\d{4}))?$/
 
 export class ConfigFormValidator extends Validator {
-    validate(input: any): {[key: string]: string} {
+    async validate(input: any): Promise<{[key: string]: string}> {
         const validatorError : { [key: string]: string; } = {};
         if (!this.directoryExists(input.DOWNLOAD_DIR)){
             validatorError["DOWNLOAD_DIR"] = `Directory ${input.DOWNLOAD_DIR} does not exist`;
@@ -33,6 +34,13 @@ export class ConfigFormValidator extends Validator {
         }
         if (!this.compilesSuccessfully(input.MOVIE_FILENAME_TEMPLATE)){
             validatorError["MOVIE_FILENAME_TEMPLATE"] = "Template does not compile";
+        }
+        if (input.SABNZBD_URL || input.SABNZBD_API_KEY){
+            const response : string | boolean = await sabzbdService.testConnection(input.SABNZBD_URL, input.SABNZBD_API_KEY);
+            if (response != true){
+                validatorError["SABNZBD_URL"] = response as string;
+                validatorError["SABNZBD_API_KEY"] = response as string;
+            }
         }
         return validatorError;
     }

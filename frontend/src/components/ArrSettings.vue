@@ -119,38 +119,6 @@ const test = async () => {
     }
 }
 
-.button-container {
-    justify-content: flex-end;
-    text-align: right;
-    max-width: 650px;
-
-    button {
-        background-color: @settings-button-background-color;
-        border: 1px solid @settings-button-border-color;
-        padding: 6px 16px;
-        font-size: 14px;
-        color: @primary-text-color;
-        border-radius: 4px;
-
-        &:hover {
-            border-color: @settings-button-hover-border-color;
-            background-color: @settings-button-hover-background-color;
-        }
-
-        .test-success {
-            color: @success-color;
-        }
-        
-        .test-pending {
-            animation: spin 1.25s linear infinite;
-        }
-
-        &.test-button {
-            width: 115px;
-        }
-    }
-}
-
 @keyframes spin {
   from {
     transform: rotate(0deg);

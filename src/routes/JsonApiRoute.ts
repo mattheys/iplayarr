@@ -21,6 +21,7 @@ import { md5 } from "../utils/Utils";
 import { IPlayerSearchResult } from "../types/IPlayerSearchResult";
 import iplayerService from "../service/iplayerService";
 import arrService from "../service/arrService";
+import sabzbdService from "../service/sabnzbdService";
 import { qualityProfiles } from "../types/QualityProfiles";
 
 const router : Router = Router();
@@ -65,7 +66,7 @@ router.get('/config', async (_, res : Response) => {
 
 router.put('/config', async (req, res : Response) => {
     const validator : Validator = new ConfigFormValidator();
-    const validationResult : {[key:string] : string} = validator.validate(req.body);
+    const validationResult : {[key:string] : string} = await validator.validate(req.body);
     if (Object.keys(validationResult).length > 0){
         const apiResponse : ApiResponse = {
             error : ApiError.INVALID_INPUT,
@@ -259,7 +260,17 @@ router.post("/arr/test", async (req : Request, res : Response) => {
     } else {
         res.status(500).json({error: ApiError.INTERNAL_ERROR, message : result} as ApiResponse)
     }
-})
+});
+
+router.post("/sabnzbd/test", async (req : Request, res : Response) => {
+    const {SABNZBD_URL, SABNZBD_API_KEY} = req.body;
+    const result : string | boolean = await sabzbdService.testConnection(SABNZBD_URL, SABNZBD_API_KEY);
+    if (result == true){
+        res.json(true);
+    } else {
+        res.status(500).json({error: ApiError.INTERNAL_ERROR, message : result} as ApiResponse)
+    }
+});
 
 router.get("/search", async (req : Request, res : Response) => {
     const {q} = req.query as any;

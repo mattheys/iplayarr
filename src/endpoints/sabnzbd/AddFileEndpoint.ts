@@ -3,6 +3,9 @@ import { Request, Response } from "express";
 import queueService from "../../service/queueService";
 import { NZBMetaEntry } from "../../types/responses/newznab/NZBFileResponse";
 import { VideoType } from "../../types/IPlayerSearchResult";
+import sabzbdService from "../../service/sabnzbdService";
+import axios from "axios";
+import FormData from "form-data";
 
 const parser = new Parser();
 
@@ -17,8 +20,9 @@ interface NZBDetails {
 }
 
 export default async (req : Request, res : Response) => {
+    const { files } = req as any as AddFileRequest;
     try {
-        const { files } = req as any as AddFileRequest;
+        
         const pids : string[] = [];
         for (const file of files){
             const xmlString = file.buffer.toString('utf-8');
@@ -32,6 +36,13 @@ export default async (req : Request, res : Response) => {
             nzo_ids: pids
         });
     } catch (error : any) {
+        //If we get an error, assume it's a real NZB and forward
+        const validSAB = await sabzbdService.test();
+        if (validSAB){
+            const response = await sabzbdService.addFile(files);
+            res.status(response.status).send(response.data);
+            return;
+        }
         res.status(500).json({
             status: false,
             error: error.message
