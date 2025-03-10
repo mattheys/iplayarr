@@ -20,7 +20,7 @@ import { LogLine, LogLineLevel } from "../types/LogLine";
 import { IPlayerDetails } from "../types/IPlayerDetails";
 
 const sizeFactor : number = 0.7;
-const progressRegex : RegExp = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s) ETA: ([\d:]+).*$/;
+const progressRegex : RegExp = /([\d.]+)% of ~?([\d.]+ [A-Z]+) @[ ]+([\d.]+ [A-Za-z]+\/s) ETA: ([\d:]+).*video\]$/;
 const seriesRegex : RegExp = /: (?:Series|Season) (\d+)/
 const detailsRegex : RegExp = /^([a-z+]+): +(.*)$/;
 
@@ -38,9 +38,10 @@ const iplayerService = {
         const completeDir = await getParameter(IplayarrParameter.COMPLETE_DIR) as string;
 
         const [exec, args] = await getIPlayerExec();
+        const additionalParams : string[] = await getAddDownloadParams();
         fs.mkdirSync(`${downloadDir}/${uuid}`);
         fs.writeFileSync(`${downloadDir}/${uuid}/${timestampFile}`, '');
-        const allArgs = [...args, '--output', `${downloadDir}/${uuid}`, '--overwrite', '--force', '--log-progress', `--pid=${pid}`];
+        const allArgs = [...args, ...additionalParams, await getQualityParam(), '--output', `${downloadDir}/${uuid}`, '--overwrite', '--force', '--log-progress', `--pid=${pid}`];
 
         loggingService.debug(`Executing get_iplayer with args: ${allArgs.join(" ")}`);
         const downloadProcess = spawn(exec as string, allArgs);
@@ -311,6 +312,22 @@ async function getIPlayerExec() : Promise<(string | RegExpMatchArray)[]> {
     const exec : string = args.shift() as string;
 
     return [exec, args];
+}
+
+async function getQualityParam() : Promise<string> {
+    const videoQuality = await getParameter(IplayarrParameter.VIDEO_QUALITY) as string;
+
+    return `--tv-quality=${videoQuality}`;
+}
+
+async function getAddDownloadParams() : Promise<string[]> {
+    const additionalParams = await getParameter(IplayarrParameter.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS);
+
+    if (additionalParams){
+        return additionalParams.split(" ");
+    } else {
+        return [];
+    }
 }
 
 function removeLastFourDigitNumber(str : string) {

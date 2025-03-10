@@ -6,6 +6,7 @@ import { IplayarrParameter } from "../types/IplayarrParameters";
 import Handlebars from 'handlebars';
 import { FilenameTemplateContext } from "../types/FilenameTemplateContext";
 import { IPlayerSearchResult, VideoType } from "../types/IPlayerSearchResult";
+import { qualityProfiles } from "../types/QualityProfiles";
 
 const seasonRegex = /(?:Series|Season)\s(\d+)/;
 const episodeRegex = /(?:Episode|Ep)\s(\d+)/;
@@ -21,6 +22,9 @@ export function formatBytes(bytes: number, unit: boolean = true, decimals: numbe
 }
 
 export async function createNZBName(type : VideoType, context : FilenameTemplateContext){
+    const videoQuality = await getParameter(IplayarrParameter.VIDEO_QUALITY) as string;
+    const qualityProfile = qualityProfiles.find(({id}) => id == videoQuality);
+    context.quality = qualityProfile?.quality;
     const templateKey : IplayarrParameter = type == VideoType.MOVIE ? IplayarrParameter.MOVIE_FILENAME_TEMPLATE : IplayarrParameter.TV_FILENAME_TEMPLATE;
     const template = await getParameter(templateKey) as string;
     return Handlebars.compile(template)(context);

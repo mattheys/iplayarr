@@ -43,7 +43,8 @@ export class ConfigFormValidator extends Validator {
             const dummyContext : FilenameTemplateContext = {
                 title : "title",
                 season : "01",
-                episode : "01"
+                episode : "01",
+                quality : "720p"
             }
             hbTemplate(dummyContext);
             return true;

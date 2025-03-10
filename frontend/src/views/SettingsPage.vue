@@ -6,11 +6,13 @@
         <SettingsTextInput name="Download Directory" tooltip="Directory for in-progress Downloads." v-model="config.DOWNLOAD_DIR" :error="validationErrors.config?.DOWNLOAD_DIR"/>
         <SettingsTextInput name="Complete Directory" tooltip="Directory for completed Downloads." v-model="config.COMPLETE_DIR" :error="validationErrors.config?.COMPLETE_DIR"/>
         <SettingsTextInput name="Download Limit" tooltip="The number of simultaneous downloads." type-override="number" v-model="config.ACTIVE_LIMIT" :error="validationErrors.config?.ACTIVE_LIMIT"/>
+        <SettingsSelectInput name="Video Quality" tooltip="Maximum video quality (Where available)" v-model="config.VIDEO_QUALITY"  :error="validationErrors.config?.ACTIVE_LIMIT" :options="qualityProfiles"/>
 
         <template v-if="showAdvanced">
             <SettingsTextInput :advanced="true" name="Refresh Schedule" tooltip="Cron Expression for schedule refresh." v-model="config.REFRESH_SCHEDULE" :error="validationErrors.config?.REFRESH_SCHEDULE"/>
-            <SettingsTextInput :advanced="true" name="TV Filename Template" tooltip="Template for TV Filenames, {title, season, episode}." v-model="config.TV_FILENAME_TEMPLATE" :error="validationErrors.config?.TV_FILENAME_TEMPLATE"/>
-            <SettingsTextInput :advanced="true" name="Movie Filename Template" tooltip="Template for Movie Filenames, {title}." v-model="config.MOVIE_FILENAME_TEMPLATE" :error="validationErrors.config?.MOVIE_FILENAME_TEMPLATE"/>
+            <SettingsTextInput :advanced="true" name="TV Filename Template" tooltip="Template for TV Filenames, {title, season, episode, quality}." v-model="config.TV_FILENAME_TEMPLATE" :error="validationErrors.config?.TV_FILENAME_TEMPLATE"/>
+            <SettingsTextInput :advanced="true" name="Movie Filename Template" tooltip="Template for Movie Filenames, {title, quality}." v-model="config.MOVIE_FILENAME_TEMPLATE" :error="validationErrors.config?.MOVIE_FILENAME_TEMPLATE"/>
+            <SettingsTextInput :advanced="true" name="Additional Download Parameters" tooltip="Extra parameters to pass to get_iplayer for download" v-model="config.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS" :error="validationErrors.config?.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS"/>
         </template>
 
         <legend class="sub">Authentication</legend>
@@ -31,6 +33,8 @@
 
     import { onMounted, ref, watch, computed } from 'vue';
     import { ipFetch } from '@/lib/ipFetch';
+    import SettingsSelectInput from '@/components/SettingsSelectInput.vue';
+    import { onBeforeRouteLeave } from 'vue-router';
 
     const loading = ref(false);
 
@@ -52,22 +56,26 @@
         config : {},
         sonarr : {},
         radarr : {}
-    })
+    });
+
+    const qualityProfiles = ref([]);
 
     const saveEnabled = computed(() => {
         return configChanges.value || sonarrChanges.value || radarrChanges.value;
     })
 
     onMounted(async () => {
-        const [configResponse, sonarrConfigResponse, radarrConfigResponse] = await Promise.all([
+        const [configResponse, sonarrConfigResponse, radarrConfigResponse, qpResponse] = await Promise.all([
             ipFetch('json-api/config'),
             ipFetch(`json-api/sonarr`),
-            ipFetch(`json-api/radarr`)
+            ipFetch(`json-api/radarr`),
+            ipFetch('json-api/qualityProfiles')
         ]);
         
         config.value = configResponse.data;
         sonarrConfig.value = sonarrConfigResponse.data;
         radarrConfig.value = radarrConfigResponse.data;
+        qualityProfiles.value = qpResponse.data.map(({id, name, quality}) => ({"key" : id, "value" : `${name} (${quality})`}));
 
         watch(config, () => { configChanges.value = true }, { deep: true });
         watch(sonarrConfig, () => { sonarrChanges.value = true }, { deep: true });
@@ -116,4 +124,15 @@
     const toggleAdvanced = () => {
         showAdvanced.value = !showAdvanced.value;
     }
+
+    onBeforeRouteLeave((_, __, next) => {
+        if (saveEnabled.value){
+            if (confirm("You have unsaved changes. If you leave this page they will be lost.")){
+                next();
+            } else {
+                next(false);
+            }
+        }
+        next();
+    })
 </script>

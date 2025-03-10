@@ -23,8 +23,9 @@ export const defaultConfigMap : ConfigMap = {
     "AUTH_USERNAME" : "admin",
     "AUTH_PASSWORD" : "5f4dcc3b5aa765d61d8327deb882cf99",
     "FALLBACK_FILENAME_SUFFIX" : "WEB.H264-BBC",
-    "MOVIE_FILENAME_TEMPLATE" : "{{title}}.BBC.WEB-DL.AAC.2.0.H.264",
-    "TV_FILENAME_TEMPLATE" : "{{title}}.S{{season}}E{{episode}}.WEB.H264-BBC"
+    "MOVIE_FILENAME_TEMPLATE" : "{{title}}.BBC.WEB-DL.AAC.2.0.{{quality}}.H.264",
+    "TV_FILENAME_TEMPLATE" : "{{title}}.S{{season}}E{{episode}}.WEB.{{quality}}.H.264.BBC",
+    "VIDEO_QUALITY" : "hd"
 }
 
 async function getConfigMap() : Promise<ConfigMap> {
