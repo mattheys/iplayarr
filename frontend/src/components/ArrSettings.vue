@@ -43,7 +43,7 @@
 import { defineProps, defineEmits, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import SettingsTextInput from '@/components/SettingsTextInput.vue';
-import { getHost } from '@/lib/utils';
+import { ipFetch } from '@/lib/ipFetch';
 
 const router = useRouter();
 
@@ -84,32 +84,23 @@ watch(
 
 const unlinkDownload = async () => {
     if (confirm(`Are you sure you want to unlink ${props.name} Download Client? All changes will be lost`)){
-        await fetch(`${getHost()}/json-api/${props.name.toLowerCase()}/download_client`, { method: 'DELETE', credentials : "include" });
+        await ipFetch(`json-api/${props.name.toLowerCase()}/download_client`, 'DELETE');
         router.go(0);
     }
 }
 
 const unlinkIndexer = async () => {
     if (confirm(`Are you sure you want to unlink ${props.name} Indexer? All changes will be lost`)){
-        await fetch(`${getHost()}/json-api/${props.name.toLowerCase()}/indexer`, { method: 'DELETE', credentials : "include" });
+        await ipFetch(`json-api/${props.name.toLowerCase()}/indexer`, 'DELETE');
         router.go(0);
     }
 }
 
 const test = async () => {
     testStatus.value = "PENDING";
-    const testResponse = await fetch(`${getHost()}/json-api/arr/test`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            HOST : localValue.value.url,
-            API_KEY : localValue.value.api_key
-        }),
-        credentials: "include"
-    });
-    if (!testResponse.ok){
-        const errorBody = await testResponse.json();
-        alert(`Error Connecting to ${props.name} : ${errorBody.message}`);
+    const {data, ok} = await ipFetch('json-api//arr/test', 'POST', {HOST : localValue.value.url, API_KEY : localValue.value.api_key});
+    if (!ok){
+        alert(`Error Connecting to ${props.name} : ${data.message}`);
         testStatus.value = "INITIAL";
     } else {
         testStatus.value = "SUCCESS";

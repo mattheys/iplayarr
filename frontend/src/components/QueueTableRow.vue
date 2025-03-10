@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { getHost } from '@/lib/utils';
+import { ipFetch } from '@/lib/ipFetch';
 import ProgressBar from './ProgressBar.vue';
 import { defineProps } from 'vue';
 
@@ -48,13 +48,13 @@ defineProps({
 
 const trash = async (pid) => {
     if (confirm("Are you sure you want to delete this history item?")) {
-        await fetch(`${getHost()}/json-api/history?pid=${pid}`, { method: 'DELETE', credentials : "include" });
+        ipFetch(`json-api/history?pid=${pid}`, 'DELETE');
     }
 }
 
 const cancel = async (pid) => {
     if (confirm("Are you sure you want to cancel this download?")) {
-        await fetch(`${getHost()}/json-api/queue?pid=${pid}`, { method: 'DELETE', credentials : "include" });
+        ipFetch(`json-api/queue?pid=${pid}`, 'DELETE');
     }
 }
 

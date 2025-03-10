@@ -10,7 +10,7 @@
 import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
 import SettingsTextInput from '@/components/SettingsTextInput.vue';
 import MediaInfoHero from '@/components/MediaInfoHero.vue';
-import { getHost } from '@/lib/utils';
+import { ipFetch } from '@/lib/ipFetch';
 import {watch, ref} from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -25,7 +25,7 @@ watch(() => route.query.json, async (newJson) => {
 
 
 const download = async () => {
-    const response = await fetch(`${getHost()}/json-api/download?pid=${searchResult.value.pid}&nzbName=${searchResult.value.nzbName}&type=${searchResult.value.type}`, {credentials : "include"});
+    const response = await ipFetch(`json-api/download?pid=${searchResult.value.pid}&nzbName=${searchResult.value.nzbName}&type=${searchResult.value.type}`);
     if (response.ok){
         router.push("/queue");
     }

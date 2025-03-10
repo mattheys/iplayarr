@@ -13,14 +13,13 @@
     import SynonymForm from '@/components/SynonymForm.vue';
 
     import {ref, onMounted} from 'vue';
-import { getHost } from '@/lib/utils';
+    import { ipFetch } from '@/lib/ipFetch';
 
     const create = ref(false);
     const synonyms = ref([]);
 
     const refreshSynonyms = async () => {
-        const synonymResponse = await fetch(`${getHost()}/json-api/synonym`, {credentials : "include"});
-        synonyms.value = await synonymResponse.json();
+        synonyms.value = (await ipFetch(`json-api/synonym`)).data;
     }
 
     onMounted(refreshSynonyms);
@@ -31,22 +30,12 @@ import { getHost } from '@/lib/utils';
 
     const newSynonym = async (synonym) => {
         create.value = false;
-        await fetch(`${getHost()}/json-api/synonym`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(synonym),
-            credentials : "include"
-        });
+        await ipFetch('json-api/synonym', 'POST', synonym);
         refreshSynonyms();
     }
 
     const removeSynonym = async (id) => {
-        await fetch(`${getHost()}/json-api/synonym`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({id}),
-            credentials : "include"
-        });
+        await ipFetch(`json-api/synonym`, 'DELETE', {id});
         refreshSynonyms();
     }
 </script>

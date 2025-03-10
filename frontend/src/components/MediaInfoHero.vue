@@ -37,7 +37,7 @@
 
 <script setup>
     import {ref, defineProps, watch, inject, computed} from 'vue';
-    import { getHost } from '@/lib/utils';
+    import { ipFetch } from '@/lib/ipFetch';
     import LoadingIndicator from './LoadingIndicator.vue';
 
     const details = ref({});
@@ -70,8 +70,7 @@
     watch(() => props.pid, async (newPid) => {
         details.value = {};
         if (newPid){
-            const detailsResponse = await fetch(`${getHost()}/json-api/details?pid=${newPid}`, {credentials : "include"});
-            details.value = await detailsResponse.json();
+            details.value = (await ipFetch(`json-api/details?pid=${newPid}`)).data;
         }
     }, {immediate : true})
 

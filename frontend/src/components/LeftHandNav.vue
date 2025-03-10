@@ -17,9 +17,9 @@
 
 <script setup>
 import { ref, defineExpose, defineEmits } from 'vue';
-import { getHost } from '@/lib/utils';
 import LeftHandNavLink from './LeftHandNavLink.vue';
 import { useRouter } from 'vue-router';
+import { ipFetch } from '@/lib/ipFetch';
 
 const router = useRouter();
 const lhn = ref(null);
@@ -38,7 +38,7 @@ defineExpose({ toggleLHN });
 
 const logout = async () => {
   if (confirm("Are you sure you want to log out?")) {
-    const response = await fetch(`${getHost()}/auth/logout`, { credentials: "include" });
+    const response = await ipFetch('json-api/auth/login');
     if (response.ok) {
       router.go(0);
     }
@@ -47,7 +47,7 @@ const logout = async () => {
 
 const refreshCache = async () => {
   if (confirm("Are you sure you want to refresh the index?")) {
-    await fetch(`${getHost()}/json-api/cache-refresh`, { credentials: "include" });
+    await ipFetch('json-api//cache-refresh');
     if (confirm("Cache Refresh Started, Would you like to view the logs?")) {
       router.push("/logs");
     }

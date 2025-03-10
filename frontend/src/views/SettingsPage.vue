@@ -30,7 +30,7 @@
     import LoadingIndicator from '@/components/LoadingIndicator.vue';
 
     import { onMounted, ref, watch, computed } from 'vue';
-    import { getHost } from '@/lib/utils';
+    import { ipFetch } from '@/lib/ipFetch';
 
     const loading = ref(false);
 
@@ -60,14 +60,14 @@
 
     onMounted(async () => {
         const [configResponse, sonarrConfigResponse, radarrConfigResponse] = await Promise.all([
-            fetch(`${getHost()}/json-api/config`, {credentials : "include"}),
-            fetch(`${getHost()}/json-api/sonarr`, {credentials : "include"}),
-            fetch(`${getHost()}/json-api/radarr`, {credentials : "include"})
+            ipFetch('json-api/config'),
+            ipFetch(`json-api/sonarr`),
+            ipFetch(`json-api/radarr`)
         ]);
         
-        config.value = await configResponse.json();
-        sonarrConfig.value = await sonarrConfigResponse.json();
-        radarrConfig.value = await radarrConfigResponse.json();
+        config.value = configResponse.data;
+        sonarrConfig.value = sonarrConfigResponse.data;
+        radarrConfig.value = radarrConfigResponse.data;
 
         watch(config, () => { configChanges.value = true }, { deep: true });
         watch(sonarrConfig, () => { sonarrChanges.value = true }, { deep: true });
@@ -79,15 +79,10 @@
         if (configChanges.value || sonarrChanges.value || radarrChanges.value){
             validationErrors.value.config = {};
 
-            const configResponse = await fetch(`${getHost()}/json-api/config`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(config.value),
-                credentials : "include"
-            });
+            const configResponse = await ipFetch(`json-api/config`, 'PUT', config.value);
 
             if (!configResponse.ok) {
-                const errorData = await configResponse.json();
+                const errorData = configResponse.data;
                 validationErrors.value.config = errorData.invalid_fields;
             } else {
                 alert("Config saved OK");
@@ -95,15 +90,10 @@
         }
 
         if (sonarrChanges.value){
-            const sonarrResponse = await fetch(`${getHost()}/json-api/sonarr`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(sonarrConfig.value),
-                credentials : "include"
-            });
+            const sonarrResponse = await ipFetch('json-api/sonarr', 'PUT', sonarrConfig.value);
 
             if (!sonarrResponse.ok){
-                const errorData = await sonarrResponse.json();
+                const errorData = sonarrResponse.data;
                 alert(errorData.message);
             } else {
                 alert("Sonarr Config saved OK");
@@ -111,15 +101,10 @@
         }
 
         if (radarrChanges.value){
-            const radarrResponse = await fetch(`${getHost()}/json-api/radarr`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(radarrConfig.value),
-                credentials : "include"
-            });
+            const radarrResponse = await ipFetch('json-api/radarr', 'PUT', radarrConfig.value);
 
             if (!radarrResponse.ok){
-                const errorData = await radarrResponse.json();
+                const errorData = radarrResponse.data;
                 alert(errorData.message);
             } else {
                 alert("Radarr Config saved OK");

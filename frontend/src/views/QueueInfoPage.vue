@@ -8,7 +8,7 @@
 
 <script setup>
 import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
-import { getHost } from '@/lib/utils';
+import { ipFetch } from '@/lib/ipFetch';
 import { useRoute, useRouter } from 'vue-router';
 import { ref, watch } from 'vue';
 import MediaInfoHero from '@/components/MediaInfoHero.vue';
@@ -30,7 +30,7 @@ const toggleFollow = () => {
 
 const deleteQueueItem = async () => {
     if (confirm("Are you sure you want to cancel this download?")) {
-        await fetch(`${getHost()}/json-api/queue?pid=${item.value.pid}`, { method: 'DELETE', credentials : "include" });
+        ipFetch(`json-api/queue?pid=${item.value.pid}`, 'DELETE');
         router.push("/queue");
     }
 }

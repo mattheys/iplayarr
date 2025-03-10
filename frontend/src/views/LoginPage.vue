@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-import { getHost } from '@/lib/utils';
+import { ipFetch } from '@/lib/ipFetch';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -57,12 +57,7 @@ const error = ref(false);
 const forgot = ref(false);
 
 const login = async () => {
-    const response = await fetch(`${getHost()}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(loginForm.value),
-        credentials: "include"
-    });
+    const response = await ipFetch('auth/login', 'POST', loginForm.value);
     if (response.ok) {
         router.push('/queue');
     } else {
@@ -72,9 +67,7 @@ const login = async () => {
 
 const showForgot = async () => {
     forgot.value=true;
-    await fetch(`${getHost()}/auth/generateToken`, {
-        credentials : "include"
-    });
+    ipFetch('generateToken');
 }
 
 const hideForgot = async () => {
@@ -82,12 +75,7 @@ const hideForgot = async () => {
 }
 
 const submitForgot = async () => {
-    await fetch(`${getHost()}/auth/resetPassword`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(forgotForm.value),
-        credentials: "include"
-    });
+    ipFetch('auth/resetPassword', 'POST', forgotForm.value);
     alert("If the code is correct, the password will be reset!");
     forgot.value=false;
 }

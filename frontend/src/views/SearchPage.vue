@@ -44,7 +44,7 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
 import { ref, watch, computed } from 'vue';
-import { getHost } from '@/lib/utils';
+import { ipFetch } from '@/lib/ipFetch';
 import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
 import LoadingIndicator from '@/components/LoadingIndicator.vue';
 
@@ -67,8 +67,7 @@ watch(() => route.query.searchTerm, async (newSearchTerm) => {
         loading.value = true;
         searchResults.value = [];
         searchTerm.value = newSearchTerm;
-        const response = await fetch(`${getHost()}/json-api/search?q=${searchTerm.value}`, { credentials: "include" });
-        searchResults.value = await response.json();
+        searchResults.value = (await ipFetch(`json-api/search?q=${searchTerm.value}`)).data;
         loading.value = false;
     }
 }, { immediate: true });
@@ -78,7 +77,7 @@ const download = async(searchResult) => {
 }
 
 const immediateDownload = async({pid, nzbName, type}) => {
-    const response = await fetch(`${getHost()}/json-api/download?pid=${pid}&nzbName=${nzbName}&type=${type}`, {credentials : "include"});
+    const response = await ipFetch(`json-api/download?pid=${pid}&nzbName=${nzbName}&type=${type}`);
     if (response.ok){
         router.push("/queue");
     }

@@ -9,13 +9,13 @@
 </template>
 
 <script setup>
+import { ipFetch } from '@/lib/ipFetch';
 import NavBar from './components/NavBar.vue';
 import LeftHandNav from './components/LeftHandNav.vue';
 import { RouterView } from 'vue-router';
 
 import { io } from "socket.io-client";
 import { ref, provide, watch, inject } from 'vue';
-import { getHost } from './lib/utils';
 
 const authState = inject("authState");
 const [queue, history, logs, socket, hiddenSettings] = [ref([]), ref([]), ref([]), ref(null), ref({})];
@@ -25,10 +25,8 @@ const navBar = ref(null);
 const leftHandNav = ref(null);
 
 const updateQueue = async () => {
-  const queueResponse = await fetch(`${getHost()}/json-api/queue`, { credentials: "include" });
-  queue.value = await queueResponse.json();
-  const historyResponse = await fetch(`${getHost()}/json-api/history`, { credentials: "include" });
-  history.value = await historyResponse.json();
+  queue.value = (await ipFetch('json-api/queue')).data;
+  history.value = (await ipFetch('json-api/history')).data;
 }
 
 const toggleLeftHandNav = () => {
@@ -66,8 +64,7 @@ const pageSetup = async () => {
       logs.value.push(data);
     })
 
-    const hsResponse = await fetch(`${getHost()}/json-api/hiddenSettings`, { credentials: "include" });
-    hiddenSettings.value = await hsResponse.json();
+    hiddenSettings.value = (await ipFetch('json-api/hiddenSettings')).data;
   }
 }
 
