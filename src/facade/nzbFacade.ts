@@ -1,13 +1,13 @@
 import { AxiosResponse } from 'axios';
 
-import { getParameter } from '../service/configService';
+import configService from '../service/configService';
 import nzbGetService from '../service/nzbgetService';
 import sabzbdService from '../service/sabnzbdService';
 import { IplayarrParameter } from '../types/IplayarrParameters';
 
 const nzbFacade = {
     test : async () : Promise<boolean> => {
-        const type = await getParameter(IplayarrParameter.NZB_TYPE);
+        const type = await configService.getParameter(IplayarrParameter.NZB_TYPE);
         switch (type){
             case 'sabnzbd':
             default:
@@ -28,7 +28,7 @@ const nzbFacade = {
     },
 
     addFile: async (files: Express.Multer.File[]): Promise<AxiosResponse> => {
-        const type = await getParameter(IplayarrParameter.NZB_TYPE);
+        const type = await configService.getParameter(IplayarrParameter.NZB_TYPE);
         switch (type){
             case 'sabnzbd':
             default:

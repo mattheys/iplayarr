@@ -3,13 +3,13 @@ import { v4 } from 'uuid';
 
 import { IplayarrParameter } from '../types/IplayarrParameters';
 import { NZBGetAppendRequest } from '../types/requests/nzbget/NZBGetAppendRequest';
-import { getParameter } from './configService';
+import configService from './configService';
 
 const nzbGetService = {
     test: async (): Promise<boolean> => {
-        const url = await getParameter(IplayarrParameter.NZB_URL);
-        const username = await getParameter(IplayarrParameter.NZB_USERNAME);
-        const password = await getParameter(IplayarrParameter.NZB_PASSWORD);
+        const url = await configService.getParameter(IplayarrParameter.NZB_URL);
+        const username = await configService.getParameter(IplayarrParameter.NZB_USERNAME);
+        const password = await configService.getParameter(IplayarrParameter.NZB_PASSWORD);
         if (url && username && password) {
             const result = await nzbGetService.testConnection(url, username, password);
             if (result == true) {
@@ -37,9 +37,9 @@ const nzbGetService = {
     },
 
     addFile: async (files: Express.Multer.File[]): Promise<AxiosResponse> => {
-        const inputUrl = await getParameter(IplayarrParameter.NZB_URL);
-        const username = await getParameter(IplayarrParameter.NZB_USERNAME) as string;
-        const password = await getParameter(IplayarrParameter.NZB_PASSWORD) as string;
+        const inputUrl = await configService.getParameter(IplayarrParameter.NZB_URL);
+        const username = await configService.getParameter(IplayarrParameter.NZB_USERNAME) as string;
+        const password = await configService.getParameter(IplayarrParameter.NZB_PASSWORD) as string;
 
         const url = `${inputUrl}/jsonrpc`;
 
