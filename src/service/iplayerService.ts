@@ -9,7 +9,7 @@ import { IplayarrParameter } from '../types/IplayarrParameters';
 import { IPlayerDetails } from '../types/IPlayerDetails';
 import { IPlayerSearchResult, VideoType } from '../types/IPlayerSearchResult';
 import { LogLine, LogLineLevel } from '../types/LogLine';
-import { QueueEntry } from "../types/QueueEntry";
+import { QueueEntry } from '../types/QueueEntry';
 import { Synonym } from '../types/Synonym';
 import { createNZBName, getQualityPofile } from '../utils/Utils';
 import { getParameter } from './configService';
