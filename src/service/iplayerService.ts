@@ -12,7 +12,7 @@ import { LogLine, LogLineLevel } from '../types/LogLine';
 import { QueueEntry } from '../types/QueueEntry';
 import { Synonym } from '../types/Synonym';
 import { createNZBName, getQualityPofile } from '../utils/Utils';
-import { getParameter } from './configService';
+import configService from './configService';
 import episodeCacheService from './episodeCacheService';
 import historyService from './historyService';
 import loggingService from './loggingService';
@@ -35,8 +35,8 @@ const timestampFile = 'iplayarr_timestamp';
 const iplayerService = {
     download : async (pid : string) : Promise<ChildProcess> => {
         const uuid : string = v4();
-        const downloadDir = await getParameter(IplayarrParameter.DOWNLOAD_DIR) as string;
-        const completeDir = await getParameter(IplayarrParameter.COMPLETE_DIR) as string;
+        const downloadDir = await configService.getParameter(IplayarrParameter.DOWNLOAD_DIR) as string;
+        const completeDir = await configService.getParameter(IplayarrParameter.COMPLETE_DIR) as string;
 
         const [exec, args] = await getIPlayerExec();
         const additionalParams : string[] = await getAddDownloadParams();
@@ -147,7 +147,7 @@ const iplayerService = {
     },
 
     refreshCache: async () => {
-        const downloadDir = await getParameter(IplayarrParameter.DOWNLOAD_DIR) as string;
+        const downloadDir = await configService.getParameter(IplayarrParameter.DOWNLOAD_DIR) as string;
         const [exec, args] = await getIPlayerExec();
 
         //Refresh the cache
@@ -346,7 +346,7 @@ function extractSeriesNumber(title : string, series : string) : any[]{
 }
 
 async function getIPlayerExec() : Promise<(string | RegExpMatchArray)[]> {
-    const fullExec : string = await getParameter(IplayarrParameter.GET_IPLAYER_EXEC) as string;
+    const fullExec : string = await configService.getParameter(IplayarrParameter.GET_IPLAYER_EXEC) as string;
     const args : RegExpMatchArray = fullExec.match(/(?:[^\s"]+|"[^"]*")+/g) as RegExpMatchArray;
 
     const exec : string = args.shift() as string;
@@ -355,13 +355,13 @@ async function getIPlayerExec() : Promise<(string | RegExpMatchArray)[]> {
 }
 
 async function getQualityParam() : Promise<string> {
-    const videoQuality = await getParameter(IplayarrParameter.VIDEO_QUALITY) as string;
+    const videoQuality = await configService.getParameter(IplayarrParameter.VIDEO_QUALITY) as string;
 
     return `--tv-quality=${videoQuality}`;
 }
 
 async function getAddDownloadParams() : Promise<string[]> {
-    const additionalParams = await getParameter(IplayarrParameter.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS);
+    const additionalParams = await configService.getParameter(IplayarrParameter.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS);
 
     if (additionalParams){
         return additionalParams.split(' ');

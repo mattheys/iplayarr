@@ -7,7 +7,7 @@ import { ArrCreateDownloadClientRequest, CreateDownloadClientRequestField,create
 import { CreateIndexerRequest, createIndexerRequestSkeleton, createIndexRequestFieldsSkeleton } from '../types/requests/sonarr/CreateIndexerRequest';
 import { DownloadClientResponse } from '../types/responses/arr/DownloadClientResponse';
 import { IndexerResponse } from '../types/responses/arr/IndexerResponse';
-import { setParameter } from './configService';
+import configService from './configService';
 
 export interface ArrConfig {
     API_KEY : string,
@@ -100,7 +100,7 @@ const arrService = {
                     'X-Api-Key': API_KEY
                 }
             });
-            setParameter(download_id_key, id);
+            configService.setParameter(download_id_key, id);
 
             return id;
         } catch (err){
@@ -207,7 +207,7 @@ const arrService = {
                     'X-Api-Key': API_KEY
                 }
             });
-            setParameter(indexer_id_key, id);
+            configService.setParameter(indexer_id_key, id);
             return id;
         } catch (err){
             throw err;

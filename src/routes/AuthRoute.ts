@@ -2,11 +2,11 @@ import {Express, NextFunction,Request, Response, Router} from 'express';
 import session from 'express-session'
 import { v4 } from 'uuid';
 
-import { defaultConfigMap, getParameter, setParameter } from '../service/configService';
 import { IplayarrParameter } from '../types/IplayarrParameters';
 import { ApiError, ApiResponse } from '../types/responses/ApiResponse';
 import User from '../types/User'
 import { md5 } from '../utils/Utils';
+import configService from '../service/configService';
 
 declare module 'express-session' {
     interface SessionData {
@@ -44,8 +44,8 @@ export const addAuthMiddleware = (app : Express) => {
 
 router.post('/login', async (req: Request, res: Response) => {
     const [AUTH_USERNAME, AUTH_PASSWORD] = await Promise.all([
-        getParameter(IplayarrParameter.AUTH_USERNAME),
-        getParameter(IplayarrParameter.AUTH_PASSWORD),
+        configService.getParameter(IplayarrParameter.AUTH_USERNAME),
+        configService.getParameter(IplayarrParameter.AUTH_PASSWORD),
     ])
     const { username, password } = req.body;
 
@@ -92,8 +92,8 @@ router.post('/resetPassword', async (req : Request, res : Response) => {
     if (token != '' && key == token){
         token = '';
         clearTimeout(resetTimer);
-        await setParameter(IplayarrParameter.AUTH_USERNAME, defaultConfigMap.AUTH_USERNAME);
-        await setParameter(IplayarrParameter.AUTH_PASSWORD, defaultConfigMap.AUTH_PASSWORD)
+        await configService.setParameter(IplayarrParameter.AUTH_USERNAME, configService.defaultConfigMap.AUTH_USERNAME);
+        await configService.setParameter(IplayarrParameter.AUTH_PASSWORD, configService.defaultConfigMap.AUTH_PASSWORD)
     }
 
     res.json(true);

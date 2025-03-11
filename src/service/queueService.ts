@@ -5,7 +5,7 @@ import { IplayarrParameter } from '../types/IplayarrParameters';
 import { VideoType } from '../types/IPlayerSearchResult';
 import { QueueEntry } from '../types/QueueEntry'
 import { QueueEntryStatus } from '../types/responses/sabnzbd/QueueResponse';
-import { getParameter } from './configService';
+import configService from './configService';
 import iplayerService from './iplayerService';
 import socketService from './socketService';
 
@@ -25,7 +25,7 @@ const queueService = {
     },
 
     moveQueue : async () : Promise<void> => {
-        const activeLimit : number = parseInt(await getParameter(IplayarrParameter.ACTIVE_LIMIT) as string);
+        const activeLimit : number = parseInt(await configService.getParameter(IplayarrParameter.ACTIVE_LIMIT) as string);
         
         let activeQueue : QueueEntry[] = queue.filter(({ status }) => status == QueueEntryStatus.DOWNLOADING);
         let idleQueue : QueueEntry[] = queue.filter(({ status }) => status == QueueEntryStatus.QUEUED);

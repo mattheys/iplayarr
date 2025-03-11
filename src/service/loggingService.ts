@@ -1,6 +1,6 @@
 import { IplayarrParameter } from '../types/IplayarrParameters';
 import { LogLine, LogLineLevel } from '../types/LogLine';
-import { getParameter } from './configService';
+import configService from './configService';
 import socketService from './socketService';
 
 const loggingService = {
@@ -19,7 +19,7 @@ const loggingService = {
     },
 
     debug: (...params : any[]) => {
-        getParameter(IplayarrParameter.DEBUG).then((debug) => {
+        configService.getParameter(IplayarrParameter.DEBUG).then((debug) => {
             const message = joinOrReturn(params);
             if (debug && debug.toLowerCase() == 'true'){
                 console.log(...params);

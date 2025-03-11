@@ -8,7 +8,7 @@ import { Server as SocketIOServer } from 'socket.io';
 import ApiRoute from './routes/ApiRoute';
 import AuthRoute, { addAuthMiddleware } from './routes/AuthRoute';
 import JsonApiRoute from './routes/JsonApiRoute';
-import { getParameter } from './service/configService';
+import configService from './service/configService';
 import episodeCacheService from './service/episodeCacheService';
 import iplayerService from './service/iplayerService';
 import loggingService from './service/loggingService';
@@ -65,7 +65,7 @@ server.listen(port, () => {
 });
 
 //Cron
-getParameter(IplayarrParameter.REFRESH_SCHEDULE).then((cronSchedule) => {
+configService.getParameter(IplayarrParameter.REFRESH_SCHEDULE).then((cronSchedule) => {
     cron.schedule(cronSchedule as string, () => {
         iplayerService.refreshCache();
         episodeCacheService.recacheAllSeries();

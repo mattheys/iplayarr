@@ -2,7 +2,7 @@ import {NextFunction,Request, Response, Router} from 'express';
 import multer, { Multer } from 'multer';
 
 import { EndpointDirectory, NewzNabEndpointDirectory, SabNZBDEndpointDirectory } from '../endpoints/EndpointDirectory';
-import { getParameter } from '../service/configService';
+import configService from '../service/configService';
 import { IplayarrParameter } from '../types/IplayarrParameters';
 import { ApiError, ApiResponse } from '../types/responses/ApiResponse';
 
@@ -17,7 +17,7 @@ interface ApiRequest {
 
 router.all('/', upload.any(), async (req : Request, res : Response, next : NextFunction) => {
     const {apikey : queryKey, mode, t} = req.query as any as ApiRequest;
-    const envKey : string | undefined = await getParameter(IplayarrParameter.API_KEY);
+    const envKey : string | undefined = await configService.getParameter(IplayarrParameter.API_KEY);
     if (envKey && envKey == queryKey){
         const endpoint : string | undefined = mode || t;
         const directory : EndpointDirectory = mode ? SabNZBDEndpointDirectory : NewzNabEndpointDirectory;
