@@ -27,7 +27,7 @@
                 tooltip="Extra parameters to pass to get_iplayer for download"
                 v-model="config.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS"
                 :error="validationErrors.config?.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS" />
-                <NZBSettings @config-updated="processNZBUpdate"/>
+                <NZBSettings @config-updated="processNZBUpdate" :validationErrors="validationErrors"/>
         </template>
 
         

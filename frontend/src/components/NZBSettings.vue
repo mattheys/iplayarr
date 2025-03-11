@@ -3,15 +3,15 @@
         <legend class="sub">NZB Passthrough</legend>
         <p>If your *arr client accidentally sends a real NZB, Where should it be forwarded?</p>
         <sub>In order for this to work successfully, your NZB Client needs the category "iplayer"</sub>
-        <SettingsSelectInput name="NZB Client" tooltip="Which NZB Client to use" :advanced="true" :options="client_options" v-model="nzbOptions.NZB_TYPE"/>
+        <SettingsSelectInput name="NZB Client" tooltip="Which NZB Client to use" :advanced="true" :options="client_options" v-model="nzbOptions.NZB_TYPE" :error="validationErrors.config.NZB_TYPE"/>
         <SettingsTextInput name="NZB URL" tooltip="URL For NZB passthrough"
-            :advanced="true" v-model="nzbOptions.NZB_URL"/>
+            :advanced="true" v-model="nzbOptions.NZB_URL" :error="validationErrors.config.NZB_URL"/>
         <SettingsTextInput name="NZB Api Key" tooltip="API Key for NZB passthrough"
-            :advanced="true" v-model="nzbOptions.NZB_API_KEY" v-if="selectedClient && selectedClient.apiKey"/>
+            :advanced="true" v-model="nzbOptions.NZB_API_KEY" v-if="selectedClient && selectedClient.apiKey" :error="validationErrors.config.NZB_API_KEY"/>
         <SettingsTextInput name="NZB Username" tooltip="Username for NZB passthrough"
-        :advanced="true" v-model="nzbOptions.NZB_USERNAME" v-if="selectedClient && selectedClient.username"/>
+        :advanced="true" v-model="nzbOptions.NZB_USERNAME" v-if="selectedClient && selectedClient.username" :error="validationErrors.config.NZB_USERNAME"/>
         <SettingsTextInput name="NZB Password" tooltip="Password for NZB passthrough"
-        :advanced="true" v-model="nzbOptions.NZB_PASSWORD" type-override="password" v-if="selectedClient && selectedClient.password"/>        
+        :advanced="true" v-model="nzbOptions.NZB_PASSWORD" type-override="password" v-if="selectedClient && selectedClient.password" :error="validationErrors.config.NZB_PASSWORD"/>        
             <div class="button-container" v-if="selectedClient">
                 <button class="test-button" @click="testNZB">
                     <template v-if="testStatus == 'INITIAL'">
@@ -32,10 +32,16 @@
     import SettingsTextInput from './SettingsTextInput.vue';
     import SettingsSelectInput from './SettingsSelectInput.vue';
 
-    import {ref, onMounted, computed, defineEmits, watch} from 'vue';
+    import {ref, onMounted, computed, defineEmits, watch, defineProps} from 'vue';
     import { ipFetch } from '@/lib/ipFetch';
 
     const emit = defineEmits(['configUpdated']);
+    defineProps({
+        validationErrors : {
+            type : Object,
+            required : true
+        }
+    })
 
     const nzbOptions = ref({
         NZB_URL : '',
