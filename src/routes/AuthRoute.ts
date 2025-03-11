@@ -2,11 +2,11 @@ import {Express, NextFunction,Request, Response, Router} from 'express';
 import session from 'express-session'
 import { v4 } from 'uuid';
 
+import configService from '../service/configService';
 import { IplayarrParameter } from '../types/IplayarrParameters';
 import { ApiError, ApiResponse } from '../types/responses/ApiResponse';
 import User from '../types/User'
 import { md5 } from '../utils/Utils';
-import configService from '../service/configService';
 
 declare module 'express-session' {
     interface SessionData {
