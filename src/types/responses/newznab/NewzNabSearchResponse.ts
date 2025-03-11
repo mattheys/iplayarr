@@ -1,4 +1,4 @@
-export interface TVSearchResponse {
+export interface NewzNabSearchResponse {
     $: {
         version: string;
         "xmlns:atom": string;
@@ -19,11 +19,11 @@ interface NewzNabTVFeedItem {
     size: string;
     category: string[];
     pubDate: string;
-    "newznab:attr": NewznabAttr[];
+    "newznab:attr": NewzNabAttr[];
     link: string;
     enclosure: { $: { url: string; length: string; type: string } };
 }
 
-interface NewznabAttr {
+export interface NewzNabAttr {
     $: { name: string; value: string };
 }
