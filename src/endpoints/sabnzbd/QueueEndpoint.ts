@@ -41,8 +41,8 @@ function convertEntries(slot : QueueEntry, index : number) : SabNZBQueueEntry {
         mb: slot.details?.size || 0,
         mbleft: slot.details?.sizeLeft || 100,
         filename: slot.nzbName,
-        timeleft: slot.details?.eta || "00:00:00",
-        percentage: slot.details?.progress || 0,
+        timeleft: slot.details?.eta || '00:00:00',
+        percentage: slot.details?.progress ? Math.trunc(slot.details.progress) : 0,
         nzo_id: slot.pid,
     } as SabNZBQueueEntry;
 }

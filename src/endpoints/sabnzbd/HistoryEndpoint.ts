@@ -8,6 +8,8 @@ import { historyEntrySkeleton, historySkeleton, SABNZBDHistoryEntryResponse, Sab
 import { formatBytes } from "../../utils/Utils"
 import { QueueEntry } from "../../types/QueueEntry"
 
+const sizeFactor : number = 1048576; 
+
 interface HistoryQuery {
     name? : string
     value? : string
@@ -34,16 +36,16 @@ function createHistoryEntry(completeDir : string, item : QueueEntry) : SABNZBDHi
     return {
         ...historyEntrySkeleton,
         duplicate_key : item.pid,
-        size : formatBytes(item.details?.size as number),
+        size : formatBytes(item.details?.size as number * sizeFactor),
         nzb_name: `${item.nzbName}.nzb`,
         storage : `${completeDir}/${item.nzbName}.mp4`,
-        completed : item.details?.size as number,
-        downloaded : item.details?.size as number,
+        completed : item.details?.size as number * sizeFactor,
+        downloaded : item.details?.size as number * sizeFactor,
         nzo_id: item.pid,
         path : `${completeDir}/${item.nzbName}.mp4`,
         name: `${item.nzbName}.mp4`,
         url: `${item.nzbName}.nzb`,
-        bytes: item.details?.size as number
+        bytes: item.details?.size as number * sizeFactor
     } as SABNZBDHistoryEntryResponse
 }
 
