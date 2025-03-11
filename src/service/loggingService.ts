@@ -1,7 +1,7 @@
-import { IplayarrParameter } from "../types/IplayarrParameters";
-import { LogLine, LogLineLevel } from "../types/LogLine";
-import { getParameter } from "./configService";
-import socketService from "./socketService";
+import { IplayarrParameter } from '../types/IplayarrParameters';
+import { LogLine, LogLineLevel } from '../types/LogLine';
+import { getParameter } from './configService';
+import socketService from './socketService';
 
 const loggingService = {
     log: (...params : any[]) => {
@@ -42,7 +42,7 @@ function joinOrReturn(input : string | any[]) : string {
     } else if (typeof input === 'string') {
       return input;
     }
-    return "";
+    return '';
   }
 
 export default loggingService;

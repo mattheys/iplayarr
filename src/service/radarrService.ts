@@ -1,10 +1,10 @@
-import { IplayarrParameter } from "../types/IplayarrParameters";
-import { CreateDownloadClientForm } from "../types/requests/form/CreateDownloadClientForm";
-import { CreateIndexerForm } from "../types/requests/form/CreateIndexerForm";
-import { DownloadClientResponse } from "../types/responses/arr/DownloadClientResponse";
-import { IndexerResponse } from "../types/responses/arr/IndexerResponse";
-import arrService, { ArrConfig } from "./arrService";
-import { getParameter } from "./configService";
+import { IplayarrParameter } from '../types/IplayarrParameters';
+import { CreateDownloadClientForm } from '../types/requests/form/CreateDownloadClientForm';
+import { CreateIndexerForm } from '../types/requests/form/CreateIndexerForm';
+import { DownloadClientResponse } from '../types/responses/arr/DownloadClientResponse';
+import { IndexerResponse } from '../types/responses/arr/IndexerResponse';
+import arrService, { ArrConfig } from './arrService';
+import { getParameter } from './configService';
 
 const radarrService = {
     getConfig: async (): Promise<ArrConfig> => {

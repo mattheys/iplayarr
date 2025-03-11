@@ -1,9 +1,10 @@
-import {Router, Request, Response, NextFunction} from 'express';
+import {NextFunction,Request, Response, Router} from 'express';
+import multer, { Multer } from 'multer';
+
+import { EndpointDirectory, NewzNabEndpointDirectory, SabNZBDEndpointDirectory } from '../endpoints/EndpointDirectory';
 import { getParameter } from '../service/configService';
 import { IplayarrParameter } from '../types/IplayarrParameters';
 import { ApiError, ApiResponse } from '../types/responses/ApiResponse';
-import { EndpointDirectory, NewzNabEndpointDirectory, SabNZBDEndpointDirectory } from '../endpoints/EndpointDirectory';
-import multer, { Multer } from 'multer';
 
 const router : Router = Router();
 const upload : Multer = multer();
@@ -23,10 +24,10 @@ router.all('/', upload.any(), async (req : Request, res : Response, next : NextF
         if (endpoint && directory[endpoint]){
             directory[endpoint](req, res, next);
         } else {
-            res.status(404).json({ "error": ApiError.API_NOT_FOUND } as ApiResponse);
+            res.status(404).json({ 'error': ApiError.API_NOT_FOUND } as ApiResponse);
         }
     } else {
-        res.status(401).json({ "error": ApiError.NOT_AUTHORISED } as ApiResponse);
+        res.status(401).json({ 'error': ApiError.NOT_AUTHORISED } as ApiResponse);
     }
 });
 

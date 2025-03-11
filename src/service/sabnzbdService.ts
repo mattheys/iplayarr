@@ -1,7 +1,8 @@
-import axios, { AxiosResponse } from "axios";
-import { getParameter } from "./configService";
-import { IplayarrParameter } from "../types/IplayarrParameters";
-import FormData from "form-data";
+import axios, { AxiosResponse } from 'axios';
+import FormData from 'form-data';
+
+import { IplayarrParameter } from '../types/IplayarrParameters';
+import { getParameter } from './configService';
 
 const sabzbdService = {
     test : async () : Promise<boolean> => {
@@ -44,7 +45,7 @@ const sabzbdService = {
         const formData = new FormData();
         if (files) {
             files.forEach((file) => {
-                formData.append("nzbfile", file.buffer, {
+                formData.append('nzbfile', file.buffer, {
                     filename: file.originalname,
                     contentType: file.mimetype,
                 });

@@ -1,30 +1,31 @@
-import { Request, Response, Router } from "express";
-import historyService from "../service/historyService";
-import queueService from "../service/queueService";
-import socketService from "../service/socketService";
-import { QueueEntry } from "../types/QueueEntry";
-import { ConfigMap, getAllConfig, getParameter, removeParameter, setParameter } from "../service/configService";
-import { DownloadClientResponse } from "../types/responses/arr/DownloadClientResponse";
-import sonarrService from "../service/sonarrService";
-import { IplayarrParameter } from "../types/IplayarrParameters";
-import { Validator } from "../validators/Validator";
-import { ConfigFormValidator } from "../validators/ConfigFormValidator";
-import { ApiError, ApiResponse } from "../types/responses/ApiResponse";
-import { SonarrConfigResponse } from "../types/responses/frontend/SonarrConfigResponse";
-import { CreateDownloadClientForm } from "../types/requests/form/CreateDownloadClientForm";
-import radarrService from "../service/radarrService";
-import { IndexerResponse } from "../types/responses/arr/IndexerResponse";
-import { CreateIndexerForm } from "../types/requests/form/CreateIndexerForm";
-import synonymService from "../service/synonymService";
-import { Synonym } from "../types/Synonym";
-import { md5 } from "../utils/Utils";
-import { IPlayerSearchResult } from "../types/IPlayerSearchResult";
-import iplayerService from "../service/iplayerService";
-import arrService from "../service/arrService";
-import sabzbdService from "../service/sabnzbdService";
-import { qualityProfiles } from "../types/QualityProfiles";
-import episodeCacheService from "../service/episodeCacheService";
-import { EpisodeCacheDefinition } from "../types/responses/EpisodeCacheTypes";
+import { Request, Response, Router } from 'express';
+
+import arrService from '../service/arrService';
+import { ConfigMap, getAllConfig, getParameter, removeParameter, setParameter } from '../service/configService';
+import episodeCacheService from '../service/episodeCacheService';
+import historyService from '../service/historyService';
+import iplayerService from '../service/iplayerService';
+import queueService from '../service/queueService';
+import radarrService from '../service/radarrService';
+import sabzbdService from '../service/sabnzbdService';
+import socketService from '../service/socketService';
+import sonarrService from '../service/sonarrService';
+import synonymService from '../service/synonymService';
+import { IplayarrParameter } from '../types/IplayarrParameters';
+import { IPlayerSearchResult } from '../types/IPlayerSearchResult';
+import { qualityProfiles } from '../types/QualityProfiles';
+import { QueueEntry } from '../types/QueueEntry';
+import { CreateDownloadClientForm } from '../types/requests/form/CreateDownloadClientForm';
+import { CreateIndexerForm } from '../types/requests/form/CreateIndexerForm';
+import { ApiError, ApiResponse } from '../types/responses/ApiResponse';
+import { DownloadClientResponse } from '../types/responses/arr/DownloadClientResponse';
+import { IndexerResponse } from '../types/responses/arr/IndexerResponse';
+import { EpisodeCacheDefinition } from '../types/responses/EpisodeCacheTypes';
+import { SonarrConfigResponse } from '../types/responses/frontend/SonarrConfigResponse';
+import { Synonym } from '../types/Synonym';
+import { md5 } from '../utils/Utils';
+import { ConfigFormValidator } from '../validators/ConfigFormValidator';
+import { Validator } from '../validators/Validator';
 
 const router : Router = Router();
 
@@ -34,7 +35,7 @@ interface DeleteRequest {
 
 router.get('/hiddenSettings', (_, res : Response) => {
     res.json(
-        {"HIDE_DONATE" : process.env.HIDE_DONATE || false}
+        {'HIDE_DONATE' : process.env.HIDE_DONATE || false}
     )
 })
 
@@ -78,7 +79,7 @@ router.put('/config', async (req, res : Response) => {
         return;
     }
     for (const key of Object.keys(req.body)){
-        if (key != "AUTH_PASSWORD"){
+        if (key != 'AUTH_PASSWORD'){
             await setParameter(key as IplayarrParameter, req.body[key]);
         } else {
             const existingPassword = await getParameter(IplayarrParameter.AUTH_PASSWORD);
@@ -104,7 +105,7 @@ router.delete('/history', async (req : Request, res : Response) => {
     const {pid} = req.query as any as DeleteRequest;
     await historyService.removeHistory(pid);
     const history = await historyService.getHistory() || [];
-    socketService.emit("history", history);
+    socketService.emit('history', history);
     res.json(history);
 });
 
@@ -112,7 +113,7 @@ router.delete('/queue', async (req : Request, res : Response) => {
     const {pid} = req.query as any as DeleteRequest;
     queueService.cancelItem(pid);
     const queue : QueueEntry[] = queueService.getQueue() || [];
-    socketService.emit("queue", queue);
+    socketService.emit('queue', queue);
     res.json(queue);
 });
 
@@ -234,27 +235,27 @@ router.put('/radarr', async (req : Request, res : Response) => {
     res.json(req.body);
 });
 
-router.delete("/sonarr/download_client", (_, res : Response) => {
+router.delete('/sonarr/download_client', (_, res : Response) => {
     removeParameter(IplayarrParameter.SONARR_DOWNLOAD_CLIENT_ID);
     res.json(true)
 });
 
-router.delete("/radarr/download_client", (_, res : Response) => {
+router.delete('/radarr/download_client', (_, res : Response) => {
     removeParameter(IplayarrParameter.RADARR_DOWNLOAD_CLIENT_ID);
     res.json(true)
 });
 
-router.delete("/sonarr/indexer", (_, res : Response) => {
+router.delete('/sonarr/indexer', (_, res : Response) => {
     removeParameter(IplayarrParameter.SONARR_INDEXER_ID);
     res.json(true)
 });
 
-router.delete("/radarr/indexer", (_, res : Response) => {
+router.delete('/radarr/indexer', (_, res : Response) => {
     removeParameter(IplayarrParameter.RADARR_INDEXER_ID);
     res.json(true)
 });
 
-router.post("/arr/test", async (req : Request, res : Response) => {
+router.post('/arr/test', async (req : Request, res : Response) => {
     const {API_KEY, HOST} = req.body;
     const result : string | boolean = await arrService.testConnection({API_KEY, HOST});
     if (result == true){
@@ -264,7 +265,7 @@ router.post("/arr/test", async (req : Request, res : Response) => {
     }
 });
 
-router.post("/sabnzbd/test", async (req : Request, res : Response) => {
+router.post('/sabnzbd/test', async (req : Request, res : Response) => {
     const {SABNZBD_URL, SABNZBD_API_KEY} = req.body;
     const result : string | boolean = await sabzbdService.testConnection(SABNZBD_URL, SABNZBD_API_KEY);
     if (result == true){
@@ -274,49 +275,49 @@ router.post("/sabnzbd/test", async (req : Request, res : Response) => {
     }
 });
 
-router.get("/search", async (req : Request, res : Response) => {
+router.get('/search', async (req : Request, res : Response) => {
     const {q} = req.query as any;
     const result : IPlayerSearchResult[] = await iplayerService.search(q);
     res.json(result);
 });
 
-router.get("/details", async (req : Request, res : Response) => {
+router.get('/details', async (req : Request, res : Response) => {
     const {pid} = req.query as any;
     const details = await iplayerService.details([pid]);
     res.json(details[0]);
 });
 
-router.get("/download", async (req : Request, res : Response) => {
+router.get('/download', async (req : Request, res : Response) => {
     const {pid, nzbName, type} = req.query as any;
     queueService.addToQueue(pid, nzbName, type);
     res.json(true)
 });
 
-router.get("/cache-refresh", async (_, res : Response) => {
+router.get('/cache-refresh', async (_, res : Response) => {
     iplayerService.refreshCache();
     res.json(true);
 });
 
-router.get("/offSchedule", async (_, res : Response) => {
+router.get('/offSchedule', async (_, res : Response) => {
     const cachedSeries : EpisodeCacheDefinition[] = await episodeCacheService.getCachedSeries();
     res.json(cachedSeries);
 });
 
-router.post("/offSchedule", async (req : Request, res : Response) => {
+router.post('/offSchedule', async (req : Request, res : Response) => {
     const {name, url} = req.body;
     await episodeCacheService.addCachedSeries(url, name);
     const cachedSeries : EpisodeCacheDefinition[] = await episodeCacheService.getCachedSeries();
     res.json(cachedSeries);
 });
 
-router.delete("/offSchedule", async (req : Request, res : Response) => {
+router.delete('/offSchedule', async (req : Request, res : Response) => {
     const {id} = req.body;
     await episodeCacheService.removeCachedSeries(id);
     const cachedSeries : EpisodeCacheDefinition[] = await episodeCacheService.getCachedSeries();
     res.json(cachedSeries);
 });
 
-router.post("/offSchedule/refresh", async (req : Request, res : Response) => {
+router.post('/offSchedule/refresh', async (req : Request, res : Response) => {
     const def : EpisodeCacheDefinition = req.body;
     episodeCacheService.recacheSeries(def);
     res.json(true);
