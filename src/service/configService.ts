@@ -1,6 +1,7 @@
-import storage from 'node-persist';
 import dotenv from 'dotenv'
-import { IplayarrParameter } from "../types/IplayarrParameters";
+import storage from 'node-persist';
+
+import { IplayarrParameter } from '../types/IplayarrParameters';
 
 dotenv.config();
 
@@ -17,15 +18,15 @@ export interface ConfigMap {
 }
 
 export const defaultConfigMap : ConfigMap = {
-    "DEBUG" : "false",
-    "ACTIVE_LIMIT" : "3",
-    "REFRESH_SCHEDULE" : "0 * * * *",
-    "AUTH_USERNAME" : "admin",
-    "AUTH_PASSWORD" : "5f4dcc3b5aa765d61d8327deb882cf99",
-    "FALLBACK_FILENAME_SUFFIX" : "WEB.H264-BBC",
-    "MOVIE_FILENAME_TEMPLATE" : "{{title}}.BBC.WEB-DL.AAC.2.0.{{quality}}.H.264",
-    "TV_FILENAME_TEMPLATE" : "{{title}}.S{{season}}E{{episode}}.WEB.{{quality}}.H.264.BBC",
-    "VIDEO_QUALITY" : "hd"
+    'DEBUG' : 'false',
+    'ACTIVE_LIMIT' : '3',
+    'REFRESH_SCHEDULE' : '0 * * * *',
+    'AUTH_USERNAME' : 'admin',
+    'AUTH_PASSWORD' : '5f4dcc3b5aa765d61d8327deb882cf99',
+    'FALLBACK_FILENAME_SUFFIX' : 'WEB.H264-BBC',
+    'MOVIE_FILENAME_TEMPLATE' : '{{title}}.BBC.WEB-DL.AAC.2.0.{{quality}}.H.264',
+    'TV_FILENAME_TEMPLATE' : '{{title}}.S{{season}}E{{episode}}.WEB.{{quality}}.H.264.BBC',
+    'VIDEO_QUALITY' : 'hd'
 }
 
 async function getConfigMap() : Promise<ConfigMap> {
@@ -33,7 +34,7 @@ async function getConfigMap() : Promise<ConfigMap> {
         await storage.init(storageOptions);
         isStorageInitialized = true;
     }
-    return (await storage.getItem("config")) || {};
+    return (await storage.getItem('config')) || {};
 }
 
 export const getParameter = async (parameter: IplayarrParameter): Promise<string | undefined> => {
@@ -53,7 +54,7 @@ export const removeParameter = async (parameter: IplayarrParameter) : Promise<vo
     await storage.setItem('config', configMap);
 }
 export const getAllConfig = async () : Promise<ConfigMap> =>  {
-    let configMap : ConfigMap = {};
+    const configMap : ConfigMap = {};
     for (const param of Object.values(IplayarrParameter)){
         const parameter : string | undefined = await getParameter(param);
         if (parameter){

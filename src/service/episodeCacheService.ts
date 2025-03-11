@@ -1,12 +1,13 @@
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
+import storage from 'node-persist';
+import { v4 } from 'uuid';
+
+import { IPlayerDetails } from '../types/IPlayerDetails';
+import { IPlayerSearchResult, VideoType } from '../types/IPlayerSearchResult';
 import { EpisodeCacheDefinition, IPlayerDataLayerResponse } from '../types/responses/EpisodeCacheTypes';
 import { createNZBName, getQualityPofile, removeAllQueryParams, splitArrayIntoChunks } from '../utils/Utils';
 import iplayerService from './iplayerService';
-import { IPlayerDetails } from '../types/IPlayerDetails';
-import { IPlayerSearchResult, VideoType } from '../types/IPlayerSearchResult';
-import storage from 'node-persist';
-import { v4 } from 'uuid';
 
 let isStorageInitialized : boolean = false;
 const storageOptions : any = {};
@@ -122,7 +123,7 @@ const episodeCacheService = {
             const detailScript : Element | null = document.querySelector('#tvip-script-app-store');
 
             if (detailScript){
-                const json = detailScript.innerHTML.replace("window.__IPLAYER_REDUX_STATE__ = ", "").replace(/;$/, "");
+                const json = detailScript.innerHTML.replace('window.__IPLAYER_REDUX_STATE__ = ', '').replace(/;$/, '');
                 const response : IPlayerDataLayerResponse = JSON.parse(json);
                 return response
             }
@@ -137,7 +138,7 @@ async function createResult(term : string, details : IPlayerDetails, sizeFactor 
     const size : number | undefined = details.runtime ? (details.runtime * 60) * sizeFactor : undefined;
 
     const nzbName = await createNZBName(VideoType.TV, {
-        title: details.title.replaceAll(" ", "."),
+        title: details.title.replaceAll(' ', '.'),
         season: details.series ? details.series.toString().padStart(2, '0') : undefined,
         episode: details.episode ? details.episode.toString().padStart(2, '0') : undefined,
     });

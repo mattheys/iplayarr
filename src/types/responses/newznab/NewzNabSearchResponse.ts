@@ -1,11 +1,11 @@
 export interface NewzNabSearchResponse {
     $: {
         version: string;
-        "xmlns:atom": string;
-        "xmlns:newznab": string;
+        'xmlns:atom': string;
+        'xmlns:newznab': string;
     };
     channel: {
-        "atom:link": { $: { rel: string; type: string } };
+        'atom:link': { $: { rel: string; type: string } };
         title: string;
         item: NewzNabTVFeedItem[];
     };
@@ -19,7 +19,7 @@ interface NewzNabTVFeedItem {
     size: string;
     category: string[];
     pubDate: string;
-    "newznab:attr": NewzNabAttr[];
+    'newznab:attr': NewzNabAttr[];
     link: string;
     enclosure: { $: { url: string; length: string; type: string } };
 }

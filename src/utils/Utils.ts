@@ -1,24 +1,21 @@
-import sonarrService from "../service/sonarrService";
-import { Request } from "express";
 import * as crypto from 'crypto';
-import { getParameter } from "../service/configService";
-import { IplayarrParameter } from "../types/IplayarrParameters";
+import { Request } from 'express';
 import Handlebars from 'handlebars';
-import { FilenameTemplateContext } from "../types/FilenameTemplateContext";
-import { IPlayerSearchResult, VideoType } from "../types/IPlayerSearchResult";
-import { QualityProfile, qualityProfiles } from "../types/QualityProfiles";
 
-const seasonRegex = /(?:Series|Season)\s(\d+)/;
-const episodeRegex = /(?:Episode|Ep)\s(\d+)/;
+import { getParameter } from '../service/configService';
+import { FilenameTemplateContext } from '../types/FilenameTemplateContext';
+import { IplayarrParameter } from '../types/IplayarrParameters';
+import { IPlayerSearchResult, VideoType } from '../types/IPlayerSearchResult';
+import { QualityProfile, qualityProfiles } from '../types/QualityProfiles';
 
 export function formatBytes(bytes: number, unit: boolean = true, decimals: number = 2): string {
-    if (bytes === 0) return "0 Bytes";
+    if (bytes === 0) return '0 Bytes';
 
     const k: number = 1024;
-    const sizes: string[] = ["Bytes", "KB", "MB", "G", "TB", "PB"];
+    const sizes: string[] = ['Bytes', 'KB', 'MB', 'G', 'TB', 'PB'];
     const i: number = Math.floor(Math.log(bytes) / Math.log(k));
 
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + (unit ? " " + sizes[i] : '');
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + (unit ? ' ' + sizes[i] : '');
 }
 
 export async function createNZBName(type: VideoType, context: FilenameTemplateContext) {

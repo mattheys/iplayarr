@@ -1,13 +1,10 @@
-import { IplayarrParameter } from "../types/IplayarrParameters";
-import { CreateDownloadClientForm } from "../types/requests/form/CreateDownloadClientForm";
-import { CreateIndexerForm } from "../types/requests/form/CreateIndexerForm";
-import { DownloadClientResponse } from "../types/responses/arr/DownloadClientResponse";
-import { IndexerResponse } from "../types/responses/arr/IndexerResponse";
-import arrService, { ArrConfig } from "./arrService";
-import { getParameter } from "./configService";
-
-const findSeriesRegex : RegExp = /(?:Season|Series) (\d+)/
-const findEpisodeRegex : RegExp = /(?:Episode) (\d+)/
+import { IplayarrParameter } from '../types/IplayarrParameters';
+import { CreateDownloadClientForm } from '../types/requests/form/CreateDownloadClientForm';
+import { CreateIndexerForm } from '../types/requests/form/CreateIndexerForm';
+import { DownloadClientResponse } from '../types/responses/arr/DownloadClientResponse';
+import { IndexerResponse } from '../types/responses/arr/IndexerResponse';
+import arrService, { ArrConfig } from './arrService';
+import { getParameter } from './configService';
 
 const sonarrService = {
     getConfig : async () : Promise<ArrConfig> => {

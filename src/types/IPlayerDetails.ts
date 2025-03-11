@@ -1,5 +1,3 @@
-import { IPlayerSearchResult } from "./IPlayerSearchResult";
-
 export interface IPlayerDetails {
     pid: string,
     title: string,
