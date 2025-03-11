@@ -2,6 +2,7 @@
     <div class="nzb-settings">
         <legend class="sub">NZB Passthrough</legend>
         <p>If your *arr client accidentally sends a real NZB, Where should it be forwarded?</p>
+        <sub>In order for this to work successfully, your NZB Client needs the category "iplayer"</sub>
         <SettingsSelectInput name="NZB Client" tooltip="Which NZB Client to use" :advanced="true" :options="client_options" v-model="nzbOptions.NZB_TYPE"/>
         <SettingsTextInput name="NZB URL" tooltip="URL For NZB passthrough"
             :advanced="true" v-model="nzbOptions.NZB_URL"/>
@@ -47,7 +48,6 @@
     const testStatus = ref('INITIAL');
 
 
-
     const client_options = computed(() => {
         return nzbClients.value.map(({id, name}) => ({key : id, value : name}));   
     });
@@ -59,11 +59,19 @@
 
     onMounted(async () => {
         nzbClients.value = (await ipFetch(`json-api/nzbClients`)).data;
+        const configResponse = (await ipFetch('json-api/config')).data;
+        nzbOptions.value = {
+            NZB_URL : configResponse.NZB_URL || '',
+            NZB_API_KEY : configResponse.NZNZB_API_KEYB_URL || '',
+            NZB_TYPE : configResponse.NZB_TYPE || '',
+            NZB_USERNAME : configResponse.NZB_USERNAME || '',
+            NZB_PASSWORD : configResponse.NZB_PASSWORD || ''
+        }
     });
 
-    watch(nzbOptions.value, (newOptions) => {
+    watch(nzbOptions, (newOptions) => {
         emit('configUpdated', newOptions);
-    }, {immediate : true});
+    }, {immediate : true, deep: true});
 
     const testNZB = async () => {
         testStatus.value = "PENDING";
@@ -78,12 +86,19 @@
 </script>
 
 <style lang="less">
-.sabnzbd-settings {
+.nzb-settings {
     legend {
         color: @warn-color;
     }
 
     p {
+        color: @warn-color;
+        margin-bottom: 3px;
+    }
+
+    sub {
+        margin-bottom: 1rem;
+        display: block;
         color: @warn-color;
     }
 }
