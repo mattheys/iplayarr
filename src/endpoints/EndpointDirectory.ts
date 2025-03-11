@@ -3,11 +3,10 @@ import QueueEndpoint from "./sabnzbd/QueueEndpoint"
 import ConfigEndpoint from "./sabnzbd/ConfigEndpoint"
 import HistoryEndpoint from "./sabnzbd/HistoryEndpoint"
 import CapsEndpoint from "./newznab/CapsEndpoint"
-import TvSearchEndpoint from "./newznab/TvSearchEndpoint"
 import AddFileEndpoint from "./sabnzbd/AddFileEndpoint"
 import DownloadNZBEndpoint from "./sabnzbd/DownloadNZBEndpoint"
 import VersionEndpoint from "./sabnzbd/VersionEndpoint"
-import MovieEndpoint from "./newznab/MovieEndpoint"
+import SearchEndpoint from "./newznab/SearchEndpoint"
 
 export interface EndpointDirectory {
     [key : string] : RequestHandler
@@ -24,7 +23,7 @@ export const SabNZBDEndpointDirectory : EndpointDirectory = {
 
 export const NewzNabEndpointDirectory : EndpointDirectory = {
     caps : CapsEndpoint,
-    tvsearch : TvSearchEndpoint,
-    movie : MovieEndpoint,
-    search : MovieEndpoint
+    tvsearch : SearchEndpoint,
+    movie : SearchEndpoint,
+    search : SearchEndpoint
 }
