@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from 'axios';
+import { v4 } from 'uuid';
 
 import { IplayarrParameter } from '../types/IplayarrParameters';
-import { getParameter } from './configService';
 import { NZBGetAppendRequest } from '../types/requests/nzbget/NZBGetAppendRequest';
-import { v4 } from 'uuid';
+import { getParameter } from './configService';
 
 const nzbGetService = {
     test: async (): Promise<boolean> => {

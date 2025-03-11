@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { Parser } from 'xml2js';
 
+import nzbFacade from '../../facade/nzbFacade';
 import queueService from '../../service/queueService';
 import { VideoType } from '../../types/IPlayerSearchResult';
 import { NZBMetaEntry } from '../../types/responses/newznab/NZBFileResponse';
-import nzbFacade from '../../facade/nzbFacade';
 
 const parser = new Parser();
 
