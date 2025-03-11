@@ -62,7 +62,7 @@
         const configResponse = (await ipFetch('json-api/config')).data;
         nzbOptions.value = {
             NZB_URL : configResponse.NZB_URL || '',
-            NZB_API_KEY : configResponse.NZNZB_API_KEYB_URL || '',
+            NZB_API_KEY : configResponse.NZB_API_KEY || '',
             NZB_TYPE : configResponse.NZB_TYPE || '',
             NZB_USERNAME : configResponse.NZB_USERNAME || '',
             NZB_PASSWORD : configResponse.NZB_PASSWORD || ''
