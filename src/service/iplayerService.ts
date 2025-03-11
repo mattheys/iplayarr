@@ -82,22 +82,26 @@ const iplayerService = {
                 if (queueItem){
                     try {
                         const uuidPath = path.join(downloadDir, uuid);
+                        loggingService.debug(pid, `Looking for MP4 files in ${uuidPath}`);
                         const files = fs.readdirSync(uuidPath);
                         const mp4File = files.find(file => file.endsWith(".mp4"));
 
                         if (mp4File) {
                             const oldPath = path.join(uuidPath, mp4File);
+                            loggingService.debug(pid, `Found MP4 file ${oldPath}`);
                             const newPath = path.join(completeDir, `${queueItem?.nzbName}.mp4`);
+                            loggingService.debug(pid, `Moving ${oldPath} to ${newPath}`);
 
                             fs.renameSync(oldPath, newPath);
                         }
 
                         // Delete the uuid directory after moving the file
+                        loggingService.debug(pid, `Deleting old directory ${uuidPath}`);
                         fs.rmSync(uuidPath, { recursive: true, force: true });
 
                         await historyService.addHistory(queueItem);
                     } catch (err) {
-                        console.error(err);
+                        loggingService.error(err);
                     }
                 }
             }

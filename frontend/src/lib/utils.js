@@ -11,3 +11,9 @@ export const formatStorageSize = (mb) => {
     }
     return;
 }
+
+export const enforceMaxLength = (arr, maxLength) => {
+    if (arr.length > maxLength) {
+        arr.splice(0, arr.length - maxLength);
+    }
+}

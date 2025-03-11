@@ -10,6 +10,7 @@
 
 <script setup>
 import { ipFetch } from '@/lib/ipFetch';
+import { enforceMaxLength } from './lib/utils';
 import NavBar from './components/NavBar.vue';
 import LeftHandNav from './components/LeftHandNav.vue';
 import { RouterView } from 'vue-router';
@@ -62,6 +63,7 @@ const pageSetup = async () => {
 
     socket.value.on('log', (data) => {
       logs.value.push(data);
+      enforceMaxLength(logs.value, 5000);
     })
 
     hiddenSettings.value = (await ipFetch('json-api/hiddenSettings')).data;
