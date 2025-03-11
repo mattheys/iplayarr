@@ -94,10 +94,10 @@ const iplayerService = {
                             const newPath = path.join(completeDir, `${queueItem?.nzbName}.mp4`);
                             loggingService.debug(pid, `Moving ${oldPath} to ${newPath}`);
 
-                            fs.renameSync(oldPath, newPath);
+                            fs.copyFileSync(oldPath, newPath);
                         }
 
-                        // Delete the uuid directory after moving the file
+                        // Delete the uuid directory and file after moving it
                         loggingService.debug(pid, `Deleting old directory ${uuidPath}`);
                         fs.rmSync(uuidPath, { recursive: true, force: true });
 
