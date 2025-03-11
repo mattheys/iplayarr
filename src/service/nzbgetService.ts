@@ -41,26 +41,48 @@ const nzbGetService = {
         const username = await getParameter(IplayarrParameter.NZB_USERNAME) as string;
         const password = await getParameter(IplayarrParameter.NZB_PASSWORD) as string;
 
-        const url = new URL(`${inputUrl}/jsonrpc`);
-        url.username = username;
-        url.password = password;
+        const url = `${inputUrl}/jsonrpc`;
 
         const file = files[0];
-        const appendRequest: NZBGetAppendRequest = {
-            NZBFilename: '',
-            Content: file.buffer.toString('base64'),
-            Category: 'iplayer',
-            Priority: 0,
-            AddToTop: false,
-            AddPaused: false,
-            DupeKey: v4(),
-            DupeScore: 1000,
-            DupeMode: 'force',
-            PPParameters: []
+        const nzo_id = v4();
+        const requestBody: NZBGetAppendRequest = {
+            method: 'append',
+            params: [
+                file.originalname, // NZB filename (empty for auto-detection)
+                file.buffer.toString('base64'), // Base64-encoded NZB file
+                'iplayer', // Category
+                0, // Priority
+                false, // Add to top
+                false, // Add paused
+                nzo_id, // Dupe key
+                1000, // Dupe score
+                'force', // Dupe mode
+                [] // Post-processing parameters
+            ],
+            id: 1
+        };
+
+        const response = await axios.post(`${url}/append`, requestBody, {
+            auth: {
+                username,
+                password
+            },
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.status == 200){
+            return {
+                status : 200,
+                data : {
+                    status: true,
+                    nzo_ids: [nzo_id]
+                }
+            } as unknown as AxiosResponse
+        } else {
+            return response
         }
-
-        const response = await axios.post(`${url}/append`, appendRequest);
-
         return response;
     }
 }
