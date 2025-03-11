@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import { Parser } from 'xml2js';
 
 import queueService from '../../service/queueService';
-import sabzbdService from '../../service/sabnzbdService';
 import { VideoType } from '../../types/IPlayerSearchResult';
 import { NZBMetaEntry } from '../../types/responses/newznab/NZBFileResponse';
+import nzbFacade from '../../facade/nzbFacade';
 
 const parser = new Parser();
 
@@ -36,9 +36,9 @@ export default async (req : Request, res : Response) => {
         });
     } catch (error : any) {
         //If we get an error, assume it's a real NZB and forward
-        const validSAB = await sabzbdService.test();
+        const validSAB = await nzbFacade.test();
         if (validSAB){
-            const response = await sabzbdService.addFile(files);
+            const response = await nzbFacade.addFile(files);
             res.status(response.status).send(response.data);
             return;
         }

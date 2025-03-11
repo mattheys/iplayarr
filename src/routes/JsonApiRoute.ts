@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
 
+import nzbFacade from '../facade/nzbFacade';
 import arrService from '../service/arrService';
 import { ConfigMap, getAllConfig, getParameter, removeParameter, setParameter } from '../service/configService';
 import episodeCacheService from '../service/episodeCacheService';
@@ -7,12 +8,12 @@ import historyService from '../service/historyService';
 import iplayerService from '../service/iplayerService';
 import queueService from '../service/queueService';
 import radarrService from '../service/radarrService';
-import sabzbdService from '../service/sabnzbdService';
 import socketService from '../service/socketService';
 import sonarrService from '../service/sonarrService';
 import synonymService from '../service/synonymService';
 import { IplayarrParameter } from '../types/IplayarrParameters';
 import { IPlayerSearchResult } from '../types/IPlayerSearchResult';
+import { nzbClients } from '../types/NZBClients';
 import { qualityProfiles } from '../types/QualityProfiles';
 import { QueueEntry } from '../types/QueueEntry';
 import { CreateDownloadClientForm } from '../types/requests/form/CreateDownloadClientForm';
@@ -61,6 +62,10 @@ router.delete('/synonym', async (req : Request, res : Response) => {
 router.get('/qualityProfiles', (_, res : Response) => {
     res.json(qualityProfiles);
 });
+
+router.get('/nzbClients', (_, res : Response) => {
+    res.json(nzbClients);
+})
 
 router.get('/config', async (_, res : Response) => {
     const configMap : ConfigMap = await getAllConfig();
@@ -265,9 +270,9 @@ router.post('/arr/test', async (req : Request, res : Response) => {
     }
 });
 
-router.post('/sabnzbd/test', async (req : Request, res : Response) => {
-    const {SABNZBD_URL, SABNZBD_API_KEY} = req.body;
-    const result : string | boolean = await sabzbdService.testConnection(SABNZBD_URL, SABNZBD_API_KEY);
+router.post('/nzb/test', async (req : Request, res : Response) => {
+    const {NZB_URL, NZB_API_KEY, NZB_TYPE, NZB_USERNAME, NZB_PASSWORD} = req.body;
+    const result : string | boolean = await nzbFacade.testConnection(NZB_TYPE, NZB_URL, NZB_API_KEY, NZB_USERNAME, NZB_PASSWORD);
     if (result == true){
         res.json(true);
     } else {
