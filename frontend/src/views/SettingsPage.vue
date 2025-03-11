@@ -27,7 +27,7 @@
                 tooltip="Extra parameters to pass to get_iplayer for download"
                 v-model="config.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS"
                 :error="validationErrors.config?.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS" />
-                <NZBSettings/>
+                <NZBSettings @config-updated="processNZBUpdate"/>
         </template>
 
         
@@ -79,8 +79,6 @@ const validationErrors = ref({
 });
 
 const qualityProfiles = ref([]);
-
-// const sabStatus = ref('INITIAL');
 
 const saveEnabled = computed(() => {
     return configChanges.value || sonarrChanges.value || radarrChanges.value;
@@ -150,17 +148,12 @@ const toggleAdvanced = () => {
     showAdvanced.value = !showAdvanced.value;
 }
 
-// const testSAB = async () => {
-//     sabStatus.value = "PENDING";
-//     const {SABNZBD_URL, SABNZBD_API_KEY} = config.value;
-//     const {data, ok} = await ipFetch('json-api/sabnzbd/test', 'POST', {SABNZBD_URL, SABNZBD_API_KEY});
-//     if (!ok){
-//         alert(`Error Connecting to SABNzbd : ${data.message}`);
-//         sabStatus.value = "INITIAL";
-//     } else {
-//         sabStatus.value = "SUCCESS";
-//     }
-// }
+const processNZBUpdate = ((update) => {
+    config.value = {
+        ...config.value,
+        ...update
+    }
+});
 
 onBeforeRouteLeave((_, __, next) => {
     if (saveEnabled.value) {
@@ -171,7 +164,7 @@ onBeforeRouteLeave((_, __, next) => {
         }
     }
     next();
-})
+});
 </script>
 
 <style lang="less">
