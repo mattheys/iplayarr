@@ -1,27 +1,33 @@
 import { Request, Response } from "express";
 import { Builder } from "xml2js"
 import iplayerService from "../../service/iplayerService";
-import { IPlayerSearchResult } from "../../types/IPlayerSearchResult";
+import { IPlayerSearchResult, VideoType } from "../../types/IPlayerSearchResult";
 import { createNZBDownloadLink, getBaseUrl } from "../../utils/Utils";
-import { TVSearchResponse } from "../../types/responses/newznab/TVSearchResponse";
+import { NewzNabSearchResponse, NewzNabAttr } from "../../types/responses/newznab/NewzNabSearchResponse";
 
-interface TvSearchRequest {
+interface SearchRequest {
     q : string,
-    season : number,
-    ep : number
+    season? : number,
+    ep? : number,
+    cat? : string
 }
 
 export default async (req : Request, res : Response) => {
-    const {q, season, ep} = req.query as any as TvSearchRequest;
+    const {q, season, ep, cat : catList} = req.query as any as SearchRequest;
+    const cat : string[] | undefined = catList ? catList.split(",") : undefined;
     const searchTerm = q ?? '*';
-    const results : IPlayerSearchResult[] = await iplayerService.search(searchTerm, season, ep)
+    let results : IPlayerSearchResult[] = await iplayerService.search(searchTerm, season, ep);
+    
+    if (cat){
+        results = results.filter(({type}) => categoriesForType(type).some(category => cat.includes(category)));
+    }
 
     const date : Date = new Date();
     date.setMinutes(date.getMinutes() - 720);
 
     const pubDate : string = date.toUTCString().replace("GMT", "+0000");
 
-    const searchResponse : TVSearchResponse = {
+    const searchResponse : NewzNabSearchResponse = {
         $: {
             version: "1.0",
             "xmlns:atom": "http://www.w3.org/2005/Atom",
@@ -37,11 +43,10 @@ export default async (req : Request, res : Response) => {
                     guid: `https://www.bbc.co.uk/iplayer/episodes/${result.pid}`,
                     comments: `https://www.bbc.co.uk/iplayer/episodes/${result.pid}`,
                     size: result.size ? String(result.size * 1048576) : "2147483648",
-                    category: ["5000", "5040"],
+                    category: categoriesForType(result.type),
                     pubDate : result.pubDate ? result.pubDate.toUTCString().replace("GMT", "+0000") : pubDate,
                     "newznab:attr": [
-                      { $: { name: "category", value: "5000" } },
-                      { $: { name: "category", value: "5040" } },
+                      ...createCategoryAttributes(result.type),
                       { $: { name: "language", value: "English" } },
                       { $: { name: "files", value: "1" } },
                       { $: { name: "grabs", value: "0" } }
@@ -51,11 +56,24 @@ export default async (req : Request, res : Response) => {
                   }
             ))
         }
-    } as TVSearchResponse
+    } as NewzNabSearchResponse
 
     const builder = new Builder({ headless: false, xmldec: { version: "1.0", encoding: "UTF-8" } });
     const xml = builder.buildObject({rss : searchResponse});
 
     res.set("Content-Type", "application/xml");
     res.send(xml);
+}
+
+function categoriesForType(type : VideoType) : string[] {
+    switch (type) {
+        case VideoType.MOVIE:
+            return ['2000','2040'];
+        case VideoType.TV:
+            return ['5000', '5040'];
+    }   
+}
+
+function createCategoryAttributes(type : VideoType) : NewzNabAttr[]{
+    return categoriesForType(type).map((value) => ({ $: { name: "category", value } }));
 }
