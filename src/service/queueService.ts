@@ -1,12 +1,13 @@
-import { ChildProcess, spawn } from "child_process";
-import { IplayarrParameter } from "../types/IplayarrParameters";
-import { QueueEntry } from "../types/QueueEntry"
-import { QueueEntryStatus, QueueStatus } from "../types/responses/sabnzbd/QueueResponse";
-import { getParameter } from "./configService";
-import iplayerService from "./iplayerService";
-import socketService from "./socketService";
-import { DownloadDetails } from "../types/DownloadDetails";
-import { VideoType } from "../types/IPlayerSearchResult";
+import { ChildProcess, spawn } from 'child_process';
+
+import { DownloadDetails } from '../types/DownloadDetails';
+import { IplayarrParameter } from '../types/IplayarrParameters';
+import { VideoType } from '../types/IPlayerSearchResult';
+import { QueueEntry } from '../types/QueueEntry'
+import { QueueEntryStatus } from '../types/responses/sabnzbd/QueueResponse';
+import configService from './configService';
+import iplayerService from './iplayerService';
+import socketService from './socketService';
 
 let queue : QueueEntry[] = [];
 
@@ -24,7 +25,7 @@ const queueService = {
     },
 
     moveQueue : async () : Promise<void> => {
-        const activeLimit : number = parseInt(await getParameter(IplayarrParameter.ACTIVE_LIMIT) as string);
+        const activeLimit : number = parseInt(await configService.getParameter(IplayarrParameter.ACTIVE_LIMIT) as string);
         
         let activeQueue : QueueEntry[] = queue.filter(({ status }) => status == QueueEntryStatus.DOWNLOADING);
         let idleQueue : QueueEntry[] = queue.filter(({ status }) => status == QueueEntryStatus.QUEUED);

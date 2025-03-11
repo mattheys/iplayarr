@@ -137,6 +137,7 @@ const saveConfig = async () => {
             validationErrors.value.config = errorData.invalid_fields;
         } else {
             alert("Config saved OK");
+            configChanges.value = false;
         }
     }
 
@@ -148,6 +149,7 @@ const saveConfig = async () => {
             alert(errorData.message);
         } else {
             alert("Sonarr Config saved OK");
+            sonarrChanges.value = false;
         }
     }
 
@@ -159,6 +161,7 @@ const saveConfig = async () => {
             alert(errorData.message);
         } else {
             alert("Radarr Config saved OK");
+            radarrChanges.value = false;
         }
     }
     loading.value = false;

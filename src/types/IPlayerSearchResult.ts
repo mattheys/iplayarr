@@ -1,6 +1,6 @@
 export enum VideoType {
-    TV = "TV",
-    MOVIE = "MOVIE"
+    TV = 'TV',
+    MOVIE = 'MOVIE'
 }
 
 export interface IPlayerSearchResult {

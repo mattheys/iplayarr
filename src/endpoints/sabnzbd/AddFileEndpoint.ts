@@ -1,11 +1,10 @@
-import { Parser } from "xml2js";
-import { Request, Response } from "express";
-import queueService from "../../service/queueService";
-import { NZBMetaEntry } from "../../types/responses/newznab/NZBFileResponse";
-import { VideoType } from "../../types/IPlayerSearchResult";
-import sabzbdService from "../../service/sabnzbdService";
-import axios from "axios";
-import FormData from "form-data";
+import { Request, Response } from 'express';
+import { Parser } from 'xml2js';
+
+import queueService from '../../service/queueService';
+import sabzbdService from '../../service/sabnzbdService';
+import { VideoType } from '../../types/IPlayerSearchResult';
+import { NZBMetaEntry } from '../../types/responses/newznab/NZBFileResponse';
 
 const parser = new Parser();
 
@@ -56,14 +55,14 @@ async function getDetails(xml : string) : Promise<NZBDetails> {
             if (err) {
                 return reject(err);
             } else if (!result?.nzb?.head?.[0]?.title?.[0]){
-                return reject(new Error("Invalid iPlayarr NZB File"));
+                return reject(new Error('Invalid iPlayarr NZB File'));
 	    }
             const nzbName : NZBMetaEntry = result.nzb.head[0].meta.find(({$} : any) => $.type === 'nzbName');
             const type : NZBMetaEntry = result.nzb.head[0].meta.find(({$} : any) => $.type === 'type');
             const details : NZBDetails = {
-                "pid" : result.nzb.head[0].title[0],
-                "nzbName" : nzbName?.$?._,
-                "type" : (type?.$?._) as VideoType
+                'pid' : result.nzb.head[0].title[0],
+                'nzbName' : nzbName?.$?._,
+                'type' : (type?.$?._) as VideoType
             }
             resolve(details);
         });

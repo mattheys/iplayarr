@@ -1,12 +1,13 @@
-import { Request, Response, NextFunction } from "express"
-import { EndpointDirectory } from "../EndpointDirectory"
-import { TrueFalseResponse } from "../../types/responses/sabnzbd/TrueFalseResponse"
-import historyService from "../../service/historyService"
-import { getParameter } from "../../service/configService"
-import { IplayarrParameter } from "../../types/IplayarrParameters"
-import { historyEntrySkeleton, historySkeleton, SABNZBDHistoryEntryResponse, SabNZBDHistoryResponse } from "../../types/responses/sabnzbd/HistoryResponse"
-import { formatBytes } from "../../utils/Utils"
-import { QueueEntry } from "../../types/QueueEntry"
+import { NextFunction,Request, Response } from 'express'
+
+import configService from '../../service/configService'
+import historyService from '../../service/historyService'
+import { IplayarrParameter } from '../../types/IplayarrParameters'
+import { QueueEntry } from '../../types/QueueEntry'
+import { historyEntrySkeleton, historySkeleton, SABNZBDHistoryEntryResponse, SabNZBDHistoryResponse } from '../../types/responses/sabnzbd/HistoryResponse'
+import { TrueFalseResponse } from '../../types/responses/sabnzbd/TrueFalseResponse'
+import { formatBytes } from '../../utils/Utils'
+import { EndpointDirectory } from '../EndpointDirectory'
 
 const sizeFactor : number = 1048576; 
 
@@ -22,7 +23,7 @@ export default async (req : Request, res : Response, next : NextFunction) => {
         return
     } else {
         const history : QueueEntry[] = await historyService.getHistory();
-        const completeDir : string = await getParameter(IplayarrParameter.COMPLETE_DIR) as string;
+        const completeDir : string = await configService.getParameter(IplayarrParameter.COMPLETE_DIR) as string;
 
         const historyObject : SabNZBDHistoryResponse = {
             ...historySkeleton,
@@ -50,7 +51,7 @@ function createHistoryEntry(completeDir : string, item : QueueEntry) : SABNZBDHi
 }
 
 const actionDirectory : EndpointDirectory = {
-    delete : async (req : Request, res : Response, next : NextFunction) => {
+    delete : async (req : Request, res : Response) => {
         const {value} = req.query as HistoryQuery;
         if (value){
             await historyService.removeHistory(value)
