@@ -2,7 +2,7 @@ import { Request, Response, Router } from 'express';
 
 import nzbFacade from '../facade/nzbFacade';
 import arrService from '../service/arrService';
-import { ConfigMap, getAllConfig, getParameter, removeParameter, setParameter } from '../service/configService';
+import configService, { ConfigMap } from '../service/configService';
 import episodeCacheService from '../service/episodeCacheService';
 import historyService from '../service/historyService';
 import iplayerService from '../service/iplayerService';
@@ -68,7 +68,7 @@ router.get('/nzbClients', (_, res : Response) => {
 })
 
 router.get('/config', async (_, res : Response) => {
-    const configMap : ConfigMap = await getAllConfig();
+    const configMap : ConfigMap = await configService.getAllConfig();
     res.json(configMap);
 });
 
@@ -85,11 +85,11 @@ router.put('/config', async (req, res : Response) => {
     }
     for (const key of Object.keys(req.body)){
         if (key != 'AUTH_PASSWORD'){
-            await setParameter(key as IplayarrParameter, req.body[key]);
+            await configService.setParameter(key as IplayarrParameter, req.body[key]);
         } else {
-            const existingPassword = await getParameter(IplayarrParameter.AUTH_PASSWORD);
+            const existingPassword = await configService.getParameter(IplayarrParameter.AUTH_PASSWORD);
             if (existingPassword != req.body[key]){
-                await setParameter(key as IplayarrParameter, md5(req.body[key]));
+                await configService.setParameter(key as IplayarrParameter, md5(req.body[key]));
             }
         }
     }
@@ -124,8 +124,8 @@ router.delete('/queue', async (req : Request, res : Response) => {
 
 router.get('/sonarr', async (req : Request, res : Response) =>{
     const [url, api_key] = await Promise.all([
-        getParameter(IplayarrParameter.SONARR_HOST),
-        getParameter(IplayarrParameter.SONARR_API_KEY),
+        configService.getParameter(IplayarrParameter.SONARR_HOST),
+        configService.getParameter(IplayarrParameter.SONARR_API_KEY),
     ]) as string[]
     const download_client : DownloadClientResponse | undefined = url ? await sonarrService.getDownloadClient() : undefined;
     const indexer : IndexerResponse | undefined = url ? await sonarrService.getIndexer() : undefined;
@@ -140,8 +140,8 @@ router.get('/sonarr', async (req : Request, res : Response) =>{
 
 router.get('/radarr', async (req : Request, res : Response) =>{
     const [url, api_key] = await Promise.all([
-        getParameter(IplayarrParameter.RADARR_HOST),
-        getParameter(IplayarrParameter.RADARR_API_KEY),
+        configService.getParameter(IplayarrParameter.RADARR_HOST),
+        configService.getParameter(IplayarrParameter.RADARR_API_KEY),
     ]) as string[]
     const download_client : DownloadClientResponse | undefined = url ? await radarrService.getDownloadClient() : undefined;
     const indexer : IndexerResponse | undefined = url ? await radarrService.getIndexer() : undefined;
@@ -156,9 +156,9 @@ router.get('/radarr', async (req : Request, res : Response) =>{
 
 router.put('/sonarr', async (req : Request, res : Response) => {
     const response : SonarrConfigResponse = req.body as any as SonarrConfigResponse;
-    await setParameter(IplayarrParameter.SONARR_API_KEY, response.api_key);
-    await setParameter(IplayarrParameter.SONARR_HOST, response.url);
-    const iplayarr_api_key = await getParameter(IplayarrParameter.API_KEY);
+    await configService.setParameter(IplayarrParameter.SONARR_API_KEY, response.api_key);
+    await configService.setParameter(IplayarrParameter.SONARR_HOST, response.url);
+    const iplayarr_api_key = await configService.getParameter(IplayarrParameter.API_KEY);
     let downloadClientId;
     try {
         const downloadClientForm : CreateDownloadClientForm = {
@@ -199,9 +199,9 @@ router.put('/sonarr', async (req : Request, res : Response) => {
 
 router.put('/radarr', async (req : Request, res : Response) => {
     const response : SonarrConfigResponse = req.body as any as SonarrConfigResponse;
-    await setParameter(IplayarrParameter.RADARR_API_KEY, response.api_key);
-    await setParameter(IplayarrParameter.RADARR_HOST, response.url);
-    const iplayarr_api_key = await getParameter(IplayarrParameter.API_KEY);
+    await configService.setParameter(IplayarrParameter.RADARR_API_KEY, response.api_key);
+    await configService.setParameter(IplayarrParameter.RADARR_HOST, response.url);
+    const iplayarr_api_key = await configService.getParameter(IplayarrParameter.API_KEY);
     let downloadClientId;
     try {
         const downloadClientForm : CreateDownloadClientForm = {
@@ -241,22 +241,22 @@ router.put('/radarr', async (req : Request, res : Response) => {
 });
 
 router.delete('/sonarr/download_client', (_, res : Response) => {
-    removeParameter(IplayarrParameter.SONARR_DOWNLOAD_CLIENT_ID);
+    configService.removeParameter(IplayarrParameter.SONARR_DOWNLOAD_CLIENT_ID);
     res.json(true)
 });
 
 router.delete('/radarr/download_client', (_, res : Response) => {
-    removeParameter(IplayarrParameter.RADARR_DOWNLOAD_CLIENT_ID);
+    configService.removeParameter(IplayarrParameter.RADARR_DOWNLOAD_CLIENT_ID);
     res.json(true)
 });
 
 router.delete('/sonarr/indexer', (_, res : Response) => {
-    removeParameter(IplayarrParameter.SONARR_INDEXER_ID);
+    configService.removeParameter(IplayarrParameter.SONARR_INDEXER_ID);
     res.json(true)
 });
 
 router.delete('/radarr/indexer', (_, res : Response) => {
-    removeParameter(IplayarrParameter.RADARR_INDEXER_ID);
+    configService.removeParameter(IplayarrParameter.RADARR_INDEXER_ID);
     res.json(true)
 });
 
