@@ -110,9 +110,9 @@ const saveEnabled = computed(() => {
 onMounted(async () => {
     const [configResponse, sonarrConfigResponse, radarrConfigResponse, qpResponse] = await Promise.all([
         ipFetch('json-api/config'),
-        ipFetch(`json-api/sonarr`),
-        ipFetch(`json-api/radarr`),
-        ipFetch('json-api/qualityProfiles')
+        ipFetch(`json-api/arr/sonarr`),
+        ipFetch(`json-api/arr/radarr`),
+        ipFetch('json-api/config/qualityProfiles')
     ]);
 
     config.value = configResponse.data;
@@ -142,7 +142,7 @@ const saveConfig = async () => {
     }
 
     if (sonarrChanges.value) {
-        const sonarrResponse = await ipFetch('json-api/sonarr', 'PUT', sonarrConfig.value);
+        const sonarrResponse = await ipFetch('json-api/arr/sonarr', 'PUT', sonarrConfig.value);
 
         if (!sonarrResponse.ok) {
             const errorData = sonarrResponse.data;
@@ -154,7 +154,7 @@ const saveConfig = async () => {
     }
 
     if (radarrChanges.value) {
-        const radarrResponse = await ipFetch('json-api/radarr', 'PUT', radarrConfig.value);
+        const radarrResponse = await ipFetch('json-api/arr/radarr', 'PUT', radarrConfig.value);
 
         if (!radarrResponse.ok) {
             const errorData = radarrResponse.data;

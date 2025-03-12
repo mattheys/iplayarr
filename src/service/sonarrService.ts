@@ -7,6 +7,8 @@ import arrService, { ArrConfig } from './arrService';
 import configService from './configService';
 
 const sonarrService = {
+    categories: [5030, 5040],
+
     getConfig : async () : Promise<ArrConfig> => {
         const API_KEY = await configService.getParameter(IplayarrParameter.SONARR_API_KEY) as string;
         const HOST = await configService.getParameter(IplayarrParameter.SONARR_HOST) as string;

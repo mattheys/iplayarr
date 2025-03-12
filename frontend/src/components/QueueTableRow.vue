@@ -49,13 +49,13 @@ defineProps({
 
 const trash = async (pid) => {
     if (confirm("Are you sure you want to delete this history item?")) {
-        ipFetch(`json-api/history?pid=${pid}`, 'DELETE');
+        ipFetch(`json-api/queue/history?pid=${pid}`, 'DELETE');
     }
 }
 
 const cancel = async (pid) => {
     if (confirm("Are you sure you want to cancel this download?")) {
-        ipFetch(`json-api/queue?pid=${pid}`, 'DELETE');
+        ipFetch(`json-api/queue/queue?pid=${pid}`, 'DELETE');
     }
 }
 </script>

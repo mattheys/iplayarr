@@ -30,7 +30,7 @@ const toggleFollow = () => {
 
 const deleteQueueItem = async () => {
     if (confirm("Are you sure you want to cancel this download?")) {
-        ipFetch(`json-api/queue?pid=${item.value.pid}`, 'DELETE');
+        ipFetch(`json-api/queue/queue?pid=${item.value.pid}`, 'DELETE');
         router.push("/queue");
     }
 }
