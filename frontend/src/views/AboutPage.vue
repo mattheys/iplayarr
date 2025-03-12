@@ -24,7 +24,7 @@
         </div>
         <h2>Tools</h2>
         <p>
-            <a href="shortcuts/downloadWithIPlayarr.shortcut" target="_blank">
+            <a href="shortcuts/Download%20With%20iPlayarr.shortcut" target="_blank">
                 Add to iPlayarr iOS Shortcut
             </a>
         </p>
