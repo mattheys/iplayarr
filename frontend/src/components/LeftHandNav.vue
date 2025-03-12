@@ -1,9 +1,6 @@
 <template>
   <div class="LeftHandNav" ref="lhn">
     <ul>
-      <li class="mobileOnly pull-right">
-        <font-awesome-icon :icon="['fas', 'xmark']" @click="toggleLHN" />
-      </li>
       <LeftHandNavLink label="Queue" icon="tasks" path="/queue" @option-clicked="closeLHN" />
       <LeftHandNavLink label="Logs" icon="history" path="/logs" @option-clicked="closeLHN" />
       <LeftHandNavLink label="Settings" icon="gears" path="/settings" @option-clicked="closeLHN" />
@@ -21,6 +18,7 @@ import { ref, defineExpose, defineEmits } from 'vue';
 import LeftHandNavLink from './LeftHandNavLink.vue';
 import { useRouter } from 'vue-router';
 import { ipFetch } from '@/lib/ipFetch';
+import { onBeforeRouteLeave } from 'vue-router';
 
 const router = useRouter();
 const lhn = ref(null);
@@ -54,6 +52,10 @@ const refreshCache = async () => {
     }
   }
 }
+
+onBeforeRouteLeave(() => {
+  closeLHN();
+})
 </script>
 
 <style lang="less">
@@ -78,6 +80,9 @@ const refreshCache = async () => {
     &.active {
       background-color: @nav-active-background-color;
       color: @brand-color;
+      border-left: 3px solid @brand-color;
+
+      padding-left: 21px;
 
       a, span {
         color: @brand-color !important;
@@ -102,21 +107,16 @@ const refreshCache = async () => {
 
 @media (max-width: @mobile-breakpoint) {
   .LeftHandNav {
-    display: none;
+    position: absolute;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    display: block;
+  }
 
-    &.show {
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-    }
-
-    li {
-      border-bottom: 1px solid @nav-border-color;
-      padding-bottom: 1rem;
-    }
+  .LeftHandNav.show {
+    transform: translateX(0);
   }
 }
+
 </style>

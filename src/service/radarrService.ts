@@ -7,6 +7,8 @@ import arrService, { ArrConfig } from './arrService';
 import configService from './configService';
 
 const radarrService = {
+    categories : [2010, 2020, 2030, 2040, 2045, 2050, 2060],
+
     getConfig: async (): Promise<ArrConfig> => {
         const API_KEY = await configService.getParameter(IplayarrParameter.RADARR_API_KEY) as string;
         const HOST = await configService.getParameter(IplayarrParameter.RADARR_HOST) as string;

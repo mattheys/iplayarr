@@ -132,3 +132,4 @@ dist
 .node-persist
 
 test-results
+.DS_Store

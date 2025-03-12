@@ -26,8 +26,8 @@ const navBar = ref(null);
 const leftHandNav = ref(null);
 
 const updateQueue = async () => {
-  queue.value = (await ipFetch('json-api/queue')).data;
-  history.value = (await ipFetch('json-api/history')).data;
+  queue.value = (await ipFetch('json-api/queue/queue')).data;
+  history.value = (await ipFetch('json-api/queue/history')).data;
 }
 
 const toggleLeftHandNav = () => {
@@ -66,7 +66,7 @@ const pageSetup = async () => {
       enforceMaxLength(logs.value, 5000);
     })
 
-    hiddenSettings.value = (await ipFetch('json-api/hiddenSettings')).data;
+    hiddenSettings.value = (await ipFetch('json-api/config/hiddenSettings')).data;
   }
 }
 
