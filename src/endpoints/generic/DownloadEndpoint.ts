@@ -21,5 +21,5 @@ export default async (req : Request, res : Response) => {
 
     queueService.addToQueue(pid, name, type)
 
-    res.json(true);
+    res.json({status : true});
 }

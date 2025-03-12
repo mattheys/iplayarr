@@ -23,7 +23,7 @@ router.post('/sabnzbd/test', async (req : Request, res : Response) => {
     const {SABNZBD_URL, SABNZBD_API_KEY} = req.body;
     const result : string | boolean = await sabzbdService.testConnection(SABNZBD_URL, SABNZBD_API_KEY);
     if (result == true){
-        res.json(true);
+        res.json({status : true});
     } else {
         res.status(500).json({error: ApiError.INTERNAL_ERROR, message : result} as ApiResponse)
     }
@@ -44,12 +44,12 @@ router.get('/details', async (req : Request, res : Response) => {
 router.get('/download', async (req : Request, res : Response) => {
     const {pid, nzbName, type} = req.query as any;
     queueService.addToQueue(pid, nzbName, type);
-    res.json(true)
+    res.json({status : true})
 });
 
 router.get('/cache-refresh', async (_, res : Response) => {
     iplayerService.refreshCache();
-    res.json(true);
+    res.json({status : true});
 });
 
 export default router;

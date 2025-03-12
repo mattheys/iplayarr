@@ -46,7 +46,7 @@ const logout = async () => {
 
 const refreshCache = async () => {
   if (confirm("Are you sure you want to refresh the index?")) {
-    await ipFetch('json-api//cache-refresh');
+    await ipFetch('json-api/cache-refresh');
     if (confirm("Cache Refresh Started, Would you like to view the logs?")) {
       router.push("/logs");
     }

@@ -85,16 +85,16 @@ const arrService = {
         }
 
         //Find an existing one
-        if (DOWNLOAD_CLIENT_ID){
-            const downloadClient = await arrService.getDownloadClient(DOWNLOAD_CLIENT_ID, config);
-            if (downloadClient){
-                updateMethod = 'put';
-                createDownloadClientRequest.id = DOWNLOAD_CLIENT_ID;
-            }
-        }
-
-        const url : string = `${HOST}/api/v3/downloadclient?apikey=${API_KEY}`;
         try {
+            if (DOWNLOAD_CLIENT_ID){
+                const downloadClient = await arrService.getDownloadClient(DOWNLOAD_CLIENT_ID, config);
+                if (downloadClient){
+                    updateMethod = 'put';
+                    createDownloadClientRequest.id = DOWNLOAD_CLIENT_ID;
+                }
+            }
+
+            const url : string = `${HOST}/api/v3/downloadclient?apikey=${API_KEY}`;
             const {data : {id}} = await axios[updateMethod](url, createDownloadClientRequest, {
                 headers: {
                     'X-Api-Key': API_KEY

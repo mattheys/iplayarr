@@ -116,8 +116,26 @@ onMounted(async () => {
     ]);
 
     config.value = configResponse.data;
-    sonarrConfig.value = sonarrConfigResponse.data;
-    radarrConfig.value = radarrConfigResponse.data;
+    if (sonarrConfigResponse.ok){
+        sonarrConfig.value = sonarrConfigResponse.data;
+    } else {
+        sonarrConfig.value = {
+            url : config.value.SONARR_HOST,
+            api_key : config.value.SONARR_API_KEY,
+            download_client : {},
+            indexer : {}
+        }
+    }
+    if (radarrConfigResponse.ok){
+        radarrConfig.value = radarrConfigResponse.data;
+    } else {
+        radarrConfig.value = {
+            url : config.value.RADARR_HOST,
+            api_key : config.value.RADARR_API_KEY,
+            download_client : {},
+            indexer : {}
+        }
+    }
     qualityProfiles.value = qpResponse.data.map(({ id, name, quality }) => ({ "key": id, "value": `${name} (${quality})` }));
 
     watch(config, () => { configChanges.value = true }, { deep: true });

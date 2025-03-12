@@ -52,7 +52,7 @@ router.post('/login', async (req: Request, res: Response) => {
     // Replace this with actual authentication logic
     if (username === AUTH_USERNAME && md5(password) === AUTH_PASSWORD) {
         req.session.user = { username };
-        res.json(true);
+        res.json({status : true});
         return;
     }
 
@@ -62,7 +62,7 @@ router.post('/login', async (req: Request, res: Response) => {
 
 router.get('/logout', (req, res) => {
     req.session.destroy(() => {
-      res.json(true);
+      res.json({status : true});
     });
   });
 
@@ -83,7 +83,7 @@ router.get('/generateToken', (_ : Request, res : Response) => {
         clearTimeout(resetTimer);
     }
     resetTimer = setTimeout(() => token='', 300000);
-    res.json(true);
+    res.json({status : true});
 });
 
 router.post('/resetPassword', async (req : Request, res : Response) => {
@@ -96,7 +96,7 @@ router.post('/resetPassword', async (req : Request, res : Response) => {
         await configService.setParameter(IplayarrParameter.AUTH_PASSWORD, configService.defaultConfigMap.AUTH_PASSWORD)
     }
 
-    res.json(true);
+    res.json({status : true});
 });
 
 export default router;

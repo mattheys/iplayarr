@@ -27,7 +27,7 @@ router.delete('/', async (req : Request, res : Response) => {
 router.post('/refresh', async (req : Request, res : Response) => {
     const def : EpisodeCacheDefinition = req.body;
     episodeCacheService.recacheSeries(def);
-    res.json(true);
+    res.json({status : true});
 });
 
 export default router;

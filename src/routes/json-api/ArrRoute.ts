@@ -15,21 +15,25 @@ import { SonarrConfigResponse } from '../../types/responses/frontend/SonarrConfi
 const router = Router();
 
 router.get('/:service', async (req : Request, res : Response) =>{
-    const service : string = req.params.service;
+    try {
+        const service : string = req.params.service;
 
-    const [url, api_key] = await Promise.all([
-        configService.getParameter(getParameter(service, 'HOST')),
-        configService.getParameter(getParameter(service, 'API_KEY')),
-    ]) as string[]
-    const download_client : DownloadClientResponse | undefined = url ? await getService(service).getDownloadClient() : undefined;
-    const indexer : IndexerResponse | undefined = url ? await getService(service).getIndexer() : undefined;
-    const arrConfig : SonarrConfigResponse = {
-        url,
-        api_key,
-        download_client : download_client || {},
-        indexer : indexer || {}
+        const [url, api_key] = await Promise.all([
+            configService.getParameter(getParameter(service, 'HOST')),
+            configService.getParameter(getParameter(service, 'API_KEY')),
+        ]) as string[]
+        const download_client : DownloadClientResponse | undefined = url ? await getService(service).getDownloadClient() : undefined;
+        const indexer : IndexerResponse | undefined = url ? await getService(service).getIndexer() : undefined;
+        const arrConfig : SonarrConfigResponse = {
+            url,
+            api_key,
+            download_client : download_client || {},
+            indexer : indexer || {}
+        }
+        res.json(arrConfig);
+    } catch(err : any) {
+        res.status(500).send({error : ApiError.INTERNAL_ERROR, message : err?.message} as ApiResponse)
     }
-    res.json(arrConfig);
 });
 
 router.put('/:service', async (req : Request, res : Response) => {
@@ -82,21 +86,21 @@ router.delete('/:service/download_client', (req : Request, res : Response) => {
     const serviceName : string = req.params.service;
 
     configService.removeParameter(getParameter(serviceName, 'DOWNLOAD_CLIENT_ID'));
-    res.json(true)
+    res.json({status : true})
 });
 
 router.delete('/:service/indexer', (req : Request, res : Response) => {
     const serviceName : string = req.params.service;
 
     configService.removeParameter(getParameter(serviceName, 'INDEXER_ID'));
-    res.json(true)
+    res.json({status : true})
 });
 
 router.post('/test', async (req : Request, res : Response) => {
     const {API_KEY, HOST} = req.body;
     const result : string | boolean = await arrService.testConnection({API_KEY, HOST});
     if (result == true){
-        res.json(true);
+        res.json({status : true});
     } else {
         res.status(500).json({error: ApiError.INTERNAL_ERROR, message : result} as ApiResponse)
     }

@@ -84,21 +84,21 @@ watch(
 
 const unlinkDownload = async () => {
     if (confirm(`Are you sure you want to unlink ${props.name} Download Client? All changes will be lost`)){
-        await ipFetch(`json-api/${props.name.toLowerCase()}/download_client`, 'DELETE');
+        await ipFetch(`json-api/arr/${props.name.toLowerCase()}/download_client`, 'DELETE');
         router.go(0);
     }
 }
 
 const unlinkIndexer = async () => {
     if (confirm(`Are you sure you want to unlink ${props.name} Indexer? All changes will be lost`)){
-        await ipFetch(`json-api/${props.name.toLowerCase()}/indexer`, 'DELETE');
+        await ipFetch(`json-api/arr/${props.name.toLowerCase()}/indexer`, 'DELETE');
         router.go(0);
     }
 }
 
 const test = async () => {
     testStatus.value = "PENDING";
-    const {data, ok} = await ipFetch('json-api//arr/test', 'POST', {HOST : localValue.value.url, API_KEY : localValue.value.api_key});
+    const {data, ok} = await ipFetch('json-api/arr/test', 'POST', {HOST : localValue.value.url, API_KEY : localValue.value.api_key});
     if (!ok){
         alert(`Error Connecting to ${props.name} : ${data.message}`);
         testStatus.value = "INITIAL";
