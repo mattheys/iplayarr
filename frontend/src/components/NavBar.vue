@@ -4,8 +4,9 @@
             <div class="logoPanel">
                 <RouterLink to="/queue">
                     <img src="/iplayarr.png" alt="Logo">
-                    <p>iPlayarr</p>
+                    <p class="desktopOnly">iPlayarr</p>
                 </RouterLink>
+                <font-awesome-icon class="mobileOnly clickable burgerMenu" @click="toggleLeftHandNav" :icon="['fas', 'bars']" v-if="authState.user"/>
             </div>
         </div>
         <div class="middle">
@@ -15,7 +16,6 @@
             </div>
         </div>
         <div class="right">
-            <font-awesome-icon class="mobileOnly clickable" @click="toggleLeftHandNav" :icon="['fas', 'bars']" v-if="authState.user"/>
             <a href="https://ko-fi.com/nikorag" aria-label="Donate" class="desktopOnly donateLink" target="_blank" v-if="!hiddenSettings.HIDE_DONATE">
                 <font-awesome-icon class="desktopOnly clickable" :icon="['fas', 'heart']" v-if="authState.user"/>
             </a>
@@ -74,6 +74,7 @@
 
                 @media (max-width: @mobile-breakpoint) {
                     padding: 0 1rem;
+                    margin-left: 1rem;
                 }
 
                 .searchPanel {
@@ -123,6 +124,10 @@
         }
 
         .logoPanel {
+            height: 60px;
+            display: flex;
+            align-items: center;
+
             a {
                 display: flex;
                 align-items: center;
@@ -138,6 +143,10 @@
             p {
                 font-size: 16px;
                 font-weight: bold;
+            }
+
+            .burgerMenu {
+                margin-left: 1.5rem;
             }
         }
 
