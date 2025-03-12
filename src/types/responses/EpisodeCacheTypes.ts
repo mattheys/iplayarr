@@ -5,7 +5,12 @@ export interface IPlayerDataLayerResponse {
         availableSlices : {
             id : string,
             title : string
-        }[]
+        }[],
+        genre: string
+    },
+    episode? : {
+        title : string,
+        subtitle : string
     },
     entities : {
         results : {
