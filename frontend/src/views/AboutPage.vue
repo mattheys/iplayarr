@@ -22,6 +22,12 @@
                 </a>
             </div>
         </div>
+        <h2>Tools</h2>
+        <p>
+            <a href="https://www.icloud.com/shortcuts/ffeb12d95b0f41b4b11736878c723928">
+                Add to iPlayarr iOS Shortcut
+            </a>
+        </p>
         <h2>Credit To</h2>
         <p>
             <a href="https://github.com/get-iplayer/get_iplayer">
