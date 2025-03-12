@@ -22,7 +22,7 @@
                 </a>
             </div>
         </div>
-        <h2>Tools</h2>
+        <h2 v-if="isAppleDevice">Tools</h2>
         <p>
             <a href="shortcuts/Download%20With%20iPlayarr.shortcut" target="_blank">
                 Add to iPlayarr iOS Shortcut
@@ -40,9 +40,13 @@
 </template>
 
 <script setup>
-    import {inject} from 'vue';
+    import {inject, computed} from 'vue';
 
     const hiddenSettings = inject("hiddenSettings");
+
+    const isAppleDevice = computed(() => {
+        return /Mac|iPhone|iPod|iPad/.test(navigator.userAgent);
+    });
 </script>
 
 <style lang="less">
