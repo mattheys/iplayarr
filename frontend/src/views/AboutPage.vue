@@ -24,7 +24,7 @@
         </div>
         <h2>Tools</h2>
         <p>
-            <a href="https://www.icloud.com/shortcuts/ffeb12d95b0f41b4b11736878c723928">
+            <a href="shortcuts/downloadWithIPlayarr.shortcut" target="_blank">
                 Add to iPlayarr iOS Shortcut
             </a>
         </p>
@@ -34,7 +34,7 @@
                 <b>Phil Lewis</b> for development of get_iplayer
             </a>
         </p>
-        <p>The Entire Development team behind Sonarr</p>
+        <p>The Entire Development team behind Sonarr, Radarr and Prowlarr</p>
         <p>The 2024 (World Champion) Philadelphia Eagles</p>
     </div>
 </template>
