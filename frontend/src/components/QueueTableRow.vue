@@ -17,7 +17,7 @@
             <ProgressBar :progress="item.details.progress" :history="history" :idle="item.status == 'Queued'"/>
         </td>
         <td data-title='ETA'>{{ item.details.eta }}</td>
-        <td data-title='Speed'>{{ item.details.speed }} {{ item.details.speed != '' ? 'MB/s' : '' }}</td>
+        <td data-title='Speed'>{{ item.details.speed || '' }} {{ item.details.speed != '' ? 'MB/s' : '' }}</td>
         <td class='actionCol' data-title='Action'>
             <span v-if="history">
                 <font-awesome-icon class="clickable" :icon="['fas', 'trash']" @click="trash(item.pid)" />
