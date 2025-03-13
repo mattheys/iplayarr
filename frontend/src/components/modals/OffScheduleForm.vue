@@ -10,7 +10,7 @@
         <SettingsTextInput name="Name" tooltip="Name for the Cache Definition" v-model="form.name" placeholder="Red Dwarf"/>
         <SettingsTextInput name="URL" tooltip="iPlayer URL" v-model="form.url" placeholder="https://www.bbc.co.uk/iplayer/episodes/b008ncn6/red-dwarf"/>
         <div class="button-container">
-            <button class="clickable" @click="close()">Cancel</button>
+            <button class="clickable cancel" @click="close()">Cancel</button>
             <button @click="saveCacheDefinition">Save</button>
         </div>
     </VueFinalModal>
