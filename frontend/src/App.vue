@@ -6,6 +6,7 @@
       <RouterView />
     </div>
   </div>
+  <ModalsContainer />
 </template>
 
 <script setup>
@@ -14,6 +15,7 @@ import { enforceMaxLength } from './lib/utils';
 import NavBar from './components/NavBar.vue';
 import LeftHandNav from './components/LeftHandNav.vue';
 import { RouterView } from 'vue-router';
+import { ModalsContainer } from 'vue-final-modal';
 
 import { io } from "socket.io-client";
 import { ref, provide, watch, inject } from 'vue';
@@ -171,5 +173,38 @@ input:focus, textarea:focus, select:focus, button:focus {
   outline: none;
   box-shadow: none;
 }
+
+.iplayarr-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed; /* Ensures it's positioned relative to the viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.iplayarr-modal-content {
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px @primary-box-shadow;
+  @media (min-width: @mobile-breakpoint) {
+    min-width: 600px;
+    max-width: 80%;
+  }
+  width: fit-content;
+  background-color: @nav-background-color;
+  @media (max-width: @mobile-breakpoint) {
+    padding-top: 3rem;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    min-width: none;
+  }
+}
+
 
 </style>

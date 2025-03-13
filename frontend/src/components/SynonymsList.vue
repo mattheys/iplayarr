@@ -1,12 +1,12 @@
 <template>
-    <button class="synonymButton" v-for="synonym in synonyms" v-bind:key="synonym.id">
-        <div class="synonymName">
+    <button class="synonymButton clickable" v-for="synonym in synonyms" v-bind:key="synonym.id">
+        <div class="synonymName" @click="openDetails(synonym)">
             {{synonym.from}}
         </div>
-        <div class="synonymTarget">
+        <div class="synonymTarget" @click="openDetails(synonym)">
             {{synonym.target}}
         </div>
-        <div class="synonymExemptions">
+        <div class="synonymExemptions" @click="openDetails(synonym)">
             {{synonym.exemptions}}
         </div>
         <div class="actionContainer">
@@ -32,7 +32,7 @@
         }
     });
 
-    const emit = defineEmits(['createSynonym', 'removeSynonym']);
+    const emit = defineEmits(['createSynonym', 'removeSynonym', 'details']);
 
     const removeSynonym = ({from, id}) => {
         if(confirm(`Are you sure you want to remove the synonym for ${from}?`)){
@@ -42,6 +42,10 @@
 
     const createSynonym = () => {
         emit('createSynonym');
+    }
+
+    const openDetails = (synonym) => {
+        emit('details', synonym);
     }
 </script>
 

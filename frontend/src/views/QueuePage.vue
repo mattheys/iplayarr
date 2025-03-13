@@ -1,4 +1,5 @@
 <template>
+    <SettingsPageToolbar :icons="['filter']" :filter-options="filterOptions" :selected-filter="filter" :filter-enabled="filter != 'All'"/>
     <div class="inner-content scroll-x">
         <QueueTable :queue="queue" :history="history" />
     </div>
@@ -6,8 +7,17 @@
 
 <script setup>
     import QueueTable from '../components/QueueTable.vue';
+    import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
 
-    import {inject} from 'vue';
+    import {ref, inject} from 'vue';
+
+    const filterOptions = ref([
+        'ALL',
+        'COMPLETE',
+        'IN PROGRESS',
+        'QUEUED'
+    ]);
+    const filter = ref('ALL');
 
     const queue = inject('queue');
     const history = inject('history');

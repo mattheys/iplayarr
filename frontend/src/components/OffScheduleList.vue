@@ -1,12 +1,12 @@
 <template>
-    <button class="cacheDefinitionButton" v-for="cacheDefinition in cacheDefinitions" v-bind:key="cacheDefinition.id">
-        <div class="cacheDefinitionName">
+    <button class="cacheDefinitionButton clickable" v-for="cacheDefinition in cacheDefinitions" v-bind:key="cacheDefinition.id">
+        <div class="cacheDefinitionName" @click="openDetails(cacheDefinition)">
             {{cacheDefinition.name}}
         </div>
-        <div class="cacheDefinitionTarget">
+        <div class="cacheDefinitionTarget" @click="openDetails(cacheDefinition)">
             {{cacheDefinition.url}}
         </div>
-        <div class="cacheDefinitionTarget">
+        <div class="cacheDefinitionTarget" @click="openDetails(cacheDefinition)">
             {{cacheDefinition.cacheRefreshed}}
         </div>
         <div class="actionContainer">
@@ -35,7 +35,7 @@
         }
     });
 
-    const emit = defineEmits(['createCacheDefinition', 'removeCacheDefinition', 'refreshDef']);
+    const emit = defineEmits(['createCacheDefinition', 'removeCacheDefinition', 'refreshDef', 'details']);
 
     const removeCacheDefinition = ({name, id}) => {
         if(confirm(`Are you sure you want to remove the Cache Definition for ${name}?`)){
@@ -49,6 +49,10 @@
 
     const refreshDef = (def) => {
         emit('refreshDef', def);
+    }
+
+    const openDetails = (def) => {
+        emit('details', def);
     }
 </script>
 

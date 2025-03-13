@@ -17,6 +17,13 @@ router.post('/', async (req : Request, res : Response) => {
     res.json(synonyms);
 });
 
+router.put('/', async (req : Request, res : Response) => {
+    const synonym : Synonym = req.body as any as Synonym;
+    await synonymService.updateSynonym(synonym);
+    const synonyms = await synonymService.getAllSynonyms();
+    res.json(synonyms);
+});
+
 router.delete('/', async (req : Request, res : Response) => {
     const {id} = req.body;
     await synonymService.removeSynonym(id);

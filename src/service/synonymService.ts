@@ -33,6 +33,13 @@ const synonymService = {
         await storage.setItem('synonyms', allSynonyms);
     },
 
+    updateSynonym : async (synonym : Synonym) : Promise<void> => {
+        await synonymService.removeSynonym(synonym.id);
+        const allSynonyms = await synonymService.getAllSynonyms();
+        allSynonyms.push(synonym);
+        await storage.setItem('synonyms', allSynonyms);
+    },
+
     removeSynonym : async (id : string) : Promise<void> => {
         let allSynonyms = await synonymService.getAllSynonyms();
         allSynonyms = allSynonyms.filter(({id : savedId}) => savedId != id);
