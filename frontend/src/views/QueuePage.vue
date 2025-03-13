@@ -1,5 +1,5 @@
 <template>
-    <SettingsPageToolbar :icons="['filter']" :filter-options="filterOptions" :selected-filter="filter" :filter-enabled="filter != 'All'"/>
+    <SettingsPageToolbar :icons="['filter']" :filter-options="filterOptions" :selected-filter="filter" :filter-enabled="filter != 'All'" v-if="false"/>
     <div class="inner-content scroll-x">
         <QueueTable :queue="queue" :history="history" />
     </div>

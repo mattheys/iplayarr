@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { ref, defineExpose, defineEmits } from 'vue';
+import { ref, defineExpose, defineEmits, onBeforeUnmount } from 'vue';
 import LeftHandNavLink from './LeftHandNavLink.vue';
 import { useRouter } from 'vue-router';
 import { ipFetch } from '@/lib/ipFetch';
@@ -27,10 +27,16 @@ const emit = defineEmits(['clear-search']);
 
 const toggleLHN = () => {
   lhn.value.classList.toggle('show');
+  if (lhn.value.classList.contains('show')){
+    setTimeout(() => {
+      document.addEventListener('click', handleClickOutside);
+    }, 0);
+  }
 }
 
 const closeLHN = () => {
   lhn.value.classList.remove('show');
+  document.removeEventListener('click', handleClickOutside);
   emit('clear-search');
 }
 
@@ -56,7 +62,17 @@ const refreshCache = async () => {
 
 onBeforeRouteLeave(() => {
   closeLHN();
-})
+});
+
+onBeforeUnmount(() => {
+  closeLHN();
+});
+
+const handleClickOutside = (event) => {
+  if (lhn.value && !lhn.value.contains(event.target)) {
+    closeLHN();
+  }
+};
 </script>
 
 <style lang="less">

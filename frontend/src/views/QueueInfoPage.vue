@@ -13,6 +13,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { ref, watch } from 'vue';
 import MediaInfoHero from '@/components/MediaInfoHero.vue';
 import LogPanel from '@/components/LogPanel.vue';
+import dialogService from '@/lib/dialogService';
 
 const route = useRoute();
 const router = useRouter();
