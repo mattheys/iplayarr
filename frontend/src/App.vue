@@ -223,7 +223,7 @@ button:focus {
     @media (max-width: @mobile-breakpoint) {
       margin-top: auto;
       box-sizing: border-box;
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
     }
 
     button {
