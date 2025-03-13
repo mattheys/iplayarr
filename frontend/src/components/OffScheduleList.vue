@@ -27,6 +27,7 @@
 
 <script setup>
     import { defineProps, defineEmits } from 'vue';
+    import dialogService from '@/lib/dialogService';
 
     defineProps({
         cacheDefinitions : {
@@ -37,8 +38,8 @@
 
     const emit = defineEmits(['createCacheDefinition', 'removeCacheDefinition', 'refreshDef', 'details']);
 
-    const removeCacheDefinition = ({name, id}) => {
-        if(confirm(`Are you sure you want to remove the Cache Definition for ${name}?`)){
+    const removeCacheDefinition = async ({name, id}) => {
+        if(await dialogService.confirm("Remove", `Are you sure you want to remove the Cache Definition for ${name}?`)){
             emit('removeCacheDefinition', id);
         }
     };

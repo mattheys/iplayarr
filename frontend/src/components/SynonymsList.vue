@@ -24,6 +24,7 @@
 
 <script setup>
     import { defineProps, defineEmits } from 'vue';
+    import dialogService from '@/lib/dialogService';
 
     defineProps({
         synonyms : {
@@ -34,8 +35,8 @@
 
     const emit = defineEmits(['createSynonym', 'removeSynonym', 'details']);
 
-    const removeSynonym = ({from, id}) => {
-        if(confirm(`Are you sure you want to remove the synonym for ${from}?`)){
+    const removeSynonym = async ({from, id}) => {
+        if(await dialogService.confirm("Remove Synonym", `Are you sure you want to remove the synonym for ${from}?`)){
             emit('removeSynonym', id);
         }
     };

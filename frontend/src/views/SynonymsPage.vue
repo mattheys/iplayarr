@@ -9,7 +9,7 @@
 
 <script setup>
 import SynonymsList from '@/components/SynonymsList.vue';
-import SynonymForm from '@/components/SynonymForm.vue';
+import SynonymForm from '@/components/modals/SynonymForm.vue';
 import { useModal } from 'vue-final-modal'
 
 import { ref, onMounted } from 'vue';

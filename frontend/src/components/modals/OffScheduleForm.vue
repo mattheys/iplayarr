@@ -18,8 +18,9 @@
 
 <script setup>
     import { VueFinalModal } from 'vue-final-modal'
-    import SettingsTextInput from './SettingsTextInput.vue';
+    import SettingsTextInput from '../SettingsTextInput.vue';
     import {ref, defineEmits, onMounted, defineProps} from 'vue';
+import dialogService from '@/lib/dialogService';
 
     const emit = defineEmits(['save']);
 
@@ -60,7 +61,7 @@
                 };
             });
         } else {
-            alert("Please complete the form");
+            dialogService.alert('Can\'t Save', "Please complete the form");
         }
     }
 </script>

@@ -76,6 +76,7 @@ import { onMounted, ref, watch, computed } from 'vue';
 import { ipFetch } from '@/lib/ipFetch';
 import SettingsSelectInput from '@/components/SettingsSelectInput.vue';
 import { onBeforeRouteLeave } from 'vue-router';
+import dialogService from '@/lib/dialogService';
 
 const loading = ref(false);
 
@@ -145,6 +146,7 @@ onMounted(async () => {
 
 const saveConfig = async () => {
     loading.value = true;
+    let saveSuccess = false;
     if (configChanges.value || sonarrChanges.value || radarrChanges.value) {
         validationErrors.value.config = {};
 
@@ -153,8 +155,9 @@ const saveConfig = async () => {
         if (!configResponse.ok) {
             const errorData = configResponse.data;
             validationErrors.value.config = errorData.invalid_fields;
+            return;
         } else {
-            alert("Config saved OK");
+            saveSuccess = true;
             configChanges.value = false;
         }
     }
@@ -164,9 +167,10 @@ const saveConfig = async () => {
 
         if (!sonarrResponse.ok) {
             const errorData = sonarrResponse.data;
-            alert(errorData.message);
+            dialogService.alert("Error Saving Sonarr", errorData.message);
+            return;
         } else {
-            alert("Sonarr Config saved OK");
+            saveSuccess = true;
             sonarrChanges.value = false;
         }
     }
@@ -176,13 +180,17 @@ const saveConfig = async () => {
 
         if (!radarrResponse.ok) {
             const errorData = radarrResponse.data;
-            alert(errorData.message);
+            dialogService.alert("Error Saving Radarr", errorData.message);
+            return;
         } else {
-            alert("Radarr Config saved OK");
+            saveSuccess = true;
             radarrChanges.value = false;
         }
     }
     loading.value = false;
+    if (saveSuccess){
+        dialogService.alert("Success", "Save Successful");
+    }
 }
 
 const toggleAdvanced = () => {
@@ -194,16 +202,16 @@ const testSAB = async () => {
     const {SABNZBD_URL, SABNZBD_API_KEY} = config.value;
     const {data, ok} = await ipFetch('json-api/sabnzbd/test', 'POST', {SABNZBD_URL, SABNZBD_API_KEY});
     if (!ok){
-        alert(`Error Connecting to SABNzbd : ${data.message}`);
+        dialogService.alert('Error Connecting to SABNzbd', data.message);
         sabStatus.value = "INITIAL";
     } else {
         sabStatus.value = "SUCCESS";
     }
 }
 
-onBeforeRouteLeave((_, __, next) => {
+onBeforeRouteLeave(async (_, __, next) => {
     if (saveEnabled.value) {
-        if (confirm("You have unsaved changes. If you leave this page they will be lost.")) {
+        if (await dialogService.confirm("Unsaved Changes", "You have unsaved changes. If you leave this page they will be lost.")) {
             next();
         } else {
             next(false);

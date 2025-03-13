@@ -8,12 +8,13 @@
 </template>
 
 <script setup>
-    import OffScheduleForm from '@/components/OffScheduleForm.vue';
+    import OffScheduleForm from '@/components/modals/OffScheduleForm.vue';
     import OffScheduleList from '@/components/OffScheduleList.vue';
     import { ipFetch } from '@/lib/ipFetch';
     import {ref, onMounted} from 'vue';
     import { useRouter } from 'vue-router';
     import { useModal } from 'vue-final-modal'
+    import dialogService from '@/lib/dialogService';
 
     const router = useRouter();
 
@@ -55,15 +56,15 @@
             refreshCacheDefinitions();
             return true;
         } else {
-            alert(response.data.invalid_fields?.url);
+            dialogService.alert('Validation Error', response.data.invalid_fields?.url);
             return false;
         }
     }
 
     const refreshCacheDefinition = async (def) => {
-        if (confirm(`Are you sure you want to refresh the cache for ${def.name}?`)) {
+        if (await dialogService.confirm("Refresh Cache", `Are you sure you want to refresh the cache for ${def.name}?`)) {
             await ipFetch('json-api/offSchedule/refresh', 'POST', def);
-            if (confirm("Cache Refresh Started, Would you like to view the logs?")) {
+            if (await dialogService.confirm("Cache Refreshing", "Cache Refresh Started, Would you like to view the logs?")) {
                 router.push("/logs");
             }
         }

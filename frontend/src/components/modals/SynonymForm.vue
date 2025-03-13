@@ -19,8 +19,9 @@
 
 <script setup>
     import { VueFinalModal } from 'vue-final-modal'
-    import SettingsTextInput from './SettingsTextInput.vue';
+    import SettingsTextInput from '../SettingsTextInput.vue';
     import {ref, defineEmits, defineProps, onMounted} from 'vue';
+import dialogService from '@/lib/dialogService';
 
     const emit = defineEmits(['save']);
 
@@ -62,7 +63,7 @@
                 exemptions : ""
             };
         } else {
-            alert("Please fill in a To and From");
+            dialogService.alert("Can't Save", "Please fill in a To and From");
         }
     }
 </script>
