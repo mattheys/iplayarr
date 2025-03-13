@@ -44,6 +44,7 @@ import { defineProps, defineEmits, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import SettingsTextInput from '@/components/SettingsTextInput.vue';
 import { ipFetch } from '@/lib/ipFetch';
+import dialogService from '@/lib/dialogService';
 
 const router = useRouter();
 
@@ -83,14 +84,14 @@ watch(
 );
 
 const unlinkDownload = async () => {
-    if (confirm(`Are you sure you want to unlink ${props.name} Download Client? All changes will be lost`)){
+    if (await dialogService.confirm('unlink', `Are you sure you want to unlink ${props.name} Download Client? All changes will be lost`)){
         await ipFetch(`json-api/arr/${props.name.toLowerCase()}/download_client`, 'DELETE');
         router.go(0);
     }
 }
 
 const unlinkIndexer = async () => {
-    if (confirm(`Are you sure you want to unlink ${props.name} Indexer? All changes will be lost`)){
+    if (await dialogService.confirm('unlink', `Are you sure you want to unlink ${props.name} Indexer? All changes will be lost`)){
         await ipFetch(`json-api/arr/${props.name.toLowerCase()}/indexer`, 'DELETE');
         router.go(0);
     }
@@ -100,7 +101,7 @@ const test = async () => {
     testStatus.value = "PENDING";
     const {data, ok} = await ipFetch('json-api/arr/test', 'POST', {HOST : localValue.value.url, API_KEY : localValue.value.api_key});
     if (!ok){
-        alert(`Error Connecting to ${props.name} : ${data.message}`);
+        dialogService.alert('Connection Error', `Error Connecting to ${props.name} : ${data.message}`);
         testStatus.value = "INITIAL";
     } else {
         testStatus.value = "SUCCESS";

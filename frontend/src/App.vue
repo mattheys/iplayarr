@@ -1,11 +1,12 @@
 <template>
-  <NavBar ref="navBar"/>
+  <NavBar ref="navBar" />
   <div class="main-layout">
-    <LeftHandNav ref="leftHandNav" v-if="authState.user" @clear-search="clearSearch"/>
+    <LeftHandNav ref="leftHandNav" v-if="authState.user" @clear-search="clearSearch" />
     <div class="content">
       <RouterView />
     </div>
   </div>
+  <ModalsContainer />
 </template>
 
 <script setup>
@@ -14,6 +15,7 @@ import { enforceMaxLength } from './lib/utils';
 import NavBar from './components/NavBar.vue';
 import LeftHandNav from './components/LeftHandNav.vue';
 import { RouterView } from 'vue-router';
+import { ModalsContainer } from 'vue-final-modal';
 
 import { io } from "socket.io-client";
 import { ref, provide, watch, inject } from 'vue';
@@ -43,7 +45,7 @@ provide('toggleLeftHandNav', toggleLeftHandNav);
 provide('hiddenSettings', hiddenSettings);
 
 const pageSetup = async () => {
-  if (socket.value == null){
+  if (socket.value == null) {
     document.body.scrollTop = document.documentElement.scrollTop = 0;
     await updateQueue();
     if (process.env.NODE_ENV == 'production') {
@@ -71,10 +73,10 @@ const pageSetup = async () => {
 }
 
 watch(authState, async (newAuthState) => {
-  if (newAuthState.user){
+  if (newAuthState.user) {
     pageSetup();
   }
-}, {immediate : true});
+}, { immediate: true });
 
 const clearSearch = () => {
   navBar.value.clearSearch();
@@ -145,31 +147,104 @@ legend {
 
 
 .pill {
-    padding: 1px 3px;
-    font-size: 11px;
-    border-radius: 2px;
-    display: inline-block;
-    background-color: @warn-color;
-    border-color: @warn-color;
-    color: @warn-text-color;
-    text-align: center;
+  padding: 1px 3px;
+  font-size: 11px;
+  border-radius: 2px;
+  display: inline-block;
+  background-color: @warn-color;
+  border-color: @warn-color;
+  color: @warn-text-color;
+  text-align: center;
 
-    &.TV {
-        background-color: @primary-color;
-        border-color: @primary-color;
-        color: @primary-text-color;
-    }
+  &.TV {
+    background-color: @primary-color;
+    border-color: @primary-color;
+    color: @primary-text-color;
+  }
 
-    &.MOVIE {
-        background-color: @error-color;
-        border-color: @error-color;
-        color: @error-text-color;
-    }
+  &.MOVIE {
+    background-color: @error-color;
+    border-color: @error-color;
+    color: @error-text-color;
+  }
 }
 
-input:focus, textarea:focus, select:focus, button:focus {
+input:focus,
+textarea:focus,
+select:focus,
+button:focus {
   outline: none;
   box-shadow: none;
 }
 
+.iplayarr-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.iplayarr-modal-content {
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px @primary-box-shadow;
+
+  @media (min-width: @mobile-breakpoint) {
+    min-width: 600px;
+    max-width: 80%;
+  }
+
+  width: fit-content;
+  background-color: @nav-background-color;
+
+  @media (max-width: @mobile-breakpoint) {
+    padding-top: 3rem;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    min-width: none;
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .button-container {
+    justify-content: flex-end;
+    text-align: right;
+    max-width: 650px;
+
+    @media (max-width: @mobile-breakpoint) {
+      margin-top: auto;
+      box-sizing: border-box;
+      margin-bottom: 2rem;
+    }
+
+    button {
+      background-color: @settings-button-background-color;
+      border: 1px solid @settings-button-border-color;
+      padding: 6px 16px;
+      font-size: 14px;
+      color: @primary-text-color;
+      border-radius: 4px;
+      margin-left: 1rem;
+
+      &.cancel {
+        background-color: @error-color;
+      }
+
+      &:hover {
+        border-color: @settings-button-hover-border-color;
+        ;
+        background-color: @settings-button-hover-background-color;
+      }
+    }
+  }
+}
 </style>

@@ -38,6 +38,7 @@
 </template>
 
 <script setup>
+import dialogService from '@/lib/dialogService';
 import { ipFetch } from '@/lib/ipFetch';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -67,7 +68,7 @@ const login = async () => {
 
 const showForgot = async () => {
     forgot.value=true;
-    ipFetch('generateToken');
+    ipFetch('auth/generateToken');
 }
 
 const hideForgot = async () => {
@@ -76,7 +77,7 @@ const hideForgot = async () => {
 
 const submitForgot = async () => {
     ipFetch('auth/resetPassword', 'POST', forgotForm.value);
-    alert("If the code is correct, the password will be reset!");
+    dialogService.alert('Reset Password', "If the code is correct, the password will be reset!");
     forgot.value=false;
 }
 </script>

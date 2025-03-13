@@ -13,6 +13,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { ref, watch } from 'vue';
 import MediaInfoHero from '@/components/MediaInfoHero.vue';
 import LogPanel from '@/components/LogPanel.vue';
+import dialogService from '@/lib/dialogService';
 
 const route = useRoute();
 const router = useRouter();
@@ -29,7 +30,7 @@ const toggleFollow = () => {
 }
 
 const deleteQueueItem = async () => {
-    if (confirm("Are you sure you want to cancel this download?")) {
+    if (await dialogService.confirm("Cancel", "Are you sure you want to cancel this download?")) {
         ipFetch(`json-api/queue/queue?pid=${item.value.pid}`, 'DELETE');
         router.push("/queue");
     }
