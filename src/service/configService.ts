@@ -1,5 +1,7 @@
 import dotenv from 'dotenv'
-import storage from 'node-persist';
+
+import { QueuedStorage } from '../types/QueuedStorage'
+const storage : QueuedStorage = new QueuedStorage();
 
 import { IplayarrParameter } from '../types/IplayarrParameters';
 

@@ -1,8 +1,9 @@
-import storage from 'node-persist';
 import { v4 } from 'uuid';
 
+import { QueuedStorage } from '../types/QueuedStorage'
 import { Synonym } from '../types/Synonym';
 
+const storage : QueuedStorage = new QueuedStorage();
 let isStorageInitialized : boolean = false;
 
 const storageOptions : any = {};
