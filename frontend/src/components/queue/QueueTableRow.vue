@@ -31,7 +31,7 @@
 
 <script setup>
 import { ipFetch } from '@/lib/ipFetch';
-import ProgressBar from './ProgressBar.vue';
+import ProgressBar from '../common/ProgressBar.vue';
 import { defineProps } from 'vue';
 import { formatStorageSize } from '@/lib/utils';
 import dialogService from '@/lib/dialogService';

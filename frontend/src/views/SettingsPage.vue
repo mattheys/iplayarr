@@ -3,27 +3,27 @@
         :icons="['save', 'advanced']" />
     <div class="inner-content" v-if="!loading">
         <legend>iPlayarr</legend>
-        <SettingsTextInput name="Api Key" tooltip="API Key for access from *arr apps." v-model="config.API_KEY"
+        <TextInput name="Api Key" tooltip="API Key for access from *arr apps." v-model="config.API_KEY"
             :error="validationErrors.config?.API_KEY" />
-        <SettingsTextInput name="Download Directory" tooltip="Directory for in-progress Downloads."
+        <TextInput name="Download Directory" tooltip="Directory for in-progress Downloads."
             v-model="config.DOWNLOAD_DIR" :error="validationErrors.config?.DOWNLOAD_DIR" />
-        <SettingsTextInput name="Complete Directory" tooltip="Directory for completed Downloads."
+        <TextInput name="Complete Directory" tooltip="Directory for completed Downloads."
             v-model="config.COMPLETE_DIR" :error="validationErrors.config?.COMPLETE_DIR" />
-        <SettingsTextInput name="Download Limit" tooltip="The number of simultaneous downloads." type-override="number"
+        <TextInput name="Download Limit" tooltip="The number of simultaneous downloads." type-override="number"
             v-model="config.ACTIVE_LIMIT" :error="validationErrors.config?.ACTIVE_LIMIT" />
-        <SettingsSelectInput name="Video Quality" tooltip="Maximum video quality (Where available)"
+        <SelectInput name="Video Quality" tooltip="Maximum video quality (Where available)"
             v-model="config.VIDEO_QUALITY" :error="validationErrors.config?.ACTIVE_LIMIT" :options="qualityProfiles" />
 
         <template v-if="showAdvanced">
-            <SettingsTextInput :advanced="true" name="Refresh Schedule" tooltip="Cron Expression for schedule refresh."
+            <TextInput :advanced="true" name="Refresh Schedule" tooltip="Cron Expression for schedule refresh."
                 v-model="config.REFRESH_SCHEDULE" :error="validationErrors.config?.REFRESH_SCHEDULE" />
-            <SettingsTextInput :advanced="true" name="TV Filename Template"
+            <TextInput :advanced="true" name="TV Filename Template"
                 tooltip="Template for TV Filenames, {title, season, episode, quality}."
                 v-model="config.TV_FILENAME_TEMPLATE" :error="validationErrors.config?.TV_FILENAME_TEMPLATE" />
-            <SettingsTextInput :advanced="true" name="Movie Filename Template"
+            <TextInput :advanced="true" name="Movie Filename Template"
                 tooltip="Template for Movie Filenames, {title, quality}." v-model="config.MOVIE_FILENAME_TEMPLATE"
                 :error="validationErrors.config?.MOVIE_FILENAME_TEMPLATE" />
-            <SettingsTextInput :advanced="true" name="Additional Download Parameters"
+            <TextInput :advanced="true" name="Additional Download Parameters"
                 tooltip="Extra parameters to pass to get_iplayer for download"
                 v-model="config.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS"
                 :error="validationErrors.config?.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS" />
@@ -33,9 +33,9 @@
             <div class="sabnzbd-settings">
                 <legend class="sub">SABNzbd Passthrough</legend>
                 <p>If your *arr client accidentally sends a real NZB, Where should it be forwarded?</p>
-                <SettingsTextInput name="SABNzbd URL" tooltip="URL For SABNzbd passthrough" v-model="config.SABNZBD_URL"
+                <TextInput name="SABNzbd URL" tooltip="URL For SABNzbd passthrough" v-model="config.SABNZBD_URL"
                     :error="validationErrors.config?.SABNZBD_URL" :advanced="true" />
-                <SettingsTextInput name="SABNzbd Api Key" tooltip="API Key for SABNzbd passthrough"
+                <TextInput name="SABNzbd Api Key" tooltip="API Key for SABNzbd passthrough"
                     v-model="config.SABNZBD_API_KEY" :error="validationErrors.config?.SABNZBD_API_KEY"
                     :advanced="true" />
                     <div class="button-container">
@@ -55,9 +55,9 @@
         </template>
 
         <legend class="sub">Authentication</legend>
-        <SettingsTextInput name="Username" tooltip="The Login Username." v-model="config.AUTH_USERNAME"
+        <TextInput name="Username" tooltip="The Login Username." v-model="config.AUTH_USERNAME"
             :error="validationErrors.config?.AUTH_USERNAME" />
-        <SettingsTextInput name="Password" tooltip="The Login Password." type-override="password"
+        <TextInput name="Password" tooltip="The Login Password." type-override="password"
             v-model="config.AUTH_PASSWORD" :error="validationErrors.config?.AUTH_PASSWORD" />
 
         <ArrSettings name="Sonarr" v-model="sonarrConfig" />
@@ -67,14 +67,14 @@
 </template>
 
 <script setup>
-import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
-import SettingsTextInput from '@/components/SettingsTextInput.vue';
+import SettingsPageToolbar from '@/components/common/SettingsPageToolbar.vue';
+import TextInput from '@/components/common/form/TextInput.vue';
 import ArrSettings from '@/components/ArrSettings.vue';
-import LoadingIndicator from '@/components/LoadingIndicator.vue';
+import LoadingIndicator from '@/components/common/LoadingIndicator.vue';
 
 import { onMounted, ref, watch, computed } from 'vue';
 import { ipFetch } from '@/lib/ipFetch';
-import SettingsSelectInput from '@/components/SettingsSelectInput.vue';
+import SelectInput from '@/components/common/form/SelectInput.vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import dialogService from '@/lib/dialogService';
 
@@ -245,7 +245,7 @@ onBeforeRouteLeave(async (_, __, next) => {
         color: @primary-text-color;
         border-radius: 4px;
 
-        &:hover {
+        &:hover:not(:disabled) {
             border-color: @settings-button-hover-border-color;
             background-color: @settings-button-hover-background-color;
         }

@@ -1,7 +1,7 @@
 <template>
     <legend>{{ name }}</legend>
-    <SettingsTextInput name="URL" :tooltip="`${name} URL, including protocol & port`" v-model="localValue.url" />
-    <SettingsTextInput name="API Key" :tooltip="`${name} API Key`" v-model="localValue.api_key" />
+    <TextInput name="URL" :tooltip="`${name} URL, including protocol & port`" v-model="localValue.url" />
+    <TextInput name="API Key" :tooltip="`${name} API Key`" v-model="localValue.api_key" />
     <div class="button-container">
         <button class="test-button" @click="test">
             <template v-if="testStatus == 'INITIAL'">
@@ -18,11 +18,11 @@
     <div class="arrContainer">
         <div>
             <legend class="sub">Download Client</legend>
-            <SettingsTextInput name="Name" :tooltip="`${name} Download Client Name`"
+            <TextInput name="Name" :tooltip="`${name} Download Client Name`"
                 v-model="localValue.download_client.name" placeholder="iPlayer"/>
-            <SettingsTextInput name="IPlayarr Host" :tooltip="`Host for ${name} to reach IPlayarr`"
+            <TextInput name="IPlayarr Host" :tooltip="`Host for ${name} to reach IPlayarr`"
                 v-model="localValue.download_client.host" :placeholder="placeholders.host"/>
-            <SettingsTextInput name="IPlayarr Port" :tooltip="`Port for ${name} to reach IPlayarr`"
+            <TextInput name="IPlayarr Port" :tooltip="`Port for ${name} to reach IPlayarr`"
                 v-model="localValue.download_client.port" :placeholder="placeholders.port"/>
             <div class="button-container">
                 <button @click="unlinkDownload">Unlink Download Client</button>
@@ -30,8 +30,8 @@
         </div>
         <div>
             <legend class="sub">Indexer</legend>
-            <SettingsTextInput name="Name" :tooltip="`${name} Indexer Name`" v-model="localValue.indexer.name" placeholder="iPlayer"/>
-            <SettingsTextInput name="URL" :tooltip="`${name} iPlayerr URL`" v-model="localValue.indexer.url" :placeholder="`${placeholders.protocol}//${placeholders.host}:${placeholders.port}`"/>
+            <TextInput name="Name" :tooltip="`${name} Indexer Name`" v-model="localValue.indexer.name" placeholder="iPlayer"/>
+            <TextInput name="URL" :tooltip="`${name} iPlayerr URL`" v-model="localValue.indexer.url" :placeholder="`${placeholders.protocol}//${placeholders.host}:${placeholders.port}`"/>
             <div class="button-container">
                 <button @click="unlinkIndexer">Unlink Indexer</button>
             </div>
@@ -42,7 +42,7 @@
 <script setup>
 import { defineProps, defineEmits, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import SettingsTextInput from '@/components/SettingsTextInput.vue';
+import TextInput from '@/components/common/form/TextInput.vue';
 import { ipFetch } from '@/lib/ipFetch';
 import dialogService from '@/lib/dialogService';
 
@@ -118,14 +118,5 @@ const test = async () => {
             flex: 1
         }
     }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
 </style>

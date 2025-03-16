@@ -7,9 +7,9 @@
       v-slot="{ close }"
     >
         <legend>{{action}} Synonym</legend>
-        <SettingsTextInput name="From" tooltip="Incoming term from *arr" v-model="form.from" placeholder="Apprentice UK"/>
-        <SettingsTextInput name="To" tooltip="Outgoing search to iPlayer" v-model="form.target" placeholder="Apprentice"/>
-        <SettingsTextInput name="Exemptions" tooltip="Exemptions (comma seperated)" v-model="form.exemptions" placeholder="You're Fired!"/>
+        <TextInput name="From" tooltip="Incoming term from *arr" v-model="form.from" placeholder="Apprentice UK"/>
+        <TextInput name="To" tooltip="Outgoing search to iPlayer" v-model="form.target" placeholder="Apprentice"/>
+        <TextInput name="Exemptions" tooltip="Exemptions (comma seperated)" v-model="form.exemptions" placeholder="You're Fired!"/>
         <div class="button-container">
             <button class="clickable cancel" @click="close()">Cancel</button>
             <button class="clickable" @click="saveSynonym">Save</button>
@@ -19,9 +19,9 @@
 
 <script setup>
     import { VueFinalModal } from 'vue-final-modal'
-    import SettingsTextInput from '../SettingsTextInput.vue';
+    import TextInput from '../common/form/TextInput.vue';
     import {ref, defineEmits, defineProps, onMounted} from 'vue';
-import dialogService from '@/lib/dialogService';
+    import dialogService from '@/lib/dialogService';
 
     const emit = defineEmits(['save']);
 

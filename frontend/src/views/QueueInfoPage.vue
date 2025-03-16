@@ -7,12 +7,12 @@
 </template>
 
 <script setup>
-import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
+import SettingsPageToolbar from '@/components/common/SettingsPageToolbar.vue';
 import { ipFetch } from '@/lib/ipFetch';
 import { useRoute, useRouter } from 'vue-router';
 import { ref, watch } from 'vue';
-import MediaInfoHero from '@/components/MediaInfoHero.vue';
-import LogPanel from '@/components/LogPanel.vue';
+import MediaInfoHero from '@/components/common/MediaInfoHero.vue';
+import LogPanel from '@/components/log/LogPanel.vue';
 import dialogService from '@/lib/dialogService';
 
 const route = useRoute();

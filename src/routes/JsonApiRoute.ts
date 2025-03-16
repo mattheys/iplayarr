@@ -5,6 +5,7 @@ import queueService from '../service/queueService';
 import sabzbdService from '../service/sabnzbdService';
 import { IPlayerSearchResult } from '../types/IPlayerSearchResult';
 import { ApiError, ApiResponse } from '../types/responses/ApiResponse';
+import AppsRoute from './json-api/AppsRoute';
 import ArrRoute from './json-api/ArrRoute';
 import OffScheduleRoute from './json-api/OffScheduleRoute';
 import QueueRoute from './json-api/QueueRoute';
@@ -18,6 +19,7 @@ router.use('/synonym', SynonymsRoute);
 router.use('/queue', QueueRoute);
 router.use('/arr', ArrRoute);
 router.use('/offSchedule', OffScheduleRoute);
+router.use('/apps', AppsRoute)
 
 router.post('/sabnzbd/test', async (req : Request, res : Response) => {
     const {SABNZBD_URL, SABNZBD_API_KEY} = req.body;

@@ -6,8 +6,8 @@
 </template>
 
 <script setup>
-    import QueueTable from '../components/QueueTable.vue';
-    import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
+    import QueueTable from '../components/queue/QueueTable.vue';
+    import SettingsPageToolbar from '@/components/common/SettingsPageToolbar.vue';
 
     import {ref, inject} from 'vue';
 

@@ -17,3 +17,7 @@ export const enforceMaxLength = (arr, maxLength) => {
         arr.splice(0, arr.length - maxLength);
     }
 }
+
+export function capitalize(word) {
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+}
