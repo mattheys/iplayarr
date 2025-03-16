@@ -3,4 +3,5 @@ export interface FilenameTemplateContext {
     episode? : string,
     season? : string,
     quality? : string,
+    synonym? : string
 }
