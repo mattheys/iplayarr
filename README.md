@@ -76,6 +76,8 @@ services:
       - "API_KEY=1234"
       - "DOWNLOAD_DIR=/mnt/media/iplayarr/incomplete"
       - "COMPLETE_DIR=/mnt/media/iplayarr/complete"
+      - "PUID=1000"
+      - "PGID=1000"
     ports:
       - "4404:4404"
     volumes:
@@ -99,6 +101,8 @@ There's a few more optional settings too:
 | ACTIVE_LIMIT | How many downloads are allowed simultaneously, defaults to 3 |
 | REFRESH_SCHEDULE | Cron expression for when to pro-actively refresh schedule, defaults to hourly, on the hour |
 | HIDE_DONATE | If you don't like the Kofi donate links you can hide them |
+| PUID | Host User ID for file permissions |
+| PGID | Host Group ID for file permissions |
 
 ### Usage
 
