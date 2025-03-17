@@ -1,14 +1,14 @@
 <template>
   <div class="LeftHandNav" ref="lhn">
     <ul>
-      <LeftHandNavLink label="Queue" icon="tasks" path="/queue" />
-      <LeftHandNavLink label="Logs" icon="history" path="/logs" />
-      <LeftHandNavLink label="Settings" icon="gears" path="/settings" />
-      <LeftHandNavLink label="Apps" icon="laptop-code" path="/apps" />
-      <LeftHandNavLink label="Synonyms" icon="arrows-rotate" path="/synonyms" />
-      <LeftHandNavLink label="Off Schedule" icon="calendar" path="/offSchedule" />
+      <LeftHandNavLink label="Queue" icon="tasks" path="/queue" @option-clicked="closeLHN"/>
+      <LeftHandNavLink label="Logs" icon="history" path="/logs" @option-clicked="closeLHN"/>
+      <LeftHandNavLink label="Settings" icon="gears" path="/settings" @option-clicked="closeLHN"/>
+      <LeftHandNavLink label="Apps" icon="laptop-code" path="/apps" @option-clicked="closeLHN"/>
+      <LeftHandNavLink label="Synonyms" icon="arrows-rotate" path="/synonyms" @option-clicked="closeLHN"/>
+      <LeftHandNavLink label="Off Schedule" icon="calendar" path="/offSchedule" @option-clicked="closeLHN"/>
       <LeftHandNavLink label="Refresh Index" icon="address-book" :noLink="true" @option-clicked="refreshCache" />
-      <LeftHandNavLink label="About" icon="circle-info" path="/about" />
+      <LeftHandNavLink label="About" icon="circle-info" path="/about" @option-clicked="closeLHN"/>
       <LeftHandNavLink label="Logout" icon="sign-out" :noLink="true" @option-clicked="logout" />
     </ul>
   </div>
