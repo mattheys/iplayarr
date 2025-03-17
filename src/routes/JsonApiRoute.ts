@@ -1,11 +1,11 @@
 import { Request, Response, Router } from 'express';
 
+import nzbFacade from '../facade/nzbFacade';
 import iplayerService from '../service/iplayerService';
 import queueService from '../service/queueService';
-import sabzbdService from '../service/sabnzbdService';
 import { IPlayerSearchResult } from '../types/IPlayerSearchResult';
 import { ApiError, ApiResponse } from '../types/responses/ApiResponse';
-import ArrRoute from './json-api/ArrRoute';
+import AppsRoute from './json-api/AppsRoute';
 import OffScheduleRoute from './json-api/OffScheduleRoute';
 import QueueRoute from './json-api/QueueRoute';
 import SettingsRoute from './json-api/SettingsRoute';
@@ -16,12 +16,12 @@ const router : Router = Router();
 router.use('/config', SettingsRoute);
 router.use('/synonym', SynonymsRoute);
 router.use('/queue', QueueRoute);
-router.use('/arr', ArrRoute);
 router.use('/offSchedule', OffScheduleRoute);
+router.use('/apps', AppsRoute)
 
-router.post('/sabnzbd/test', async (req : Request, res : Response) => {
-    const {SABNZBD_URL, SABNZBD_API_KEY} = req.body;
-    const result : string | boolean = await sabzbdService.testConnection(SABNZBD_URL, SABNZBD_API_KEY);
+router.post('/nzb/test', async (req : Request, res : Response) => {
+    const {NZB_URL, NZB_API_KEY, NZB_TYPE, NZB_USERNAME, NZB_PASSWORD} = req.body;
+    const result : string | boolean = await nzbFacade.testConnection(NZB_TYPE, NZB_URL, NZB_API_KEY, NZB_USERNAME, NZB_PASSWORD);
     if (result == true){
         res.json({status : true});
     } else {

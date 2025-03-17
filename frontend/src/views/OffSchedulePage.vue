@@ -2,19 +2,31 @@
     <div class="inner-content">
         <legend>Off Schedule</legend>
         <p>By default, only media broadcast in the last 30 days is returned, to extend this, you need to index specific iPlayer URLs</p>
-        <OffScheduleList @details="openForm" @create-cache-definition="openForm" @remove-cache-definition="remove" :cacheDefinitions="cacheDefinitions" @refresh-def="refreshCacheDefinition"/>
+        <ListEditor :items="cacheDefinitions" @create="openForm" :actions="[['refresh', refreshCacheDefinition], ['trash', remove]]" v-slot="{item}">
+            <div class="major" @click="openDetails(item)">
+                {{item.name}}
+            </div>
+            <div class="cacheDefinitionTarget" @click="openDetails(item)">
+                {{item.url}}
+            </div>
+            <div class="cacheDefinitionTarget" @click="openDetails(item)">
+                {{item.cacheRefreshed}}
+            </div>
+        </ListEditor>
         <div class="block-reset"></div>
     </div>
 </template>
 
 <script setup>
     import OffScheduleForm from '@/components/modals/OffScheduleForm.vue';
-    import OffScheduleList from '@/components/OffScheduleList.vue';
+    import ListEditor from '@/components/common/ListEditor.vue';
     import { ipFetch } from '@/lib/ipFetch';
     import {ref, onMounted} from 'vue';
     import { useRouter } from 'vue-router';
     import { useModal } from 'vue-final-modal'
     import dialogService from '@/lib/dialogService';
+
+    import { deepCopy } from '@/lib/utils';
 
     const router = useRouter();
 
@@ -30,7 +42,7 @@
         const formModal = useModal({
             component: OffScheduleForm,
             attrs: {
-                inputObj : cacheDef,
+                inputObj : deepCopy(cacheDef),
                 action : cacheDef ? 'Edit' : 'Create',
                 onSave : async(form, success) => {
                     const result = await saveCacheDefinition(form);
@@ -45,8 +57,10 @@
     }
 
     const remove = async (id) => {
-        await ipFetch(`json-api/offSchedule`, 'DELETE', {id});
-        refreshCacheDefinitions();
+        if (await dialogService.confirm('Delete Cache Definition', 'Are you sure you want to delete this Cache Definition?')){
+            await ipFetch(`json-api/offSchedule`, 'DELETE', {id});
+            refreshCacheDefinitions();
+        }  
     }
 
     const saveCacheDefinition = async (form) => {
@@ -71,3 +85,11 @@
 
 }
 </script>
+
+<style lang="less">
+
+.cacheDefinitionTarget {
+    font-size: 10px;
+}
+
+</style>

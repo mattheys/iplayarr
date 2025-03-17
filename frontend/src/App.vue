@@ -12,8 +12,8 @@
 <script setup>
 import { ipFetch } from '@/lib/ipFetch';
 import { enforceMaxLength } from './lib/utils';
-import NavBar from './components/NavBar.vue';
-import LeftHandNav from './components/LeftHandNav.vue';
+import NavBar from './components/common/NavBar.vue';
+import LeftHandNav from './components/common/LeftHandNav.vue';
 import { RouterView } from 'vue-router';
 import { ModalsContainer } from 'vue-final-modal';
 
@@ -105,7 +105,7 @@ body {
   }
 }
 
-.clickable {
+.clickable:not(:disabled) {
   cursor: pointer;
 }
 
@@ -139,6 +139,10 @@ legend {
 .block-reset {
   display: block;
   clear: both;
+}
+
+.mb-0 {
+  margin-bottom: 0px;
 }
 
 .scroll-x {
@@ -239,7 +243,7 @@ button:focus {
         background-color: @error-color;
       }
 
-      &:hover {
+      &:hover:not(:disabled) {
         border-color: @settings-button-hover-border-color;
         ;
         background-color: @settings-button-hover-background-color;

@@ -6,7 +6,8 @@
       content-transition="vfm-fade"
     >
         <legend>{{ title }}</legend>
-        <p>{{ text }}</p>
+        <p :class="[subtext ? 'hasLower' : '']">{{ text }}</p>
+        <p class="sub" v-if="subtext">{{ subtext }}</p>
         <div class="button-container">
             <button class="clickable cancel" @click="emit('cancel')" v-if="showCancel">Cancel</button>
             <button class="clickable" @click="emit('confirm')">OK</button>
@@ -23,9 +24,23 @@
     defineProps({
         title : String,
         text : String,
+        subtext : String,
         showCancel : {
             type : Boolean,
             default : false
         }
     });
 </script>
+
+<style lang="less">
+    p {
+        &.sub {
+            font-size: 14px;
+            margin-top: 0px;
+        }
+
+        &.hasLower {
+            margin-bottom: 0px;
+        }
+    }
+</style>

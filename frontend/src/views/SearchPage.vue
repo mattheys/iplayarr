@@ -47,8 +47,8 @@
 import { useRoute, useRouter } from 'vue-router';
 import { ref, watch, computed } from 'vue';
 import { ipFetch } from '@/lib/ipFetch';
-import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
-import LoadingIndicator from '@/components/LoadingIndicator.vue';
+import SettingsPageToolbar from '@/components/common/SettingsPageToolbar.vue';
+import LoadingIndicator from '@/components/common/LoadingIndicator.vue';
 import { formatStorageSize } from '@/lib/utils';
 
 const route = useRoute();

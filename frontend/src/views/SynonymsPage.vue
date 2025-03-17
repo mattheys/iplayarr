@@ -2,18 +2,31 @@
     <div class="inner-content">
         <legend>Synonyms</legend>
         <p>iPlayer don't save their videos in an *arr friendly way. You can use synonyms to help you bridge the gap</p>
-        <SynonymsList @details="openForm" @create-synonym="openForm" @remove-synonym="removeSynonym" :synonyms="synonyms" />
+        <ListEditor :items="synonyms" @create="openForm" :actions="[['trash', removeSynonym]]" v-slot="{item}">
+            <div class="major" @click="openForm(item)">
+                {{item.from}}
+            </div>
+            <div class="minor" @click="openForm(item)">
+                {{item.target}}
+            </div>
+            <div class="sub" @click="openForm(item)">
+                {{item.exemptions}}
+            </div>
+        </ListEditor>
         <div class="block-reset"></div>
     </div>
 </template>
 
 <script setup>
-import SynonymsList from '@/components/SynonymsList.vue';
+import ListEditor from '@/components/common/ListEditor.vue';
 import SynonymForm from '@/components/modals/SynonymForm.vue';
 import { useModal } from 'vue-final-modal'
 
 import { ref, onMounted } from 'vue';
 import { ipFetch } from '@/lib/ipFetch';
+import dialogService from '@/lib/dialogService';
+
+import { deepCopy } from '@/lib/utils';
 
 const synonyms = ref([]);
 
@@ -27,7 +40,7 @@ const openForm = (synonym) => {
     const formModal = useModal({
         component: SynonymForm,
         attrs: {
-            inputObj : synonym,
+            inputObj : deepCopy(synonym),
             action : synonym ? 'Edit' : 'Create',
             onSave(synonym) {
                 saveSynonym(synonym);
@@ -45,7 +58,9 @@ const saveSynonym = async (synonym) => {
 }
 
 const removeSynonym = async (id) => {
-    await ipFetch(`json-api/synonym`, 'DELETE', { id });
-    refreshSynonyms();
+    if (await dialogService.confirm('Delete Synonym', 'Are you sure you want to delete this Synonym?')){
+        await ipFetch(`json-api/synonym`, 'DELETE', { id });
+        refreshSynonyms();
+    }
 }
 </script>

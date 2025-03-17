@@ -6,8 +6,8 @@
 </template>
 
 <script setup>
-import LogPanel from '@/components/LogPanel.vue';
-import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
+import LogPanel from '@/components/log/LogPanel.vue';
+import SettingsPageToolbar from '@/components/common/SettingsPageToolbar.vue';
 import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 

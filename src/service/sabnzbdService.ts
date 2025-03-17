@@ -1,27 +1,11 @@
 import axios, { AxiosResponse } from 'axios';
 import FormData from 'form-data';
 
-import { IplayarrParameter } from '../types/IplayarrParameters';
-import configService from './configService';
+import { App } from '../types/App';
 
 const sabzbdService = {
-    test : async () : Promise<boolean> => {
-        const SABNZBD_URL = await configService.getParameter(IplayarrParameter.SABNZBD_URL);
-        const SABNSBD_API_KEY = await configService.getParameter(IplayarrParameter.SABNZBD_API_KEY);
-        if (SABNZBD_URL && SABNSBD_API_KEY){
-            const result = await sabzbdService.testConnection(SABNZBD_URL, SABNSBD_API_KEY);
-            if (result == true) {
-                return true;
-            }
-        } 
-        return false;
-    },
-
-    getAddFileUrl : async () : Promise<string> => {
-        const SABNZBD_URL = await configService.getParameter(IplayarrParameter.SABNZBD_URL) as string;
-        const SABNSBD_API_KEY = await configService.getParameter(IplayarrParameter.SABNZBD_API_KEY) as string;
-
-        return `${SABNZBD_URL}/api?mode=addfile&cat=iplayer&priority=-100&apikey=${SABNSBD_API_KEY}`;
+    getAddFileUrl : async ({url, api_key} : App) : Promise<string> => {
+        return `${url}/api?mode=addfile&cat=iplayer&priority=-100&apikey=${api_key}`;
     },
 
     testConnection : async(sabnzbdUrl : string, apikey : string) : Promise<string | boolean> => {
@@ -39,8 +23,8 @@ const sabzbdService = {
         }
     },
 
-    addFile : async(files : Express.Multer.File[]) : Promise<AxiosResponse> => {
-        const url = await sabzbdService.getAddFileUrl();
+    addFile : async(app : App, files : Express.Multer.File[]) : Promise<AxiosResponse> => {
+        const url = await sabzbdService.getAddFileUrl(app);
 
         const formData = new FormData();
         if (files) {

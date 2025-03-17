@@ -2,14 +2,14 @@
     <SettingsPageToolbar :icons="['download']" @download="download"/>
     <MediaInfoHero :pid="searchResult.pid" :type="searchResult.type" :title="`${searchResult.title}${searchResult.episode ? ` - Series ${searchResult.series || 'Unknown'}, Episode ${searchResult.episode}` : ''}`"/>
     <div class="inner-content">
-        <SettingsTextInput name="Filename" tooltip="Filename to Download as (extension will be added automatically)" v-model="searchResult.nzbName"/>
+        <TextInput name="Filename" tooltip="Filename to Download as (extension will be added automatically)" v-model="searchResult.nzbName"/>
     </div>
 </template>
 
 <script setup>
-import SettingsPageToolbar from '@/components/SettingsPageToolbar.vue';
-import SettingsTextInput from '@/components/SettingsTextInput.vue';
-import MediaInfoHero from '@/components/MediaInfoHero.vue';
+import SettingsPageToolbar from '@/components/common/SettingsPageToolbar.vue';
+import TextInput from '@/components/common/form/TextInput.vue';
+import MediaInfoHero from '@/components/common/MediaInfoHero.vue';
 import { ipFetch } from '@/lib/ipFetch';
 import {watch, ref} from 'vue';
 import { useRoute, useRouter } from 'vue-router';

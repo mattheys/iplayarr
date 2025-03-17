@@ -7,8 +7,8 @@
       v-slot="{ close }"
     >
         <legend>{{action}} Cache Definition</legend>
-        <SettingsTextInput name="Name" tooltip="Name for the Cache Definition" v-model="form.name" placeholder="Red Dwarf"/>
-        <SettingsTextInput name="URL" tooltip="iPlayer URL" v-model="form.url" placeholder="https://www.bbc.co.uk/iplayer/episodes/b008ncn6/red-dwarf"/>
+        <TextInput name="Name" tooltip="Name for the Cache Definition" v-model="form.name" placeholder="Red Dwarf"/>
+        <TextInput name="URL" tooltip="iPlayer URL" v-model="form.url" placeholder="https://www.bbc.co.uk/iplayer/episodes/b008ncn6/red-dwarf"/>
         <div class="button-container">
             <button class="clickable cancel" @click="close()">Cancel</button>
             <button @click="saveCacheDefinition">Save</button>
@@ -18,7 +18,7 @@
 
 <script setup>
     import { VueFinalModal } from 'vue-final-modal'
-    import SettingsTextInput from '../SettingsTextInput.vue';
+    import TextInput from '../common/form/TextInput.vue';
     import {ref, defineEmits, onMounted, defineProps} from 'vue';
     import dialogService from '@/lib/dialogService';
 
