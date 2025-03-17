@@ -6,7 +6,8 @@ RUN apk --update add \
     perl-mojolicious \
     perl-lwp-protocol-https \
     perl-xml-simple \
-    perl-xml-libxml
+    perl-xml-libxml \
+    su-exec
 
 RUN apk add atomicparsley --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted && ln -s `which atomicparsley` /usr/local/bin/AtomicParsley
 
@@ -33,5 +34,7 @@ COPY frontend/package*.json ./frontend/
 RUN npm run install:both
 COPY . .
 RUN npm run build:frontend && npm run build:backend
+
+ENTRYPOINT [ "./docker_entry.sh" ]
 
 CMD ["npm", "run", "start"]
