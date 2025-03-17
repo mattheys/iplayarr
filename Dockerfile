@@ -35,6 +35,6 @@ RUN npm run install:both
 COPY . .
 RUN npm run build:frontend && npm run build:backend
 
-ENTRYPOINT [ "./docker_entry.sh" ]
+# ENTRYPOINT [ "./docker_entry.sh" ]
 
 CMD ["npm", "run", "start"]
