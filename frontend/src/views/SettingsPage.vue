@@ -59,9 +59,6 @@
             :error="validationErrors.config?.AUTH_USERNAME" />
         <TextInput name="Password" tooltip="The Login Password." type-override="password"
             v-model="config.AUTH_PASSWORD" :error="validationErrors.config?.AUTH_PASSWORD" />
-
-        <ArrSettings name="Sonarr" v-model="sonarrConfig" />
-        <ArrSettings name="Radarr" v-model="radarrConfig" />
     </div>
     <LoadingIndicator v-if="loading" />
 </template>
@@ -69,7 +66,6 @@
 <script setup>
 import SettingsPageToolbar from '@/components/common/SettingsPageToolbar.vue';
 import TextInput from '@/components/common/form/TextInput.vue';
-import ArrSettings from '@/components/ArrSettings.vue';
 import LoadingIndicator from '@/components/common/LoadingIndicator.vue';
 
 import { onMounted, ref, watch, computed } from 'vue';
@@ -82,22 +78,10 @@ const loading = ref(false);
 
 const config = ref({});
 const configChanges = ref(false);
-const sonarrConfig = ref({
-    download_client: {},
-    indexer: {}
-});
-const sonarrChanges = ref(false);
-const radarrConfig = ref({
-    download_client: {},
-    indexer: {}
-});
-const radarrChanges = ref(false);
 const showAdvanced = ref(false);
 
 const validationErrors = ref({
-    config: {},
-    sonarr: {},
-    radarr: {}
+    config: {}
 });
 
 const qualityProfiles = ref([]);
@@ -105,49 +89,24 @@ const qualityProfiles = ref([]);
 const sabStatus = ref('INITIAL');
 
 const saveEnabled = computed(() => {
-    return configChanges.value || sonarrChanges.value || radarrChanges.value;
+    return configChanges.value;
 })
 
 onMounted(async () => {
-    const [configResponse, sonarrConfigResponse, radarrConfigResponse, qpResponse] = await Promise.all([
+    const [configResponse, qpResponse] = await Promise.all([
         ipFetch('json-api/config'),
-        ipFetch(`json-api/arr/sonarr`),
-        ipFetch(`json-api/arr/radarr`),
         ipFetch('json-api/config/qualityProfiles')
     ]);
 
     config.value = configResponse.data;
-    if (sonarrConfigResponse.ok){
-        sonarrConfig.value = sonarrConfigResponse.data;
-    } else {
-        sonarrConfig.value = {
-            url : config.value.SONARR_HOST,
-            api_key : config.value.SONARR_API_KEY,
-            download_client : {},
-            indexer : {}
-        }
-    }
-    if (radarrConfigResponse.ok){
-        radarrConfig.value = radarrConfigResponse.data;
-    } else {
-        radarrConfig.value = {
-            url : config.value.RADARR_HOST,
-            api_key : config.value.RADARR_API_KEY,
-            download_client : {},
-            indexer : {}
-        }
-    }
     qualityProfiles.value = qpResponse.data.map(({ id, name, quality }) => ({ "key": id, "value": `${name} (${quality})` }));
 
     watch(config, () => { configChanges.value = true }, { deep: true });
-    watch(sonarrConfig, () => { sonarrChanges.value = true }, { deep: true });
-    watch(radarrConfig, () => { radarrChanges.value = true }, { deep: true })
 });
 
 const saveConfig = async () => {
     loading.value = true;
-    let saveSuccess = false;
-    if (configChanges.value || sonarrChanges.value || radarrChanges.value) {
+    if (configChanges.value) {
         validationErrors.value.config = {};
 
         const configResponse = await ipFetch(`json-api/config`, 'PUT', config.value);
@@ -157,40 +116,12 @@ const saveConfig = async () => {
             validationErrors.value.config = errorData.invalid_fields;
             return;
         } else {
-            saveSuccess = true;
+            dialogService.alert("Success", "Save Successful");
             configChanges.value = false;
         }
     }
 
-    if (sonarrChanges.value) {
-        const sonarrResponse = await ipFetch('json-api/arr/sonarr', 'PUT', sonarrConfig.value);
-
-        if (!sonarrResponse.ok) {
-            const errorData = sonarrResponse.data;
-            dialogService.alert("Error Saving Sonarr", errorData.message);
-            return;
-        } else {
-            saveSuccess = true;
-            sonarrChanges.value = false;
-        }
-    }
-
-    if (radarrChanges.value) {
-        const radarrResponse = await ipFetch('json-api/arr/radarr', 'PUT', radarrConfig.value);
-
-        if (!radarrResponse.ok) {
-            const errorData = radarrResponse.data;
-            dialogService.alert("Error Saving Radarr", errorData.message);
-            return;
-        } else {
-            saveSuccess = true;
-            radarrChanges.value = false;
-        }
-    }
     loading.value = false;
-    if (saveSuccess){
-        dialogService.alert("Success", "Save Successful");
-    }
 }
 
 const toggleAdvanced = () => {

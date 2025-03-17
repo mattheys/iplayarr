@@ -26,6 +26,8 @@ import { ref, onMounted } from 'vue';
 import { ipFetch } from '@/lib/ipFetch';
 import dialogService from '@/lib/dialogService';
 
+import { deepCopy } from '@/lib/utils';
+
 const synonyms = ref([]);
 
 const refreshSynonyms = async () => {
@@ -38,7 +40,7 @@ const openForm = (synonym) => {
     const formModal = useModal({
         component: SynonymForm,
         attrs: {
-            inputObj : synonym,
+            inputObj : deepCopy(synonym),
             action : synonym ? 'Edit' : 'Create',
             onSave(synonym) {
                 saveSynonym(synonym);

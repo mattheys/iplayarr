@@ -82,6 +82,10 @@
 
         .actionContainer {
             text-align: right;
+            position: absolute;
+            width: 270px;
+            bottom: 0px;
+            padding-bottom: 0.5rem;
 
             button {
                 background: none;

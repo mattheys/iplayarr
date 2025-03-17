@@ -9,6 +9,12 @@ export class AppFormValidator extends Validator {
             validatorError['api_key'] = testResult as string;
             validatorError['url'] = testResult as string;
         }
+        if ((input.indexer?.name || input.indexer?.priority) && (!input.download_client?.name)){
+            validatorError['indexer_name'] = 'Cannot create Indexer without Download Client' as string;
+            validatorError['indexer_priority'] = 'Cannot create Indexer without Download Client' as string;
+        } else if (input.indexer?.priority && (input.indexer.priority < 0 || input.indexer.priority > 50)) {
+            validatorError['indexer_priority'] = 'Priority must be between 0 and 50' as string;
+        }
         return validatorError;
     }
 }

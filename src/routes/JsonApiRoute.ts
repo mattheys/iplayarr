@@ -6,7 +6,6 @@ import sabzbdService from '../service/sabnzbdService';
 import { IPlayerSearchResult } from '../types/IPlayerSearchResult';
 import { ApiError, ApiResponse } from '../types/responses/ApiResponse';
 import AppsRoute from './json-api/AppsRoute';
-import ArrRoute from './json-api/ArrRoute';
 import OffScheduleRoute from './json-api/OffScheduleRoute';
 import QueueRoute from './json-api/QueueRoute';
 import SettingsRoute from './json-api/SettingsRoute';
@@ -17,7 +16,6 @@ const router : Router = Router();
 router.use('/config', SettingsRoute);
 router.use('/synonym', SynonymsRoute);
 router.use('/queue', QueueRoute);
-router.use('/arr', ArrRoute);
 router.use('/offSchedule', OffScheduleRoute);
 router.use('/apps', AppsRoute)
 

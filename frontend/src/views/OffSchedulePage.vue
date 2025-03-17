@@ -26,6 +26,8 @@
     import { useModal } from 'vue-final-modal'
     import dialogService from '@/lib/dialogService';
 
+    import { deepCopy } from '@/lib/utils';
+
     const router = useRouter();
 
     const cacheDefinitions = ref([]);
@@ -40,7 +42,7 @@
         const formModal = useModal({
             component: OffScheduleForm,
             attrs: {
-                inputObj : cacheDef,
+                inputObj : deepCopy(cacheDef),
                 action : cacheDef ? 'Edit' : 'Create',
                 onSave : async(form, success) => {
                     const result = await saveCacheDefinition(form);

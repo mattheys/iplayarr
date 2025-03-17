@@ -27,7 +27,7 @@
 
     const test = async () => {
         testStatus.value = "PENDING";
-        const {data, ok} = await ipFetch('json-api/arr/test', 'POST', {HOST : props.app.url, API_KEY : props.app.api_key});
+        const {data, ok} = await ipFetch('json-api/apps/test', 'POST', {HOST : props.app.url, API_KEY : props.app.api_key});
         if (!ok){
             dialogService.alert('Connection Error', `Error Connecting to ${capitalize(props.app.type)} : ${data.message}`);
             testStatus.value = "INITIAL";

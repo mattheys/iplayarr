@@ -21,3 +21,7 @@ export const enforceMaxLength = (arr, maxLength) => {
 export function capitalize(word) {
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 }
+
+export function deepCopy(input) {
+    return input ? JSON.parse(JSON.stringify(input)) : undefined;
+}

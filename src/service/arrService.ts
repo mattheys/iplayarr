@@ -1,13 +1,12 @@
 import axios, { AxiosInstance } from 'axios';
 
-import { IplayarrParameter } from '../types/IplayarrParameters';
+import { ArrCreateDownloadClientRequest, CreateDownloadClientRequestField,createDownloadClientRequestSkeleton } from '../types/requests/arr/CreateDownloadClientRequest';
+import { CreateIndexerRequest, createIndexerRequestSkeleton, createIndexRequestFieldsSkeleton } from '../types/requests/arr/CreateIndexerRequest';
 import { CreateDownloadClientForm } from '../types/requests/form/CreateDownloadClientForm';
 import { CreateIndexerForm } from '../types/requests/form/CreateIndexerForm';
-import { ArrCreateDownloadClientRequest, CreateDownloadClientRequestField,createDownloadClientRequestSkeleton } from '../types/requests/sonarr/CreateDownloadClientRequest';
-import { CreateIndexerRequest, createIndexerRequestSkeleton, createIndexRequestFieldsSkeleton } from '../types/requests/sonarr/CreateIndexerRequest';
 import { DownloadClientResponse } from '../types/responses/arr/DownloadClientResponse';
 import { IndexerResponse } from '../types/responses/arr/IndexerResponse';
-import configService from './configService';
+import { CreateProwlarrIndexerRequest, createProwlarrIndexerRequestSkeleton } from '../types/requests/arr/CreateProwlarrIndexerRequest';
 
 export interface ArrConfig {
     API_KEY : string,
@@ -17,7 +16,7 @@ export interface ArrConfig {
 }
 
 const arrService = {
-    createUpdateDownloadClient : async(form : CreateDownloadClientForm, config : ArrConfig, download_id_key : IplayarrParameter) : Promise<number> => {
+    createUpdateDownloadClient : async(form : CreateDownloadClientForm, config : ArrConfig, prowlarr : boolean = false) : Promise<number> => {
         const {API_KEY, HOST, DOWNLOAD_CLIENT_ID} = config;
         let updateMethod : keyof AxiosInstance = 'post';
 
@@ -70,6 +69,23 @@ const arrService = {
             ]
         } as ArrCreateDownloadClientRequest
 
+        if (prowlarr){
+            createDownloadClientRequest.categories = [];
+            createDownloadClientRequest.fields = createDownloadClientRequest.fields.filter(({order}) => order != undefined && order < 7);
+            createDownloadClientRequest.fields.push(
+                {
+                    'order': 7,
+                    'name': 'category',
+                    'label': 'Default Category',
+                    'value': 'iplayer',
+                    'type': 'textbox',
+                    'advanced': false,
+                    'privacy': 'normal',
+                    'isFloat': false
+                },
+            )
+        }
+
         if (form.urlBase){
             createDownloadClientRequest.fields.push({
                 'order': 3,
@@ -94,13 +110,12 @@ const arrService = {
                 }
             }
 
-            const url : string = `${HOST}/api/v3/downloadclient?apikey=${API_KEY}`;
+            const url : string = `${HOST}/api/${prowlarr ? 'v1' : 'v3'}/downloadclient?apikey=${API_KEY}`;
             const {data : {id}} = await axios[updateMethod](url, createDownloadClientRequest, {
                 headers: {
                     'X-Api-Key': API_KEY
                 }
             });
-            configService.setParameter(download_id_key, id);
 
             return id;
         } catch (err){
@@ -135,12 +150,13 @@ const arrService = {
         }
     },
 
-    createUpdateIndexer : async(form : CreateIndexerForm, config : ArrConfig, indexer_id_key : IplayarrParameter) : Promise<number> => {
+    createUpdateIndexer : async(form : CreateIndexerForm, config : ArrConfig) : Promise<number> => {
         const {API_KEY, HOST, INDEXER_ID} = config;
         let updateMethod : keyof AxiosInstance = 'post';
 
         const createIndexerRequest : CreateIndexerRequest = {
             ...createIndexerRequestSkeleton,
+            priority : form.priority || 25,
             name : form.name,
             downloadClientId : form.downloadClientId,
             fields : [
@@ -207,15 +223,15 @@ const arrService = {
                     'X-Api-Key': API_KEY
                 }
             });
-            configService.setParameter(indexer_id_key, id);
+
             return id;
         } catch (err){
             throw err;
         }
     },
 
-    getIndexer : async(id : number, {API_KEY, HOST} : ArrConfig) : Promise<IndexerResponse | undefined> => {
-        const url : string = `${HOST}/api/v3/indexer/${id}?apikey=${API_KEY}`;
+    getIndexer : async(id : number, {API_KEY, HOST} : ArrConfig, prowlarr : boolean = false) : Promise<IndexerResponse | undefined> => {
+        const url : string = `${HOST}/api/${prowlarr ? 'v1' : 'v3'}/indexer/${id}?apikey=${API_KEY}`;
 
         try {
             const response = await axios.get(url, {
@@ -237,6 +253,78 @@ const arrService = {
                 return;
             }
             throw error;
+        }
+    },
+
+    createUpdateProwlarrIndexer : async(form : CreateIndexerForm, config : ArrConfig) : Promise<number> => {
+        const {API_KEY, HOST, INDEXER_ID} = config;
+        let updateMethod : keyof AxiosInstance = 'post';
+
+        const createIndexerRequest : CreateProwlarrIndexerRequest = {
+            ...createProwlarrIndexerRequestSkeleton,
+            priority : form.priority || 25,
+            added : new Date(),
+            indexerUrls : [
+                form.url
+            ],
+            name : form.name,
+            downloadClientId : form.downloadClientId,
+            fields : [
+                ...createIndexRequestFieldsSkeleton,
+                {
+                    'order': 0,
+                    'name': 'baseUrl',
+                    'label': 'URL',
+                    'value': form.url,
+                    'type': 'textbox',
+                    'advanced': false,
+                    'privacy': 'normal',
+                    'isFloat': false
+                },
+                {
+                    'order': 1,
+                    'name': 'apiPath',
+                    'label': 'API Path',
+                    'helpText': 'Path to the api, usually /api',
+                    'value': `${form.urlBase || '/api'}`,
+                    'type': 'textbox',
+                    'advanced': true,
+                    'privacy': 'normal',
+                    'isFloat': false
+                },
+                {
+                    'order': 2,
+                    'name': 'apiKey',
+                    'label': 'API Key',
+                    'value': form.apiKey,
+                    'type': 'textbox',
+                    'advanced': false,
+                    'privacy': 'apiKey',
+                    'isFloat': false
+                }
+            ]
+        } as CreateProwlarrIndexerRequest;
+
+        //Find an existing one
+        if (INDEXER_ID){
+            const indexer = await arrService.getIndexer(INDEXER_ID, config, true);
+            if (indexer){
+                updateMethod = 'put';
+                createIndexerRequest.id = INDEXER_ID;
+            }
+        }
+
+        const url : string = `${HOST}/api/v1/indexer?apikey=${API_KEY}`;
+        try {
+            const {data : {id}} = await axios[updateMethod](url, createIndexerRequest, {
+                headers: {
+                    'X-Api-Key': API_KEY
+                }
+            });
+
+            return id;
+        } catch (err){
+            throw err;
         }
     },
 

@@ -52,7 +52,6 @@ export const createIndexerRequestSkeleton : Partial<CreateIndexerRequest> = {
     'supportsRss': true,
     'supportsSearch': true,
     'protocol': 'usenet',
-    'priority': 25,
     'seasonSearchMaximumSingleEpisodeAge': 0,
     'downloadClientId': 3,
     'name': 'iPlayer',

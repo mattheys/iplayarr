@@ -6,6 +6,11 @@ export interface App {
     name : string,
     url : string,
     api_key : string,
+    iplayarr : {
+        host : string,
+        port : number,
+        useSSL : boolean
+    }
     download_client? : {
         id: number,
         name?: string,
@@ -17,6 +22,7 @@ export interface App {
         id : number,
         name?: string,
         url?: string,
-        api_key?: string
+        api_key?: string,
+        priority : number
     }
 }
