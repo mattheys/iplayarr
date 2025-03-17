@@ -21,5 +21,5 @@ if [ -z "$EXISTING_USER" ]; then
     EXISTING_USER="$USERNAME"
 fi
 
-find /app \! -user $PUID \! -group $PGID -exec chown "${EXISTING_USER}":"${GROUPNAME}" {} \;
+find /app -name "node_modules" -prune -o \! -user "$PUID" \! -group "$PGID" -exec chown "${EXISTING_USER}":"${GROUPNAME}" {} +
 exec su-exec "$EXISTING_USER" "$@"

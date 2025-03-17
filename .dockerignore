@@ -1,3 +1,9 @@
 node_modules
 .node-persist
 .env
+.git
+dist
+readme-media
+eslint.config.mjs
+jest.config.js
+.github
