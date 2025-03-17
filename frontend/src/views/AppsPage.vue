@@ -1,8 +1,9 @@
 <template>
     <div class="inner-content">
         <legend>Apps</legend>
-        <p>Manage your integrations with Apps (including Arr and NZB Clients) here</p>
-        <sub>If your *arr client accidentally sends a real NZB, Where should it be forwarded? In order for this to work successfully, <b>your NZB Client needs the category <pre>iplayer</pre></b></sub>
+        <p class="mb-0">Manage your integrations with Apps (including Arr and NZB Clients) here</p>
+        <sub>In order for NZB Forwarding to work successfully, your NZB Client needs the category "iplayer"</sub>
+        <div class="block-reset"></div>
         <AppsList :apps="apps" @create="openForm"/>
         <ListEditor :items="apps" @create="openForm" :actions="[['trash', deleteApp]]" v-slot="{item}">
             <a @click="openForm(item)">
@@ -26,7 +27,7 @@
                             Indexer
                         </li>
                         <li v-if="hasFeature(item.type, 'priority')">
-                            <font-awesome-icon class="present" :icon="['fas', 'level-up']" />
+                            <font-awesome-icon :icon="['fas', 'level-up']" />
                             {{item.priority}}
                         </li>
                 </ul>

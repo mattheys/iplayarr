@@ -141,6 +141,10 @@ legend {
   clear: both;
 }
 
+.mb-0 {
+  margin-bottom: 0px;
+}
+
 .scroll-x {
   overflow-x: auto;
 }
