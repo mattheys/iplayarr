@@ -1,5 +1,7 @@
 import dotenv from 'dotenv'
-import storage from 'node-persist';
+
+import { QueuedStorage } from '../types/QueuedStorage'
+const storage : QueuedStorage = new QueuedStorage();
 
 import { IplayarrParameter } from '../types/IplayarrParameters';
 
@@ -44,8 +46,8 @@ const configService = {
         'AUTH_USERNAME' : 'admin',
         'AUTH_PASSWORD' : '5f4dcc3b5aa765d61d8327deb882cf99',
         'FALLBACK_FILENAME_SUFFIX' : 'WEB.H264-BBC',
-        'MOVIE_FILENAME_TEMPLATE' : '{{title}}.BBC.WEB-DL.AAC.2.0.{{quality}}.H.264',
-        'TV_FILENAME_TEMPLATE' : '{{title}}.S{{season}}E{{episode}}.WEB.{{quality}}.H.264.BBC',
+        'MOVIE_FILENAME_TEMPLATE' : '{{#if synonym}}{{synonym}}{{else}}{{title}}{{/if}}.BBC.WEB-DL.AAC.2.0.{{quality}}.H.264',
+        'TV_FILENAME_TEMPLATE' : '{{#if synonym}}{{synonym}}{{else}}{{title}}{{/if}}.S{{season}}E{{episode}}.WEB.{{quality}}.H.264.BBC',
         'VIDEO_QUALITY' : 'hd'
     } as ConfigMap,
 

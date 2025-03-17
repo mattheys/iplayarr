@@ -18,10 +18,10 @@
             <TextInput :advanced="true" name="Refresh Schedule" tooltip="Cron Expression for schedule refresh."
                 v-model="config.REFRESH_SCHEDULE" :error="validationErrors.config?.REFRESH_SCHEDULE" />
             <TextInput :advanced="true" name="TV Filename Template"
-                tooltip="Template for TV Filenames, {title, season, episode, quality}."
+                tooltip="Template for TV Filenames, {title, synonym, season, episode, quality}."
                 v-model="config.TV_FILENAME_TEMPLATE" :error="validationErrors.config?.TV_FILENAME_TEMPLATE" />
             <TextInput :advanced="true" name="Movie Filename Template"
-                tooltip="Template for Movie Filenames, {title, quality}." v-model="config.MOVIE_FILENAME_TEMPLATE"
+                tooltip="Template for Movie Filenames, {title, synonym, quality}." v-model="config.MOVIE_FILENAME_TEMPLATE"
                 :error="validationErrors.config?.MOVIE_FILENAME_TEMPLATE" />
             <TextInput :advanced="true" name="Additional Download Parameters"
                 tooltip="Extra parameters to pass to get_iplayer for download"
