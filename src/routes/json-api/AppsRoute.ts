@@ -1,7 +1,6 @@
 import { Request, Response,Router } from 'express';
 
 import appService from '../../service/appService';
-import arrService from '../../service/arrService';
 import { App } from '../../types/App';
 import { appFeatures } from '../../types/AppType';
 import { ApiError, ApiResponse } from '../../types/responses/ApiResponse';
@@ -77,13 +76,13 @@ router.get('/types', async (_, res :Response) => {
 });
 
 router.post('/test', async (req : Request, res : Response) => {
-    const {API_KEY, HOST} = req.body;
-    const result : string | boolean = await arrService.testConnection({API_KEY, HOST});
+    const result = await appService.testAppConnection(req.body);
     if (result == true){
         res.json({status : true});
     } else {
         res.status(500).json({error: ApiError.INTERNAL_ERROR, message : result} as ApiResponse)
     }
+    return;
 });
 
 export default router;

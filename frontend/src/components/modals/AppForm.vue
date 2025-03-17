@@ -13,14 +13,31 @@
             <SelectInput name="Type" tooltip="App Type" v-model="form.type" :options="types"/>
             <template v-if="form.type">
                 <TextInput name="URL" :tooltip="`URL for ${capitalize(form.type)}`" v-model="form.url" :error="validationErrors?.url"/>
-                <TextInput name="API Key" :tooltip="`API KEY for ${capitalize(form.type)}`" v-model="form.api_key" :error="validationErrors?.api_key"/>
-                <div class="button-container">
-                    <AppTestButton :app="form" ref="testButton"/>
-                </div>
+                
+                <template v-if="showForm('api_key')">
+                    <TextInput name="API Key" :tooltip="`API KEY for ${capitalize(form.type)}`" v-model="form.api_key" :error="validationErrors?.api_key"/>
+                    <div class="button-container">
+                        <AppTestButton :app="form" ref="testButton"/>
+                    </div>
+                </template>
 
-                <SelectInput name="iPlayarr Protocol" :tooltip="`iPlayarr Protocol for connection from ${capitalize(form.type)}`" v-model="form.iplayarr.useSSL" :options="[{key : 'true' , value : 'https'}, {key : 'false' , value : 'http'}]"/>
-                <TextInput name="iPlayarr Host" :tooltip="`iPlayarr Host for connection from ${capitalize(form.type)}`" v-model="form.iplayarr.host"/>
-                <TextInput name="iPlayarr Port" type-override="number" :tooltip="`iPlayarr Port for connection from ${capitalize(form.type)}`" v-model="form.iplayarr.port"/>
+                <template v-if="showForm('username_password')">
+                    <TextInput name="Username" :tooltip="`Username for ${capitalize(form.type)}`" v-model="form.username" :error="validationErrors?.username"/>
+                    <TextInput name="Password" :tooltip="`Password for ${capitalize(form.type)}`" v-model="form.password" :error="validationErrors?.password"/>
+                    <div class="button-container">
+                        <AppTestButton :app="form" ref="testButton"/>
+                    </div>
+                </template>
+
+                <template v-if="showForm('priority')">
+                    <TextInput name="Priority" placeholder="25" type-override="number" :tooltip="`NZB Client Priority, (lower number is first)`" v-model="form.priority" :error="validationErrors?.priority"/>
+                </template>
+
+                <template v-if="showForm('callback')">
+                    <SelectInput name="iPlayarr Protocol" :tooltip="`iPlayarr Protocol for connection from ${capitalize(form.type)}`" v-model="form.iplayarr.useSSL" :options="[{key : 'true' , value : 'https'}, {key : 'false' , value : 'http'}]"/>
+                    <TextInput name="iPlayarr Host" :tooltip="`iPlayarr Host for connection from ${capitalize(form.type)}`" v-model="form.iplayarr.host"/>
+                    <TextInput name="iPlayarr Port" type-override="number" :tooltip="`iPlayarr Port for connection from ${capitalize(form.type)}`" v-model="form.iplayarr.port"/>
+                </template>
                 
                 <template v-if="showForm('download_client') || showForm('prowlarr_download_client')">
                     <legend class="sub">Download Client</legend>
@@ -64,7 +81,8 @@ import LoadingIndicator from '../common/LoadingIndicator.vue';
             host : window.location.hostname,
             port : window.location.port
         },
-        indexer : {}
+        indexer : {},
+        priority : 5
     }
 
     const [features, form] = [ref({}), ref(props.inputObj || defaultForm)];

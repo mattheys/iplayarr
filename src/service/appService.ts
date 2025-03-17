@@ -1,8 +1,9 @@
 import storage from 'node-persist';
 import { v4 } from 'uuid';
 
+import nzbFacade from '../facade/nzbFacade';
 import { App } from '../types/App';
-import { appCategories, AppFeature, appFeatures } from '../types/AppType';
+import { appCategories, AppFeature, appFeatures, AppType } from '../types/AppType';
 import { IplayarrParameter } from '../types/IplayarrParameters';
 import { CreateDownloadClientForm } from '../types/requests/form/CreateDownloadClientForm';
 import { CreateIndexerForm } from '../types/requests/form/CreateIndexerForm';
@@ -72,7 +73,7 @@ const appService = {
 
         const arrConfig : ArrConfig = {
             HOST : form.url,
-            API_KEY : form.api_key,
+            API_KEY : form.api_key || '',
             DOWNLOAD_CLIENT_ID : form.download_client?.id || undefined,
             INDEXER_ID : form.indexer?.id || undefined
         }
@@ -87,6 +88,22 @@ const appService = {
 
         await appService.updateApp(form);
         return form;
+    },
+
+    testAppConnection : async (form : App) : Promise<string | boolean> => {
+        switch (form.type){
+            case AppType.PROWLARR:
+            case AppType.RADARR:
+            case AppType.SONARR: {
+                return await arrService.testConnection({API_KEY : form.api_key as string, HOST : form.url});
+            }
+            case AppType.NZBGET:
+            case AppType.SABNZBD: {
+                return await nzbFacade.testConnection(form.type.toString().toLowerCase(), form.url, form.api_key, form.username, form.password); 
+            }
+            default:
+                return false; 
+        }
     }
 }
 
@@ -189,6 +206,18 @@ const createUpdateFeature : Record<AppFeature, (form : App, arrConfig : ArrConfi
                 };
             }
         }
+        return form;
+    },
+    [AppFeature.CALLBACK]: async (form: App): Promise<App> => {
+        return form;
+    },
+    [AppFeature.API_KEY]: async (form: App): Promise<App> => {
+        return form;
+    },
+    [AppFeature.USERNAME_PASSWORD]: async (form: App): Promise<App> => {
+        return form;
+    },
+    [AppFeature.PRIORITY]: async (form: App): Promise<App> => {
         return form;
     }
 }

@@ -1,7 +1,8 @@
 <template>
     <div class="inner-content">
         <legend>Apps</legend>
-        <p>Manage your integrations with the Arr stack here</p>
+        <p>Manage your integrations with Apps (including Arr and NZB Clients) here</p>
+        <sub>If your *arr client accidentally sends a real NZB, Where should it be forwarded? In order for this to work successfully, <b>your NZB Client needs the category <pre>iplayer</pre></b></sub>
         <AppsList :apps="apps" @create="openForm"/>
         <ListEditor :items="apps" @create="openForm" :actions="[['trash', deleteApp]]" v-slot="{item}">
             <a @click="openForm(item)">
@@ -23,6 +24,10 @@
                         <li v-if="hasFeature(item.type, 'indexer') || hasFeature(item.type, 'prowlarr_indexer')">
                             <font-awesome-icon :class="[item.indexer?.id ? 'present' : 'missing']" :icon="['fas', item.indexer?.id ? 'check' : 'xmark']" />
                             Indexer
+                        </li>
+                        <li v-if="hasFeature(item.type, 'priority')">
+                            <font-awesome-icon class="present" :icon="['fas', 'level-up']" />
+                            {{item.priority}}
                         </li>
                 </ul>
                 </div>

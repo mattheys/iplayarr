@@ -5,7 +5,10 @@ export interface App {
     type : AppType,
     name : string,
     url : string,
-    api_key : string,
+    api_key? : string,
+    username? : string,
+    password? : string,
+    priority? : number,
     iplayarr : {
         host : string,
         port : number,

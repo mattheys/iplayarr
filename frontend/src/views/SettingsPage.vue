@@ -27,7 +27,7 @@
                 tooltip="Extra parameters to pass to get_iplayer for download"
                 v-model="config.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS"
                 :error="validationErrors.config?.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS" />
-                <NZBSettings @config-updated="processNZBUpdate" :validationErrors="validationErrors"/>
+            <p class="nzbBanner">Looking for NZB Passthrough? Check the <RouterLink to="/apps">Apps</RouterLink> section</p>
         </template>
 
         <legend class="sub">Authentication</legend>
@@ -48,7 +48,6 @@ import { onMounted, ref, watch, computed } from 'vue';
 import { ipFetch } from '@/lib/ipFetch';
 import SelectInput from '@/components/common/form/SelectInput.vue';
 import { onBeforeRouteLeave } from 'vue-router';
-import NZBSettings from '@/components/NZBSettings.vue';
 import dialogService from '@/lib/dialogService';
 
 const loading = ref(false);
@@ -103,13 +102,6 @@ const toggleAdvanced = () => {
     showAdvanced.value = !showAdvanced.value;
 }
 
-const processNZBUpdate = ((update) => {
-    config.value = {
-        ...config.value,
-        ...update
-    }
-});
-
 onBeforeRouteLeave(async (_, __, next) => {
     if (saveEnabled.value) {
         if (await dialogService.confirm("Unsaved Changes", "You have unsaved changes. If you leave this page they will be lost.")) {
@@ -153,5 +145,9 @@ onBeforeRouteLeave(async (_, __, next) => {
             width: 115px;
         }
     }
+}
+
+.nzbBanner {
+    color: @warn-color;
 }
 </style>

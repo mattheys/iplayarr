@@ -2,7 +2,10 @@ import { Request, Response } from 'express';
 import { Parser } from 'xml2js';
 
 import nzbFacade from '../../facade/nzbFacade';
+import appService from '../../service/appService';
+import loggingService from '../../service/loggingService';
 import queueService from '../../service/queueService';
+import { AppType } from '../../types/AppType';
 import { VideoType } from '../../types/IPlayerSearchResult';
 import { NZBMetaEntry } from '../../types/responses/newznab/NZBFileResponse';
 
@@ -35,12 +38,27 @@ export default async (req : Request, res : Response) => {
             nzo_ids: pids
         });
     } catch (error : any) {
-        //If we get an error, assume it's a real NZB and forward
-        const validSAB = await nzbFacade.test();
-        if (validSAB){
-            const response = await nzbFacade.addFile(files);
-            res.status(response.status).send(response.data);
-            return;
+        let allApps = await appService.getAllApps();
+        allApps = allApps
+            .filter(({type}) => type == AppType.NZBGET || type == AppType.SABNZBD)
+            .sort((a, b) => a.priority as number - (b.priority as number));
+        for (const nzbApp of allApps){
+            const validApp = await nzbFacade.testConnection(
+                nzbApp.type.toString(),
+                nzbApp.url,
+                nzbApp.api_key,
+                nzbApp.username,
+                nzbApp.password
+            )
+            if (validApp){
+                try {
+                    const response = await nzbFacade.addFile(nzbApp, files);
+                    res.status(response.status).send(response.data);
+                    return;
+                } catch (nzbErr) {
+                    loggingService.error(nzbErr);
+                }
+            }
         }
         res.status(500).json({
             status: false,

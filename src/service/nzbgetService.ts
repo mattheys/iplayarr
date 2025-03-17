@@ -1,24 +1,10 @@
 import axios, { AxiosResponse } from 'axios';
 import { v4 } from 'uuid';
 
-import { IplayarrParameter } from '../types/IplayarrParameters';
+import { App } from '../types/App';
 import { NZBGetAppendRequest } from '../types/requests/nzbget/NZBGetAppendRequest';
-import configService from './configService';
 
 const nzbGetService = {
-    test: async (): Promise<boolean> => {
-        const url = await configService.getParameter(IplayarrParameter.NZB_URL);
-        const username = await configService.getParameter(IplayarrParameter.NZB_USERNAME);
-        const password = await configService.getParameter(IplayarrParameter.NZB_PASSWORD);
-        if (url && username && password) {
-            const result = await nzbGetService.testConnection(url, username, password);
-            if (result == true) {
-                return true;
-            }
-        }
-        return false;
-    },
-
     testConnection: async (inputUrl: string, username: string, password: string): Promise<string | boolean> => {
         const url = new URL(`${inputUrl}/jsonrpc`);
         url.username = username;
@@ -36,11 +22,7 @@ const nzbGetService = {
         }
     },
 
-    addFile: async (files: Express.Multer.File[]): Promise<AxiosResponse> => {
-        const inputUrl = await configService.getParameter(IplayarrParameter.NZB_URL);
-        const username = await configService.getParameter(IplayarrParameter.NZB_USERNAME) as string;
-        const password = await configService.getParameter(IplayarrParameter.NZB_PASSWORD) as string;
-
+    addFile: async ({url : inputUrl, username, password} : App, files: Express.Multer.File[]): Promise<AxiosResponse> => {
         const url = `${inputUrl}/jsonrpc`;
 
         const file = files[0];
@@ -64,8 +46,8 @@ const nzbGetService = {
 
         const response = await axios.post(`${url}/append`, requestBody, {
             auth: {
-                username,
-                password
+                username : username as string,
+                password : password as string
             },
             headers: {
                 'Content-Type': 'application/json'
