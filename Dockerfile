@@ -34,7 +34,9 @@ COPY frontend/package*.json ./frontend/
 RUN npm run install:both
 COPY . .
 RUN npm run build:frontend && npm run build:backend
+RUN rm -rf /app/src /app/frontend/src
 
-# ENTRYPOINT [ "./docker_entry.sh" ]
+
+ENTRYPOINT [ "./docker_entry.sh" ]
 
 CMD ["npm", "run", "start"]
