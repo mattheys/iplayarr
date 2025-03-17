@@ -21,5 +21,5 @@ if [ -z "$EXISTING_USER" ]; then
     EXISTING_USER="$USERNAME"
 fi
 
-chown -R "$PUID:$PGID" /app
+find /app \! -user $PUID \! -group $PGID -exec chown "${EXISTING_USER}":"${GROUPNAME}" {} \;
 exec su-exec "$EXISTING_USER" "$@"
