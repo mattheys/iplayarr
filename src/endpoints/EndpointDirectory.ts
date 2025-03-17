@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express'
 
+import DownloadEndpoint from './generic/DownloadEndpoint'
 import CapsEndpoint from './newznab/CapsEndpoint'
 import SearchEndpoint from './newznab/SearchEndpoint'
 import AddFileEndpoint from './sabnzbd/AddFileEndpoint'
@@ -13,7 +14,12 @@ export interface EndpointDirectory {
     [key : string] : RequestHandler
 }
 
+export const GenericEndpointDirectory : EndpointDirectory = {
+    download : DownloadEndpoint
+}
+
 export const SabNZBDEndpointDirectory : EndpointDirectory = {
+    ...GenericEndpointDirectory,
     queue : QueueEndpoint,
     get_config : ConfigEndpoint,
     history : HistoryEndpoint,
@@ -23,8 +29,10 @@ export const SabNZBDEndpointDirectory : EndpointDirectory = {
 }
 
 export const NewzNabEndpointDirectory : EndpointDirectory = {
+    ...GenericEndpointDirectory,
     caps : CapsEndpoint,
     tvsearch : SearchEndpoint,
     movie : SearchEndpoint,
     search : SearchEndpoint
 }
+

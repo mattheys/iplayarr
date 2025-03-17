@@ -17,7 +17,7 @@
             <ProgressBar :progress="item.details.progress" :history="history" :idle="item.status == 'Queued'"/>
         </td>
         <td data-title='ETA'>{{ item.details.eta }}</td>
-        <td data-title='Speed'>{{ item.details.speed }} {{ item.details.speed != '' ? 'MB/s' : '' }}</td>
+        <td data-title='Speed'>{{ item.details.speed || '' }} {{ item.details.speed != '' ? 'MB/s' : '' }}</td>
         <td class='actionCol' data-title='Action'>
             <span v-if="history">
                 <font-awesome-icon class="clickable" :icon="['fas', 'trash']" @click="trash(item.pid)" />
@@ -31,9 +31,10 @@
 
 <script setup>
 import { ipFetch } from '@/lib/ipFetch';
-import ProgressBar from './ProgressBar.vue';
+import ProgressBar from '../common/ProgressBar.vue';
 import { defineProps } from 'vue';
 import { formatStorageSize } from '@/lib/utils';
+import dialogService from '@/lib/dialogService';
 
 defineProps({
     item: {
@@ -48,13 +49,13 @@ defineProps({
 });
 
 const trash = async (pid) => {
-    if (confirm("Are you sure you want to delete this history item?")) {
+    if (await dialogService.confirm("Delete", "Are you sure you want to delete this history item?")) {
         ipFetch(`json-api/queue/history?pid=${pid}`, 'DELETE');
     }
 }
 
 const cancel = async (pid) => {
-    if (confirm("Are you sure you want to cancel this download?")) {
+    if (await dialogService.confirm("Cancel", "Are you sure you want to cancel this download?")) {
         ipFetch(`json-api/queue/queue?pid=${pid}`, 'DELETE');
     }
 }

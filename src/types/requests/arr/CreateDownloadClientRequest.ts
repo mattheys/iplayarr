@@ -153,7 +153,8 @@ export interface ArrCreateDownloadClientRequest {
     protocol: string,
     priority: number,
     removeCompletedDownloads: boolean,
-    removeFailedDownloads: boolean
+    removeFailedDownloads: boolean,
+    categories? : string[] //Prowlarr only
 }
 
 export interface CreateDownloadClientRequestField {

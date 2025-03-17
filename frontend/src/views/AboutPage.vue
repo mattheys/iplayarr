@@ -22,21 +22,31 @@
                 </a>
             </div>
         </div>
+        <h2 v-if="isAppleDevice">Tools</h2>
+        <p>
+            <a href="shortcuts/Download%20With%20iPlayarr.shortcut" target="_blank">
+                Add to iPlayarr iOS Shortcut
+            </a>
+        </p>
         <h2>Credit To</h2>
         <p>
             <a href="https://github.com/get-iplayer/get_iplayer">
                 <b>Phil Lewis</b> for development of get_iplayer
             </a>
         </p>
-        <p>The Entire Development team behind Sonarr</p>
+        <p>The Entire Development team behind Sonarr, Radarr and Prowlarr</p>
         <p>The 2024 (World Champion) Philadelphia Eagles</p>
     </div>
 </template>
 
 <script setup>
-    import {inject} from 'vue';
+    import {inject, computed} from 'vue';
 
     const hiddenSettings = inject("hiddenSettings");
+
+    const isAppleDevice = computed(() => {
+        return /Mac|iPhone|iPod|iPad/.test(navigator.userAgent);
+    });
 </script>
 
 <style lang="less">

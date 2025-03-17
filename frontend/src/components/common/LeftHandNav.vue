@@ -1,24 +1,26 @@
 <template>
   <div class="LeftHandNav" ref="lhn">
     <ul>
-      <LeftHandNavLink label="Queue" icon="tasks" path="/queue" @option-clicked="closeLHN" />
-      <LeftHandNavLink label="Logs" icon="history" path="/logs" @option-clicked="closeLHN" />
-      <LeftHandNavLink label="Settings" icon="gears" path="/settings" @option-clicked="closeLHN" />
-      <LeftHandNavLink label="Synonyms" icon="arrows-rotate" path="/synonyms" @option-clicked="closeLHN" />
-      <LeftHandNavLink label="Off Schedule" icon="calendar" path="/offSchedule" @option-clicked="closeLHN" />
+      <LeftHandNavLink label="Queue" icon="tasks" path="/queue" />
+      <LeftHandNavLink label="Logs" icon="history" path="/logs" />
+      <LeftHandNavLink label="Settings" icon="gears" path="/settings" />
+      <LeftHandNavLink label="Apps" icon="laptop-code" path="/apps" />
+      <LeftHandNavLink label="Synonyms" icon="arrows-rotate" path="/synonyms" />
+      <LeftHandNavLink label="Off Schedule" icon="calendar" path="/offSchedule" />
       <LeftHandNavLink label="Refresh Index" icon="address-book" :noLink="true" @option-clicked="refreshCache" />
-      <LeftHandNavLink label="About" icon="circle-info" path="/about" @option-clicked="closeLHN" />
+      <LeftHandNavLink label="About" icon="circle-info" path="/about" />
       <LeftHandNavLink label="Logout" icon="sign-out" :noLink="true" @option-clicked="logout" />
     </ul>
   </div>
 </template>
 
 <script setup>
-import { ref, defineExpose, defineEmits } from 'vue';
-import LeftHandNavLink from './LeftHandNavLink.vue';
+import { ref, defineExpose, defineEmits, onBeforeUnmount } from 'vue';
+import LeftHandNavLink from './NavLink.vue';
 import { useRouter } from 'vue-router';
 import { ipFetch } from '@/lib/ipFetch';
 import { onBeforeRouteLeave } from 'vue-router';
+import dialogService from '@/lib/dialogService';
 
 const router = useRouter();
 const lhn = ref(null);
@@ -26,18 +28,24 @@ const emit = defineEmits(['clear-search']);
 
 const toggleLHN = () => {
   lhn.value.classList.toggle('show');
+  if (lhn.value.classList.contains('show')){
+    setTimeout(() => {
+      document.addEventListener('click', handleClickOutside);
+    }, 0);
+  }
 }
 
 const closeLHN = () => {
   lhn.value.classList.remove('show');
+  document.removeEventListener('click', handleClickOutside);
   emit('clear-search');
 }
 
 defineExpose({ toggleLHN });
 
 const logout = async () => {
-  if (confirm("Are you sure you want to log out?")) {
-    const response = await ipFetch('json-api/auth/login');
+  if (await dialogService.confirm('Logout', "Are you sure you want to log out?")) {
+    const response = await ipFetch('auth/logout');
     if (response.ok) {
       router.go(0);
     }
@@ -45,9 +53,9 @@ const logout = async () => {
 }
 
 const refreshCache = async () => {
-  if (confirm("Are you sure you want to refresh the index?")) {
-    await ipFetch('json-api//cache-refresh');
-    if (confirm("Cache Refresh Started, Would you like to view the logs?")) {
+  if (await dialogService.confirm("Refresh Index", "Are you sure you want to refresh the index?")) {
+    await ipFetch('json-api/cache-refresh');
+    if (await dialogService.confirm("Index Refreshing", "Cache Refresh Started, Would you like to view the logs?")) {
       router.push("/logs");
     }
   }
@@ -55,7 +63,17 @@ const refreshCache = async () => {
 
 onBeforeRouteLeave(() => {
   closeLHN();
-})
+});
+
+onBeforeUnmount(() => {
+  closeLHN();
+});
+
+const handleClickOutside = (event) => {
+  if (lhn.value && !lhn.value.contains(event.target)) {
+    closeLHN();
+  }
+};
 </script>
 
 <style lang="less">

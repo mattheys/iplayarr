@@ -1,7 +1,7 @@
-import storage from 'node-persist';
-
+import { QueuedStorage } from '../types/QueuedStorage'
 import { QueueEntry } from '../types/QueueEntry';
 import socketService from './socketService';
+const storage : QueuedStorage = new QueuedStorage();
 
 let isStorageInitialized : boolean = false;
 

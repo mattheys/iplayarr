@@ -309,6 +309,7 @@ async function searchIPlayer(term : string, synonym? : Synonym) : Promise<IPlaye
                         title: result.title.replaceAll(' ', '.'),
                         season: result.series ? result.series.toString().padStart(2, '0') : undefined,
                         episode: result.episode ? result.episode.toString().padStart(2, '0') : undefined,
+			synonym: synonym?.from ? synonym.from.replaceAll(' ', '.') : undefined
                     });
                     result.nzbName = nzbName;
                 }

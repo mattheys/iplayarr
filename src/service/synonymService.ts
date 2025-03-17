@@ -1,8 +1,9 @@
-import storage from 'node-persist';
 import { v4 } from 'uuid';
 
+import { QueuedStorage } from '../types/QueuedStorage'
 import { Synonym } from '../types/Synonym';
 
+const storage : QueuedStorage = new QueuedStorage();
 let isStorageInitialized : boolean = false;
 
 const storageOptions : any = {};
@@ -28,6 +29,13 @@ const synonymService = {
     addSynonym : async (synonym : Synonym) : Promise<void> => {
         const id = v4();
         synonym.id = id;
+        const allSynonyms = await synonymService.getAllSynonyms();
+        allSynonyms.push(synonym);
+        await storage.setItem('synonyms', allSynonyms);
+    },
+
+    updateSynonym : async (synonym : Synonym) : Promise<void> => {
+        await synonymService.removeSynonym(synonym.id);
         const allSynonyms = await synonymService.getAllSynonyms();
         allSynonyms.push(synonym);
         await storage.setItem('synonyms', allSynonyms);

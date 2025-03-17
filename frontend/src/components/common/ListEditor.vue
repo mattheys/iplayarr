@@ -1,52 +1,33 @@
 <template>
-    <button class="synonymButton" v-for="synonym in synonyms" v-bind:key="synonym.id">
-        <div class="synonymName">
-            {{synonym.from}}
-        </div>
-        <div class="synonymTarget">
-            {{synonym.target}}
-        </div>
-        <div class="synonymExemptions">
-            {{synonym.exemptions}}
-        </div>
+    <button class="listButton clickable" v-for="item in items" v-bind:key="JSON.stringify(item)">
+        <slot :item="item"></slot>
         <div class="actionContainer">
-            <button class="clickable" @click="removeSynonym(synonym)">
-                <font-awesome-icon :icon="['fas', 'trash']" />
+            <button class="clickable" v-for="action in actions" @click="action[1](item)" v-bind:key="action[0]">
+                <font-awesome-icon :icon="['fas', action[0]]" />
             </button>
         </div>
     </button>
-    <button class="synonymButton addSynonymButton clickable" @click="createSynonym">
-        <div class="synonymCenter">
+    <button class="listButton listAddButton clickable" @click="emit('create')">
+        <div class="addButtonCenter">
             <font-awesome-icon :icon="['fas', 'plus']" />
         </div>
     </button>
 </template>
 
 <script setup>
-    import { defineProps, defineEmits } from 'vue';
+    import {defineProps, defineEmits} from 'vue';
+
+    const emit = defineEmits(['create'])
 
     defineProps({
-        synonyms : {
-            type : Array,
-            required: true
-        }
+        showAdd : Boolean,
+        items : Array,
+        actions : Array
     });
-
-    const emit = defineEmits(['createSynonym', 'removeSynonym']);
-
-    const removeSynonym = ({from, id}) => {
-        if(confirm(`Are you sure you want to remove the synonym for ${from}?`)){
-            emit('removeSynonym', id);
-        }
-    };
-
-    const createSynonym = () => {
-        emit('createSynonym');
-    }
 </script>
 
 <style lang="less">
-    .synonymButton {
+    .listButton {
         width: 290px;
         background-color: @nav-active-background-color;
 
@@ -73,10 +54,10 @@
             margin-right: auto;
         }
 
-        &.addSynonymButton {
+        &.listAddButton {
             text-align: center;
 
-            .synonymCenter {
+            .addButtonCenter {
                 display: inline-block;
                 padding: 5px 20px 0;
                 border: 1px solid @table-border-color;
@@ -87,20 +68,24 @@
             }
         }
 
-        .synonymName {
-            font-size: 24px;
+        .major {
+            font-size: 20px;
         }
 
-        .synonymTarget {
-            font-size: 18px;
+        .minor {
+            font-size: 16px;
         }
 
-        .synonymExemptions {
+        .sub {
             font-size: 14px;
         }
 
         .actionContainer {
             text-align: right;
+            position: absolute;
+            width: 270px;
+            bottom: 0px;
+            padding-bottom: 0.5rem;
 
             button {
                 background: none;

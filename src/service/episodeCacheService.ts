@@ -1,13 +1,14 @@
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
-import storage from 'node-persist';
 import { v4 } from 'uuid';
 
 import { IPlayerDetails } from '../types/IPlayerDetails';
 import { IPlayerSearchResult, VideoType } from '../types/IPlayerSearchResult';
+import { QueuedStorage } from '../types/QueuedStorage'
 import { EpisodeCacheDefinition, IPlayerDataLayerResponse } from '../types/responses/EpisodeCacheTypes';
 import { createNZBName, getQualityPofile, removeAllQueryParams, splitArrayIntoChunks } from '../utils/Utils';
 import iplayerService from './iplayerService';
+const storage : QueuedStorage = new QueuedStorage();
 
 let isStorageInitialized : boolean = false;
 const storageOptions : any = {};

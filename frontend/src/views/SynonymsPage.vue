@@ -1,41 +1,66 @@
 <template>
     <div class="inner-content">
         <legend>Synonyms</legend>
-        <p>BBC don't save their videos in an *arr friendly way. You can use synonyms to help you bridge the gap</p>
-        <SynonymsList @create-synonym="openForm" @remove-synonym="removeSynonym" :synonyms="synonyms"/>
+        <p>iPlayer don't save their videos in an *arr friendly way. You can use synonyms to help you bridge the gap</p>
+        <ListEditor :items="synonyms" @create="openForm" :actions="[['trash', removeSynonym]]" v-slot="{item}">
+            <div class="major" @click="openForm(item)">
+                {{item.from}}
+            </div>
+            <div class="minor" @click="openForm(item)">
+                {{item.target}}
+            </div>
+            <div class="sub" @click="openForm(item)">
+                {{item.exemptions}}
+            </div>
+        </ListEditor>
         <div class="block-reset"></div>
-        <SynonymForm v-if="create" @save="newSynonym"/>
     </div>
 </template>
 
 <script setup>
-    import SynonymsList from '@/components/SynonymsList.vue';
-    import SynonymForm from '@/components/SynonymForm.vue';
+import ListEditor from '@/components/common/ListEditor.vue';
+import SynonymForm from '@/components/modals/SynonymForm.vue';
+import { useModal } from 'vue-final-modal'
 
-    import {ref, onMounted} from 'vue';
-    import { ipFetch } from '@/lib/ipFetch';
+import { ref, onMounted } from 'vue';
+import { ipFetch } from '@/lib/ipFetch';
+import dialogService from '@/lib/dialogService';
 
-    const create = ref(false);
-    const synonyms = ref([]);
+import { deepCopy } from '@/lib/utils';
 
-    const refreshSynonyms = async () => {
-        synonyms.value = (await ipFetch(`json-api/synonym`)).data;
-    }
+const synonyms = ref([]);
 
-    onMounted(refreshSynonyms);
+const refreshSynonyms = async () => {
+    synonyms.value = (await ipFetch(`json-api/synonym`)).data;
+}
 
-    const openForm = () => {
-        create.value = true;
-    }
+onMounted(refreshSynonyms);
 
-    const newSynonym = async (synonym) => {
-        create.value = false;
-        await ipFetch('json-api/synonym', 'POST', synonym);
+const openForm = (synonym) => {
+    const formModal = useModal({
+        component: SynonymForm,
+        attrs: {
+            inputObj : deepCopy(synonym),
+            action : synonym ? 'Edit' : 'Create',
+            onSave(synonym) {
+                saveSynonym(synonym);
+                formModal.close();
+            }
+        }
+    });
+    formModal.open();
+}
+
+const saveSynonym = async (synonym) => {
+    const method = synonym.id ? 'PUT' : 'POST';
+    await ipFetch('json-api/synonym', method, synonym);
+    refreshSynonyms();
+}
+
+const removeSynonym = async (id) => {
+    if (await dialogService.confirm('Delete Synonym', 'Are you sure you want to delete this Synonym?')){
+        await ipFetch(`json-api/synonym`, 'DELETE', { id });
         refreshSynonyms();
     }
-
-    const removeSynonym = async (id) => {
-        await ipFetch(`json-api/synonym`, 'DELETE', {id});
-        refreshSynonyms();
-    }
+}
 </script>
