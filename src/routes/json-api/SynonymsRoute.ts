@@ -1,12 +1,12 @@
 import { Request, Response, Router } from 'express';
 
-import searchHistoryService from '../../service/searchHistoryService';
-import synonymService from '../../service/synonymService';
-import { Synonym } from '../../types/Synonym';
 import appService from '../../service/appService';
 import arrService from '../../service/arrService';
+import searchHistoryService from '../../service/searchHistoryService';
+import synonymService from '../../service/synonymService';
 import { App } from '../../types/App';
 import { ApiError, ApiResponse } from '../../types/responses/ApiResponse';
+import { Synonym } from '../../types/Synonym';
 
 const router = Router();
 

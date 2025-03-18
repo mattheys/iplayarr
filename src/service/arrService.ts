@@ -1,15 +1,15 @@
 import axios, { AxiosInstance } from 'axios';
 
+import { App } from '../types/App';
+import { AppType } from '../types/AppType';
 import { ArrCreateDownloadClientRequest, CreateDownloadClientRequestField,createDownloadClientRequestSkeleton } from '../types/requests/arr/CreateDownloadClientRequest';
 import { CreateIndexerRequest, createIndexerRequestSkeleton, createIndexRequestFieldsSkeleton } from '../types/requests/arr/CreateIndexerRequest';
 import { CreateProwlarrIndexerRequest, createProwlarrIndexerRequestSkeleton } from '../types/requests/arr/CreateProwlarrIndexerRequest';
 import { CreateDownloadClientForm } from '../types/requests/form/CreateDownloadClientForm';
 import { CreateIndexerForm } from '../types/requests/form/CreateIndexerForm';
+import { ArrLookupResponse } from '../types/responses/arr/ArrLookupResponse';
 import { DownloadClientResponse } from '../types/responses/arr/DownloadClientResponse';
 import { IndexerResponse } from '../types/responses/arr/IndexerResponse';
-import { AppType } from '../types/AppType';
-import { App } from '../types/App';
-import { ArrLookupResponse } from '../types/responses/arr/ArrLookupResponse';
 
 export interface ArrConfig {
     API_KEY : string,

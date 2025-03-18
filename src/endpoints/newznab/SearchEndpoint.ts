@@ -2,11 +2,11 @@ import { Request, Response } from 'express';
 import { Builder } from 'xml2js'
 
 import iplayerService from '../../service/iplayerService';
+import searchHistoryService from '../../service/searchHistoryService';
 import { IPlayerSearchResult, VideoType } from '../../types/IPlayerSearchResult';
 import { NewzNabAttr,NewzNabSearchResponse } from '../../types/responses/newznab/NewzNabSearchResponse';
-import { createNZBDownloadLink, getBaseUrl } from '../../utils/Utils';
 import { SearchHistoryEntry } from '../../types/SearchHistoryEntry';
-import searchHistoryService from '../../service/searchHistoryService';
+import { createNZBDownloadLink, getBaseUrl } from '../../utils/Utils';
 
 interface SearchRequest {
     q : string,
