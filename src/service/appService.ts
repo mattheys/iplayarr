@@ -59,8 +59,10 @@ const appService = {
     },
 
     addApp : async (form : App) : Promise<App | undefined> => {
-        const id = v4();
-        form.id = id;
+        if (!form.id){
+            const id = v4();
+            form.id = id;
+        }
         const allApps : App[] = await appService.getAllApps();
         allApps.push(form);
         await storage.setItem('apps', allApps);

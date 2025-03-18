@@ -83,7 +83,7 @@ import ArrLookupDialog from './ArrLookupDialog.vue';
             attrs : {
                 onSelect : ({history, app}) => {
                     form.value.from = history.term;
-                    searchApp.value = app;
+                    searchApp.value = app || {};
                     formModal.close();
                 }
             }

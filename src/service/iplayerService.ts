@@ -305,7 +305,7 @@ async function searchIPlayer(term : string, synonym? : Synonym) : Promise<IPlaye
         searchProcess.on('close', async (code) => {
             if (code === 0) {
                 for (const result of results){
-                    const synonymName = synonym ? (synonym.filenameOverride || synonym.from).replaceAll(/[^a-zA-Z0-9]/, '.') : undefined;
+                    const synonymName = synonym ? (synonym.filenameOverride || synonym.from).replaceAll(/[^a-zA-Z0-9]/g, '.') : undefined;
 
                     const nzbName = await createNZBName(result.type, {
                         title: result.title.replaceAll(' ', '.'),
