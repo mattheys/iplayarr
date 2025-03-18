@@ -26,12 +26,14 @@ export default async (req : Request, res : Response) => {
         results = results.filter(({type}) => categoriesForType(type).some(category => cat.includes(category)));
     }
 
-    const historyEntry : SearchHistoryEntry = {
-        term: q,
-        results: results.length,
-        appId : app
+    if (searchTerm != '*'){
+        const historyEntry : SearchHistoryEntry = {
+            term: searchTerm,
+            results: results.length,
+            appId : app
+        }
+        searchHistoryService.addItem(historyEntry);
     }
-    searchHistoryService.addItem(historyEntry);
 
     const date : Date = new Date();
     date.setMinutes(date.getMinutes() - 720);
