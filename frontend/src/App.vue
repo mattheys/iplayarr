@@ -258,9 +258,9 @@ button:focus {
     @media (max-width: @mobile-breakpoint) {
       &.floor {
         margin-top: auto;
+        margin-bottom: 3rem;
       }
       box-sizing: border-box;
-      margin-bottom: 3rem;
     }
 
     button {
@@ -271,6 +271,7 @@ button:focus {
       color: @primary-text-color;
       border-radius: 4px;
       margin-left: 1rem;
+      cursor: pointer;
 
       &.cancel {
         background-color: @error-color;
@@ -278,7 +279,6 @@ button:focus {
 
       &:hover:not(:disabled) {
         border-color: @settings-button-hover-border-color;
-        ;
         background-color: @settings-button-hover-background-color;
       }
     }

@@ -138,6 +138,7 @@ const createUpdateFeature : Record<AppFeature, (form : App, arrConfig : ArrConfi
 
         if (form.download_client?.id && form.indexer?.name) {
             const createIndexerForm: CreateIndexerForm = {
+                appId : form.id,
                 name: form.indexer.name,
                 downloadClientId: form.download_client.id,
                 url: `http${form.iplayarr.useSSL ? 's' : ''}://${form.iplayarr.host}:${form.iplayarr.port}`,
@@ -188,6 +189,7 @@ const createUpdateFeature : Record<AppFeature, (form : App, arrConfig : ArrConfi
 
         if (form.download_client?.id && form.indexer?.name) {
             const createIndexerForm: CreateIndexerForm = {
+                appId : form.id,
                 name: form.indexer.name,
                 downloadClientId: form.download_client.id,
                 url: `http${form.iplayarr.useSSL ? 's' : ''}://${form.iplayarr.host}:${form.iplayarr.port}`,

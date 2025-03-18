@@ -88,16 +88,6 @@ export const createIndexRequestFieldsSkeleton : CreateIndexerRequestField[] = [
         'isFloat': false
     },
     {
-        'order': 6,
-        'name': 'additionalParameters',
-        'label': 'Additional Parameters',
-        'helpText': 'Please note if you change the category you will have to add required/restricted rules about the subgroups to avoid foreign language releases.',
-        'type': 'textbox',
-        'advanced': true,
-        'privacy': 'normal',
-        'isFloat': false
-    },
-    {
         'order': 7,
         'name': 'multiLanguages',
         'label': 'Multi Languages',

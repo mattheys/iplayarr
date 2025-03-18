@@ -2,7 +2,12 @@
     <div :class="['form-group', advanced ? 'advanced' : '']">
         <label>{{ name }}</label>
         <div :class="['inputBox', error ? 'error' : '']">
-            <input :type="typeOverride" v-model="localValue" :placeholder="placeholder" />
+            <div class="inputWithButton">
+                <input :type="typeOverride" v-model="localValue" :placeholder="placeholder" />
+                <button v-if="iconButton" @click="emit('action')">
+                    <font-awesome-icon :icon="['fas', iconButton]" />
+                </button>
+            </div>
             <div class="error" v-if="error">
                 {{ error }}
             </div>
@@ -47,10 +52,11 @@ const props = defineProps({
         type: Boolean,
         required: false,
         default: false
-    }
+    },
+    iconButton : String
 })
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'action']);
 
 const localValue = ref(props.modelValue);
 
@@ -93,24 +99,50 @@ watch(
         flex: 1 1 auto;
         box-sizing: border-box;
 
-        input {
-            box-sizing: border-box;
-            padding: 6px 16px;
+        .inputWithButton {
+            position: relative;
+            display: flex;
+            align-items: center;
             width: 100%;
-            height: 35px;
-            border: 1px solid @input-border-color;
-            border-radius: 4px;
-            background-color: @input-background-color;
-            box-shadow: inset 0 1px 1px @primary-box-shadow;
-            color: @input-text-color;
-        }
 
-        &.error {
-            font-size: 14px;
-            color: @error-color;
+            button {
+                position: absolute;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                background-color: @settings-button-hover-background-color;
+                border: none;
+                cursor: pointer;
+                padding: 9px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid @input-border-color;
+
+                &:hover {
+                    background-color: @input-background-color;
+                }
+            }
 
             input {
-                border-color: @error-color;
+                box-sizing: border-box;
+                padding: 6px 16px;
+                width: 100%;
+                height: 35px;
+                border: 1px solid @input-border-color;
+                border-radius: 4px;
+                background-color: @input-background-color;
+                box-shadow: inset 0 1px 1px @primary-box-shadow;
+                color: @input-text-color;
+            }
+
+            &.error {
+                font-size: 14px;
+                color: @error-color;
+
+                input {
+                    border-color: @error-color;
+                }
             }
         }
     }
