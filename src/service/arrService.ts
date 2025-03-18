@@ -7,6 +7,9 @@ import { CreateDownloadClientForm } from '../types/requests/form/CreateDownloadC
 import { CreateIndexerForm } from '../types/requests/form/CreateIndexerForm';
 import { DownloadClientResponse } from '../types/responses/arr/DownloadClientResponse';
 import { IndexerResponse } from '../types/responses/arr/IndexerResponse';
+import { AppType } from '../types/AppType';
+import { App } from '../types/App';
+import { ArrLookupResponse } from '../types/responses/arr/ArrLookupResponse';
 
 export interface ArrConfig {
     API_KEY : string,
@@ -203,7 +206,18 @@ const arrService = {
                     'selectOptionsProviderAction': 'newznabCategories',
                     'privacy': 'normal',
                     'isFloat': false
-                }
+                },
+                {
+                    'order': 6,
+                    'name': 'additionalParameters',
+                    'label': 'Additional Parameters',
+                    'helpText': 'Please note if you change the category you will have to add required/restricted rules about the subgroups to avoid foreign language releases.',
+                    'type': 'textbox',
+                    'advanced': true,
+                    'privacy': 'normal',
+                    'isFloat': false,
+                    'value': `&app=${form.appId}`,
+                },
             ]
         } as CreateIndexerRequest;
 
@@ -344,6 +358,26 @@ const arrService = {
                 return error.message;
             }
             return false;
+        }
+    },
+
+    search : async(app : App, term : string) : Promise<string[]> => {
+        const endpoint : string = app.type == AppType.SONARR ? 'series' : 'movie';
+        const url : string = `${app.url}/api/v3/${endpoint}/lookup?term=${term}`
+
+        try {
+            const response = await axios.get(url, {
+                headers: {
+                    'X-Api-Key' : app.api_key
+                }
+            });
+            if (response.status == 200) {
+                const results : ArrLookupResponse[] = response.data;
+                return results.filter(({path}) => path).map(({title}) => title);
+            }
+            return [];
+        } catch (error) {
+            throw error;
         }
     }
 }

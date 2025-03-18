@@ -1,4 +1,5 @@
 export interface CreateIndexerForm {
+    appId : string,
     name : string,
     downloadClientId : number,
     url: string,

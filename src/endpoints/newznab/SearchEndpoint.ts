@@ -5,16 +5,19 @@ import iplayerService from '../../service/iplayerService';
 import { IPlayerSearchResult, VideoType } from '../../types/IPlayerSearchResult';
 import { NewzNabAttr,NewzNabSearchResponse } from '../../types/responses/newznab/NewzNabSearchResponse';
 import { createNZBDownloadLink, getBaseUrl } from '../../utils/Utils';
+import { SearchHistoryEntry } from '../../types/SearchHistoryEntry';
+import searchHistoryService from '../../service/searchHistoryService';
 
 interface SearchRequest {
     q : string,
     season? : number,
     ep? : number,
-    cat? : string
+    cat? : string,
+    app? : string
 }
 
 export default async (req : Request, res : Response) => {
-    const {q, season, ep, cat : catList} = req.query as any as SearchRequest;
+    const {q, season, ep, cat : catList, app} = req.query as any as SearchRequest;
     const cat : string[] | undefined = catList ? catList.split(',') : undefined;
     const searchTerm = q ?? '*';
     let results : IPlayerSearchResult[] = await iplayerService.search(searchTerm, season, ep);
@@ -22,6 +25,13 @@ export default async (req : Request, res : Response) => {
     if (cat){
         results = results.filter(({type}) => categoriesForType(type).some(category => cat.includes(category)));
     }
+
+    const historyEntry : SearchHistoryEntry = {
+        term: q,
+        results: results.length,
+        appId : app
+    }
+    searchHistoryService.addItem(historyEntry);
 
     const date : Date = new Date();
     date.setMinutes(date.getMinutes() - 720);
