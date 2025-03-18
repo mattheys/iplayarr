@@ -142,7 +142,7 @@ onBeforeRouteLeave(async (_, __, next) => {
         }
 
         &.test-button {
-            width: 115px;
+            min-width: 115px;
         }
     }
 }

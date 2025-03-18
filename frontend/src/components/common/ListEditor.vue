@@ -41,8 +41,8 @@
         border: 0;
         text-decoration: none;
         text-align: left;
-        color: @primary-text-color;
-        height: 100px;
+        color: @table-text-color;
+        height: 120px;
 
         @media (min-width: @mobile-breakpoint) {
             float: left;
@@ -69,15 +69,19 @@
         }
 
         .major {
-            font-size: 20px;
+            font-size: 24px;
+            font-weight: 300;
+            color: @table-text-color;
         }
 
         .minor {
             font-size: 16px;
+            color: @table-text-color;
         }
 
         .sub {
             font-size: 14px;
+            color: @table-text-color;
         }
 
         .actionContainer {

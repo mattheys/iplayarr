@@ -9,8 +9,13 @@
             <div class="minor" @click="openForm(item)">
                 {{item.target}}
             </div>
-            <div class="sub" @click="openForm(item)">
-                {{item.exemptions}}
+            <div class="featureList">
+                <span :class="['pill', 'success']" v-if="item.filenameOverride">
+                        {{item.filenameOverride}}
+                </span>
+                <span :class="['pill', 'error']" v-for="exemption in item.exemptions.split(',')" v-bind:key="exemption">
+                        {{exemption.trim()}}
+                </span>
             </div>
         </ListEditor>
         <div class="block-reset"></div>
@@ -64,3 +69,12 @@ const removeSynonym = async (id) => {
     }
 }
 </script>
+
+<style lang="less" scoped>
+    .featureList {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 6px;
+    }
+</style>

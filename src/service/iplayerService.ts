@@ -305,11 +305,13 @@ async function searchIPlayer(term : string, synonym? : Synonym) : Promise<IPlaye
         searchProcess.on('close', async (code) => {
             if (code === 0) {
                 for (const result of results){
+                    const synonymName = synonym ? (synonym.filenameOverride || synonym.from).replaceAll(' ', '.') : undefined;
+
                     const nzbName = await createNZBName(result.type, {
                         title: result.title.replaceAll(' ', '.'),
                         season: result.series ? result.series.toString().padStart(2, '0') : undefined,
                         episode: result.episode ? result.episode.toString().padStart(2, '0') : undefined,
-			synonym: synonym?.from ? synonym.from.replaceAll(' ', '.') : undefined
+			            synonym: synonymName
                     });
                     result.nzbName = nzbName;
                 }

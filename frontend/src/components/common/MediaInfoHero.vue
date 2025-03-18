@@ -129,17 +129,17 @@
         }
     }
 
-    .pill.grey {
-        padding: 3px 7px;
-        font-weight: 300;
-        font-size: 17px;
-        background-color: @grey-pill-background-color;
-        color: @primary-text-color;
+    .seriesDetails {
+        .pill.grey {
+            padding: 3px 7px;
+            font-weight: 300;
+            font-size: 17px;
 
-        svg {
-            margin-right: 3px;
+            svg {
+                margin-right: 3px;
+            }
+
+            margin-right: 10px !important;
         }
-
-        margin-right: 10px !important;
     }
 </style>

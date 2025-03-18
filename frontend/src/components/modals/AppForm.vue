@@ -52,7 +52,7 @@
             </template>
 
             
-            <div class="button-container">
+            <div class="button-container floor">
                 <button class="clickable cancel" @click="close()">Cancel</button>
                 <button class="clickable" @click="saveApp">{{form.id ? 'Save' : 'Create'}}</button>
             </div>

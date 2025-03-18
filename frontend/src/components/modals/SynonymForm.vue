@@ -9,8 +9,9 @@
         <legend>{{action}} Synonym</legend>
         <TextInput name="From" tooltip="Incoming term from *arr" v-model="form.from" placeholder="Apprentice UK"/>
         <TextInput name="To" tooltip="Outgoing search to iPlayer" v-model="form.target" placeholder="Apprentice"/>
+        <TextInput name="Filename Override" tooltip="Optional Text for the filename" v-model="form.filenameOverride" placeholder="The Apprentice UK"/>
         <TextInput name="Exemptions" tooltip="Exemptions (comma seperated)" v-model="form.exemptions" placeholder="You're Fired!"/>
-        <div class="button-container">
+        <div class="button-container floor">
             <button class="clickable cancel" @click="close()">Cancel</button>
             <button class="clickable" @click="saveSynonym">Save</button>
         </div>
@@ -55,12 +56,16 @@
 
     const saveSynonym = () => {
         if (form.value.from && form.value.target){
+            if (form.value.filenameOverride == ""){
+                delete form.value.filenameOverride;
+            }
             emit('save', form.value);
             form.value = {
                 id: undefined,
                 from : "",
                 target : "",
-                exemptions : ""
+                exemptions : "",
+                filenameOverride : undefined
             };
         } else {
             dialogService.alert("Can't Save", "Please fill in a To and From");

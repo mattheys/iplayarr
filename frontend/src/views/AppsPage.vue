@@ -13,24 +13,19 @@
                         {{item.name}}
                     </span>
                 </div>
-                <div class="minor">
+                <div class="sub">
                     {{ item.url }}
                 </div>
-                <div class="sub">
-                <ul class="featureList">
-                        <li v-if="hasFeature(item.type, 'download_client') || hasFeature(item.type, 'prowlarr_download_client')">
-                            <font-awesome-icon :class="[item.download_client?.id ? 'present' : 'missing']" :icon="['fas', item.download_client?.id ? 'check' : 'xmark']" />
+                <div class="featureList">
+                    <span :class="['pill', item.download_client?.id ? 'success' : 'error']" v-if="hasFeature(item.type, 'download_client') || hasFeature(item.type, 'prowlarr_download_client')">
                             Download Client
-                        </li>
-                        <li v-if="hasFeature(item.type, 'indexer') || hasFeature(item.type, 'prowlarr_indexer')">
-                            <font-awesome-icon :class="[item.indexer?.id ? 'present' : 'missing']" :icon="['fas', item.indexer?.id ? 'check' : 'xmark']" />
+                    </span>
+                    <span :class="['pill', item.indexer?.id ? 'success' : 'error']" v-if="hasFeature(item.type, 'indexer') || hasFeature(item.type, 'prowlarr_indexer')">
                             Indexer
-                        </li>
-                        <li v-if="hasFeature(item.type, 'priority')">
-                            <font-awesome-icon :icon="['fas', 'level-up']" />
-                            {{item.priority}}
-                        </li>
-                </ul>
+                    </span>
+                    <span :class="['pill', 'grey']" v-if="hasFeature(item.type, 'priority')">
+                            Priority: {{ item.priority }}
+                    </span>
                 </div>
             </a>
         </ListEditor>
@@ -89,28 +84,19 @@
     .major {
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 6px;
         height: 30px;
 
         .appImg {
             width: 25px;
+            filter: grayscale(100%) contrast(100%);
         }
     }
 
     .featureList {
-        list-style: none;
-        padding-left: 0px;
         display: flex;
         align-items: center;
-        gap: 1rem;
-        margin: 0px;
-
-        .present {
-            color: @success-color;
-        }
-
-        .missing {
-            color: @error-color;
-        }
+        gap: 5px;
+        margin-top: 6px;
     }
 </style>

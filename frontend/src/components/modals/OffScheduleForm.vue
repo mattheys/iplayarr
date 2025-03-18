@@ -9,7 +9,7 @@
         <legend>{{action}} Cache Definition</legend>
         <TextInput name="Name" tooltip="Name for the Cache Definition" v-model="form.name" placeholder="Red Dwarf"/>
         <TextInput name="URL" tooltip="iPlayer URL" v-model="form.url" placeholder="https://www.bbc.co.uk/iplayer/episodes/b008ncn6/red-dwarf"/>
-        <div class="button-container">
+        <div class="button-container floor">
             <button class="clickable cancel" @click="close()">Cancel</button>
             <button @click="saveCacheDefinition">Save</button>
         </div>

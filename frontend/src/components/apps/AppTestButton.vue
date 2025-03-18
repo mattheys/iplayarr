@@ -75,7 +75,7 @@ button {
         }
 
         &.test-button {
-            width: 130px;
+            min-width: 130px;
         }
     }
 </style>

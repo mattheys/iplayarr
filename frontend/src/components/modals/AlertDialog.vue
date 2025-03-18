@@ -8,7 +8,7 @@
         <legend>{{ title }}</legend>
         <p :class="[subtext ? 'hasLower' : '']">{{ text }}</p>
         <p class="sub" v-if="subtext">{{ subtext }}</p>
-        <div class="button-container">
+        <div class="button-container floor">
             <button class="clickable cancel" @click="emit('cancel')" v-if="showCancel">Cancel</button>
             <button class="clickable" @click="emit('confirm')">OK</button>
         </div>

@@ -171,6 +171,36 @@ legend {
     border-color: @error-color;
     color: @error-text-color;
   }
+
+  &.primary {
+    background-color: @primary-color;
+    border-color: @primary-color;
+    color: @primary-text-color;
+  }
+
+  &.warn {
+    background-color: @warn-color;
+    border-color: @warn-color;
+    color: @primary-text-color;
+  }
+
+  &.success {
+    background-color: @success-color;
+    border-color: @success-color;
+    color: @primary-text-color;
+  }
+
+  &.error {
+    background-color: @error-color;
+    border-color: @error-color;
+    color: @error-text-color;
+  }
+
+  &.grey {
+    background-color: @grey-pill-background-color;
+    border-color: @grey-pill-background-color;
+    color: @primary-text-color;
+  }
 }
 
 input:focus,
@@ -226,7 +256,9 @@ button:focus {
     max-width: 650px;
 
     @media (max-width: @mobile-breakpoint) {
-      margin-top: auto;
+      &.floor {
+        margin-top: auto;
+      }
       box-sizing: border-box;
       margin-bottom: 3rem;
     }
