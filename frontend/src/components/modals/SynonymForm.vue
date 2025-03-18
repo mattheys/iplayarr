@@ -7,9 +7,9 @@
       v-slot="{ close }"
     >
         <legend>{{action}} Synonym</legend>
-        <TextInput name="From" tooltip="Incoming term from *arr" v-model="form.from" placeholder="Apprentice UK" iconButton="history" @action="openSearchHistory"/>
+        <TextInput name="From" tooltip="Incoming term from *arr" v-model="form.from" placeholder="Apprentice UK" iconButton="history" @action="openSearchHistory" button-tooltip="Look at Search History"/>
         <TextInput name="To" tooltip="Outgoing search to iPlayer" v-model="form.target" placeholder="Apprentice"/>
-        <TextInput name="Filename Override" tooltip="Optional Text for the filename" v-model="form.filenameOverride" placeholder="The Apprentice UK" :iconButton="searchApp.type ? 'search' : undefined" @action="openArrLookup"/>
+        <TextInput name="Filename Override" tooltip="Optional Text for the filename" v-model="form.filenameOverride" placeholder="The Apprentice UK" :brandButton="searchApp.type ? searchApp.type : undefined" @action="openArrLookup" :button-tooltip="searchApp.type ? `Lookup on ${searchApp.name}` : ''"/>
         <TextInput name="Exemptions" tooltip="Exemptions (comma seperated)" v-model="form.exemptions" placeholder="You're Fired!"/>
         <div class="button-container floor">
             <button class="clickable cancel" @click="close()">Cancel</button>
