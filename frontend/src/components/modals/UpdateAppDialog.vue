@@ -40,7 +40,7 @@
 <script setup>
 import { VueFinalModal } from 'vue-final-modal'
 import { ipFetch } from '@/lib/ipFetch';
-import {ref, onMounted, defineEmits, inject} from 'vue';
+import {ref, onMounted, defineEmits, inject, onBeforeUnmount} from 'vue';
 
 const apps = ref([]);
 const features = ref([]);
@@ -71,6 +71,10 @@ onMounted(async () => {
     });
 
     ipFetch("json-api/apps/updateApiKey", "POST", {});
+});
+
+onBeforeUnmount(() => {
+    socket.value.off('app_update_status');
 });
 
 const getPillColor = (status) => {
