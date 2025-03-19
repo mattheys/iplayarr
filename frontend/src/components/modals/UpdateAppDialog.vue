@@ -7,6 +7,9 @@
                 <tr>
                     <th>App</th>
                     <th>Status</th>
+                    <th>
+                        <font-awesome-icon :icon="['fas', 'book-open']" />
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -19,8 +22,11 @@
                             </span>
                         </div>
                     </td>
-                    <td>
-                        <span :class="['pill', getPillColor(appStatus[app.id])]">{{appStatus[app.id]}}</span>
+                    <td v-if="appStatus[app.id]">
+                        <span :class="['pill', getPillColor(appStatus[app.id].status)]">{{appStatus[app.id].status}}</span>
+                    </td>
+                    <td v-if="appStatus[app.id]">
+                        {{appStatus[app.id].message}}
                     </td>
                 </tr>
             </tbody>
@@ -56,12 +62,12 @@ onMounted(async () => {
     }
 
     appStatus.value = apps.value.reduce((acc, {id}) => {
-        acc[id] = "Pending";
+        acc[id] = {status : "Pending", message : ""};
         return acc;
     }, {});
 
-    socket.value.on('app_update_status', ({id, status}) => {
-        appStatus.value[id] = status;
+    socket.value.on('app_update_status', ({id, status, message}) => {
+        appStatus.value[id] = {status, message};
     });
 
     ipFetch("json-api/apps/updateApiKey", "POST", {});
@@ -72,9 +78,11 @@ const getPillColor = (status) => {
         default:
             return "grey";
         case "In Progress":
-            return "warn"; 
+            return "error"; 
         case "Complete":
-            return "success";       
+            return "success"; 
+        case "Error":
+            return "error";      
     }
 }
 </script>
