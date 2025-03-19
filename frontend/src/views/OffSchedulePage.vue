@@ -3,13 +3,13 @@
         <legend>Off Schedule</legend>
         <p>By default, only media broadcast in the last 30 days is returned, to extend this, you need to index specific iPlayer URLs</p>
         <ListEditor :items="cacheDefinitions" @create="openForm" :actions="[['refresh', refreshCacheDefinition], ['trash', remove]]" v-slot="{item}">
-            <div class="major" @click="openDetails(item)">
+            <div class="major">
                 {{item.name}}
             </div>
-            <div class="cacheDefinitionTarget" @click="openDetails(item)">
+            <div class="cacheDefinitionTarget">
                 {{item.url}}
             </div>
-            <div class="cacheDefinitionTarget" @click="openDetails(item)">
+            <div class="cacheDefinitionTarget">
                 {{item.cacheRefreshed}}
             </div>
         </ListEditor>
