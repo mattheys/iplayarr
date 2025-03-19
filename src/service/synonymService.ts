@@ -2,6 +2,7 @@ import { v4 } from 'uuid';
 
 import { QueuedStorage } from '../types/QueuedStorage'
 import { Synonym } from '../types/Synonym';
+import iplayerService from './iplayerService';
 
 const storage : QueuedStorage = new QueuedStorage();
 let isStorageInitialized : boolean = false;
@@ -27,11 +28,14 @@ const synonymService = {
     },
 
     addSynonym : async (synonym : Synonym) : Promise<void> => {
-        const id = v4();
-        synonym.id = id;
+        if (!synonym.id){
+            const id = v4();
+            synonym.id = id;
+        }
         const allSynonyms = await synonymService.getAllSynonyms();
         allSynonyms.push(synonym);
         await storage.setItem('synonyms', allSynonyms);
+        iplayerService.removeFromSearchCache(synonym.target);
     },
 
     updateSynonym : async (synonym : Synonym) : Promise<void> => {
@@ -39,12 +43,17 @@ const synonymService = {
         const allSynonyms = await synonymService.getAllSynonyms();
         allSynonyms.push(synonym);
         await storage.setItem('synonyms', allSynonyms);
+        iplayerService.removeFromSearchCache(synonym.target);
     },
 
     removeSynonym : async (id : string) : Promise<void> => {
         let allSynonyms = await synonymService.getAllSynonyms();
-        allSynonyms = allSynonyms.filter(({id : savedId}) => savedId != id);
-        await storage.setItem('synonyms', allSynonyms);
+        const foundSynonym : Synonym | undefined = allSynonyms.find(({id : savedId}) => savedId == id);
+        if (foundSynonym){
+            allSynonyms = allSynonyms.filter(({id : savedId}) => savedId != id);
+            await storage.setItem('synonyms', allSynonyms);
+            iplayerService.removeFromSearchCache(foundSynonym.target);
+        }
     }
 }
 

@@ -1,5 +1,7 @@
 export interface SearchHistoryEntry {
     term : string,
     results : number,
-    appId? : string
+    appId? : string,
+    series? : number,
+    episode? : number
 }

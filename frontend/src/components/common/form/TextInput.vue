@@ -4,8 +4,11 @@
         <div :class="['inputBox', error ? 'error' : '']">
             <div class="inputWithButton">
                 <input :type="typeOverride" v-model="localValue" :placeholder="placeholder" />
-                <button v-if="iconButton" @click="emit('action')">
+                <button v-if="iconButton" @click="emit('action')" :title="buttonTooltip">
                     <font-awesome-icon :icon="['fas', iconButton]" />
+                </button>
+                <button v-if="brandButton" @click="emit('action')" :title="buttonTooltip">
+                    <img class="brand" :src="`/img/${brandButton.toLowerCase()}.svg`"/>
                 </button>
             </div>
             <div class="error" v-if="error">
@@ -53,7 +56,9 @@ const props = defineProps({
         required: false,
         default: false
     },
-    iconButton : String
+    iconButton : String,
+    brandButton : String,
+    buttonTooltip : String
 })
 
 const emit = defineEmits(['update:modelValue', 'action']);
@@ -118,6 +123,11 @@ watch(
                 align-items: center;
                 justify-content: center;
                 border: 1px solid @input-border-color;
+
+                .brand {
+                    width: 15px;
+                    filter: grayscale(100%) contrast(100%);
+                }
 
                 &:hover {
                     background-color: @input-background-color;

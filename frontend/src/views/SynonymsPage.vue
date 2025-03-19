@@ -13,9 +13,11 @@
                 <span :class="['pill', 'success']" v-if="item.filenameOverride">
                         {{item.filenameOverride}}
                 </span>
-                <span :class="['pill', 'error']" v-for="exemption in item.exemptions.split(',')" v-bind:key="exemption">
-                        {{exemption.trim()}}
-                </span>
+                <template v-if="item.exemptions">
+                    <span :class="['pill', 'error']" v-for="exemption in item.exemptions.split(',')" v-bind:key="exemption">
+                            {{exemption.trim()}}
+                    </span>
+                </template>
             </div>
         </ListEditor>
         <div class="block-reset"></div>
@@ -62,7 +64,7 @@ const saveSynonym = async (synonym) => {
     refreshSynonyms();
 }
 
-const removeSynonym = async (id) => {
+const removeSynonym = async ({id}) => {
     if (await dialogService.confirm('Delete Synonym', 'Are you sure you want to delete this Synonym?')){
         await ipFetch(`json-api/synonym`, 'DELETE', { id });
         refreshSynonyms();
