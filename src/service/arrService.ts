@@ -53,7 +53,7 @@ const arrService = {
                     'name': 'useSsl',
                     'label': 'Use SSL',
                     'helpText': 'Use secure connection when connection to Sabnzbd',
-                    'value': form.useSSL,
+                    'value': typeof form.useSSL === 'boolean' ? form.useSSL : form.useSSL === 'true',
                     'type': 'checkbox',
                     'advanced': false,
                     'privacy': 'normal',
