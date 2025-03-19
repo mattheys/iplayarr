@@ -38,6 +38,30 @@ const dialogService = {
             });
             formModal.open();
         });
+    },
+
+    select : async (title, text, subtext, options) => {
+        return new Promise((resolve) => {
+            const formModal = useModal({
+                component: AlertDialog,
+                attrs: {
+                    title,
+                    text,
+                    subtext,
+                    showCancel : true,
+                    options,
+                    onConfirm : (option) => {
+                        resolve(option);
+                        formModal.close();
+                    },
+                    onCancel : () => {
+                        resolve(false);
+                        formModal.close();
+                    }
+                }
+            });
+            formModal.open();
+        });
     }
 }
 

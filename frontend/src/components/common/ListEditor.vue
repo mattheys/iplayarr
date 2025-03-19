@@ -7,7 +7,7 @@
             </button>
         </div>
     </button>
-    <button class="listButton listAddButton clickable" @click="emit('create')">
+    <button class="listButton listAddButton clickable" @click="emit('create')" v-if="showAdd">
         <div class="addButtonCenter">
             <font-awesome-icon :icon="['fas', 'plus']" />
         </div>
@@ -20,7 +20,11 @@
     const emit = defineEmits(['create'])
 
     defineProps({
-        showAdd : Boolean,
+        showAdd : {
+            type : Boolean,
+            required : false,
+            default : true
+        },
         items : Array,
         actions : Array
     });

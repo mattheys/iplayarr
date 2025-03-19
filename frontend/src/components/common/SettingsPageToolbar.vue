@@ -1,39 +1,46 @@
 <template>
     <div class="SettingsPageToolbar">
         <div>
-            <button class="SettingsPageToolbar-button clickable" @click="emitEvent('deleteQueueItem')"
+            <button class="SettingsPageToolbar-button clickable" @click="emit('deleteQueueItem')"
                 v-if="icons.some((i) => i == 'delete')">
                 <font-awesome-icon :icon="['fas', 'trash']" />
                 <div class="SettingsPageToolbar-label">
                     Stop
                 </div>
             </button>
-            <button class="SettingsPageToolbar-button clickable" @click="emitEvent('save')" :disabled="!saveEnabled"
+            <button class="SettingsPageToolbar-button clickable" @click="emit('save')" :disabled="!saveEnabled"
                 v-if="icons.some((i) => i == 'save')">
                 <font-awesome-icon :icon="['fas', 'floppy-disk']" />
                 <div class="SettingsPageToolbar-label">
                     {{ saveEnabled ? 'Save' : 'No' }} Changes
                 </div>
             </button>
-            <button class="SettingsPageToolbar-button clickable" @click="emitEvent('toggleAdvanced')"
+            <button class="SettingsPageToolbar-button clickable" @click="emit('toggleAdvanced')"
                 v-if="icons.some((i) => i == 'advanced')">
                 <font-awesome-icon :icon="['fas', 'cog']" />
                 <div class="SettingsPageToolbar-label">
                     Toggle Advanced
                 </div>
             </button>
-            <button class="SettingsPageToolbar-button clickable" @click="emitEvent('download')"
+            <button class="SettingsPageToolbar-button clickable" @click="emit('download')"
                 v-if="icons.some((i) => i == 'download')">
                 <font-awesome-icon :icon="['fas', 'download']" />
                 <div class="SettingsPageToolbar-label">
                     Download
                 </div>
             </button>
-            <button class="SettingsPageToolbar-button clickable" @click="emitEvent('toggleFollow')"
+            <button class="SettingsPageToolbar-button clickable" @click="emit('toggleFollow')"
                 v-if="icons.some((i) => i == 'follow')">
                 <font-awesome-icon :icon="['fas', followStatus ? 'person-walking' : 'person']" />
                 <div class="SettingsPageToolbar-label">
                     {{ followStatus ? 'Following' : 'Not Following' }}
+                </div>
+            </button>
+            <button class="SettingsPageToolbar-button clickable" @click="emit('arrImport')"
+                v-if="icons.some((i) => i == 'arrImport')">
+                <font-awesome-icon :icon="['fas', 'hat-wizard']" />
+                <div class="SettingsPageToolbar-label">
+                    Arr Import
                 </div>
             </button>
         </div>
@@ -65,7 +72,15 @@
 <script setup>
 import { defineEmits, defineProps, ref, onBeforeUnmount } from 'vue';
 
-const emit = defineEmits(['save', 'toggleAdvanced', 'download', 'toggleFollow', 'selectFilter', 'deleteQueueItem']);
+const emit = defineEmits([
+    'save',
+    'toggleAdvanced',
+    'download',
+    'toggleFollow',
+    'selectFilter',
+    'deleteQueueItem',
+    'arrImport'
+]);
 const showFilterDropdown = ref(false);
 const dropdownDiv = ref(null);
 
@@ -100,10 +115,6 @@ defineProps({
         default: false
     }
 })
-
-const emitEvent = (event) => {
-    emit(event);
-}
 
 const selectFilter = (option) => {
     showFilterDropdown.value = false;
