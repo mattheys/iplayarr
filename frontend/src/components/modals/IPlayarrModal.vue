@@ -1,7 +1,7 @@
 <template>
     <VueFinalModal
       class="iplayarr-modal"
-      content-class="iplayarr-modal-content confirmDialog"
+      content-class="iplayarr-modal-content"
       overlay-transition="vfm-fade"
       content-transition="vfm-fade"
       v-slot="{close}"
@@ -10,11 +10,13 @@
             <span>{{ title }}</span>
             <font-awesome-icon class="clickable" :icon="['fas', 'xmark']" @click="close()"/>
         </legend>
-        <slot/>
-        <div class="button-container floor">
-            <button class="clickable cancel" @click="emit('cancel')" v-if="showCancel">{{cancelLabel}}</button>
-            <button class="clickable cancel" @click="close()" v-if="showClose">{{closeLabel}}</button>
-            <button class="clickable" @click="emit('confirm')" v-if="showConfirm">{{confirmLabel}}</button>
+        <div class="modal-inner">
+            <slot/>
+            <div class="button-container floor">
+                <button class="clickable cancel" @click="emit('cancel')" v-if="showCancel">{{cancelLabel}}</button>
+                <button class="clickable cancel" @click="close()" v-if="showClose">{{closeLabel}}</button>
+                <button class="clickable" @click="emit('confirm')" v-if="showConfirm">{{confirmLabel}}</button>
+            </div>
         </div>
     </VueFinalModal>
 </template>
