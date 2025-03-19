@@ -155,11 +155,12 @@ const createUpdateFeature : Record<AppFeature, (form : App, arrConfig : ArrConfi
         const API_KEY: string = await configService.getParameter(IplayarrParameter.API_KEY) as string;
 
         if (form.download_client?.id && form.indexer?.name) {
+	    const useSSL : boolean = typeof form.iplayarr.useSSL === 'boolean' ? form.iplayarr.useSSL : form.iplayarr.useSSL === 'true';
             const createIndexerForm: CreateIndexerForm = {
                 appId : form.id,
                 name: form.indexer.name,
                 downloadClientId: form.download_client.id,
-                url: `http${form.iplayarr.useSSL ? 's' : ''}://${form.iplayarr.host}:${form.iplayarr.port}`,
+                url: `http${useSSL ? 's' : ''}://${form.iplayarr.host}:${form.iplayarr.port}`,
                 apiKey: API_KEY,
                 categories: appCategories[form.type],
                 priority: form.indexer.priority
@@ -206,11 +207,12 @@ const createUpdateFeature : Record<AppFeature, (form : App, arrConfig : ArrConfi
         const API_KEY: string = await configService.getParameter(IplayarrParameter.API_KEY) as string;
 
         if (form.download_client?.id && form.indexer?.name) {
-            const createIndexerForm: CreateIndexerForm = {
+            const useSSL : boolean = typeof form.iplayarr.useSSL === 'boolean' ? form.iplayarr.useSSL : form.iplayarr.useSSL === 'true';
+	    const createIndexerForm: CreateIndexerForm = {
                 appId : form.id,
                 name: form.indexer.name,
                 downloadClientId: form.download_client.id,
-                url: `http${form.iplayarr.useSSL ? 's' : ''}://${form.iplayarr.host}:${form.iplayarr.port}`,
+                url: `http${useSSL ? 's' : ''}://${form.iplayarr.host}:${form.iplayarr.port}`,
                 apiKey: API_KEY,
                 categories: appCategories[form.type],
                 priority: form.indexer.priority
