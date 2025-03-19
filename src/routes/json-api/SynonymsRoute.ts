@@ -6,8 +6,8 @@ import searchHistoryService from '../../service/searchHistoryService';
 import synonymService from '../../service/synonymService';
 import { App } from '../../types/App';
 import { ApiError, ApiResponse } from '../../types/responses/ApiResponse';
-import { Synonym } from '../../types/Synonym';
 import { ArrLookupResponse } from '../../types/responses/arr/ArrLookupResponse';
+import { Synonym } from '../../types/Synonym';
 
 const router = Router();
 
