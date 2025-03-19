@@ -7,6 +7,7 @@ import synonymService from '../../service/synonymService';
 import { App } from '../../types/App';
 import { ApiError, ApiResponse } from '../../types/responses/ApiResponse';
 import { Synonym } from '../../types/Synonym';
+import { ArrLookupResponse } from '../../types/responses/arr/ArrLookupResponse';
 
 const router = Router();
 
@@ -43,12 +44,12 @@ router.get('/searchHistory', async (req : Request, res : Response) => {
 
 router.get('/lookup/:appId', async (req : Request, res : Response) => {
     const {appId} = req.params as {appId : string};
-    const {term} = req.query as {term : string};
+    const {term} = req.query as {term? : string};
     
     const app : App | undefined = await appService.getApp(appId);
     if (app){
         try {
-            const results = await arrService.search(app, term);
+            const results : ArrLookupResponse[] = await arrService.search(app, term);
             res.json(results);
             return;
         } catch (err : any) {

@@ -229,6 +229,9 @@ button:focus {
 
   .modal-inner {
     overflow-y: auto;
+    @media (min-width: @mobile-breakpoint) {
+      max-height: 75vh;
+    }
   }
 
   @media (min-width: @mobile-breakpoint) {

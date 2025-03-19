@@ -25,7 +25,7 @@ const arrService = {
 
         const createDownloadClientRequest : ArrCreateDownloadClientRequest = {
             ...createDownloadClientRequestSkeleton,
-            name : form.name,
+            name : `${form.name} (iPlayarr)`,
             fields : [
                 ...createDownloadClientRequestSkeleton.fields as CreateDownloadClientRequestField[],
                 {
@@ -162,7 +162,7 @@ const arrService = {
         const createIndexerRequest : CreateIndexerRequest = {
             ...createIndexerRequestSkeleton,
             priority : form.priority || 25,
-            name : form.name,
+            name : `${form.name} (iPlayarr)`,
             downloadClientId : form.downloadClientId,
             fields : [
                 ...createIndexRequestFieldsSkeleton,
@@ -285,7 +285,7 @@ const arrService = {
             indexerUrls : [
                 form.url
             ],
-            name : form.name,
+            name : `${form.name} (iPlayarr)`,
             downloadClientId : form.downloadClientId,
             fields : [
                 ...createIndexRequestFieldsSkeleton,
@@ -367,9 +367,9 @@ const arrService = {
         }
     },
 
-    search : async(app : App, term : string) : Promise<string[]> => {
+    search : async(app : App, term? : string) : Promise<ArrLookupResponse[]> => {
         const endpoint : string = app.type == AppType.SONARR ? 'series' : 'movie';
-        const url : string = `${app.url}/api/v3/${endpoint}/lookup?term=${term}`
+        const url : string = `${app.url}/api/v3/${endpoint}${term ? `/lookup?term=${term}` : ''}`
 
         try {
             const response = await axios.get(url, {
@@ -379,7 +379,7 @@ const arrService = {
             });
             if (response.status == 200) {
                 const results : ArrLookupResponse[] = response.data;
-                return results.filter(({path}) => path).map(({title}) => title);
+                return results.filter(({path}) => path);
             }
             return [];
         } catch (error) {

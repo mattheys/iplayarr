@@ -1,4 +1,5 @@
 <template>
+    <SettingsPageToolbar :icons="['arrImport']" @arrImport="openImportWizard"/>
     <div class="inner-content">
         <legend>Synonyms</legend>
         <p>iPlayer don't save their videos in an *arr friendly way. You can use synonyms to help you bridge the gap</p>
@@ -34,6 +35,9 @@ import { ipFetch } from '@/lib/ipFetch';
 import dialogService from '@/lib/dialogService';
 
 import { deepCopy } from '@/lib/utils';
+import SettingsPageToolbar from '@/components/common/SettingsPageToolbar.vue';
+import AppSelectDialog from '@/components/modals/AppSelectDialog.vue';
+import ArrLookupDialog from '@/components/modals/ArrLookupDialog.vue';
 
 const synonyms = ref([]);
 
@@ -43,11 +47,12 @@ const refreshSynonyms = async () => {
 
 onMounted(refreshSynonyms);
 
-const openForm = (synonym) => {
+const openForm = (synonym, inputApp) => {
     const formModal = useModal({
         component: SynonymForm,
         attrs: {
             inputObj : deepCopy(synonym),
+            inputApp,
             action : synonym ? 'Edit' : 'Create',
             onSave(synonym) {
                 saveSynonym(synonym);
@@ -69,6 +74,50 @@ const removeSynonym = async ({id}) => {
         await ipFetch(`json-api/synonym`, 'DELETE', { id });
         refreshSynonyms();
     }
+}
+
+const openImportWizard = async () => {
+    const formModal = useModal({
+        component: AppSelectDialog,
+        attrs : {
+            onSelectApp : (app) => {
+                openArrItemList(app);
+                formModal.close();
+            },
+            onClose : () => {
+                formModal.close();
+            }
+        }
+    });
+    formModal.open();
+}
+
+const openArrItemList = async (app) => {
+    const formModal = useModal({
+        component: ArrLookupDialog,
+        attrs : {
+            app,
+            showFilter : true,
+            onError : (err) => {
+                dialogService.alert(`Error from ${app.name}`, err.message);
+            },
+            onSelect : async (result) => {
+                let options = [result.title];
+                if (result.alternateTitles && result.alternateTitles.length > 0){
+                    options = [...options, ...result.alternateTitles.map(({title}) => title)]
+                }
+                formModal.close();
+                const from = await dialogService.select(result.title, "Select a search Term", undefined, options);
+                if (from !== false){
+                    openForm({
+                        from,
+                        filenameOverride : result.title
+                    }, app);
+                }
+            }
+        }
+    });
+    formModal.open();
 }
 </script>
 
