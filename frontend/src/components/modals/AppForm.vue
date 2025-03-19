@@ -1,14 +1,7 @@
 <template>
-    <VueFinalModal
-      class="iplayarr-modal"
-      content-class="iplayarr-modal-content"
-      overlay-transition="vfm-fade"
-      content-transition="vfm-fade"
-      v-slot="{ close }"
-    >
-    <legend>{{action}} App</legend>
-    <LoadingIndicator v-if="loading"/>
-    <template v-if="!loading">
+    <IPlayarrModal :title="`${action} App`" :show-close="true" close-label="Cancel" :show-confirm="true" :confirmLabel="`${form.id ? 'Save' : 'Create'}`" @confirm="saveApp">
+        <LoadingIndicator v-if="loading"/>
+        <template v-if="!loading">
             <TextInput name="Name" tooltip="App Name" v-model="form.name" :error="validationErrors?.name"/>
             <SelectInput name="Type" tooltip="App Type" v-model="form.type" :options="types"/>
             <template v-if="form.type">
@@ -50,18 +43,11 @@
                     <TextInput name="Priority" placeholder="25" type-override="number" :tooltip="`Priority in ${capitalize(form.type)}`" v-model="form.indexer.priority" :error="validationErrors?.indexer_priority"/>
                 </template>
             </template>
-
-            
-            <div class="button-container floor">
-                <button class="clickable cancel" @click="close()">Cancel</button>
-                <button class="clickable" @click="saveApp">{{form.id ? 'Save' : 'Create'}}</button>
-            </div>
         </template>
-    </VueFinalModal>
+    </IPlayarrModal>
 </template>
 
 <script setup>
-    import { VueFinalModal } from 'vue-final-modal'
     import TextInput from '../common/form/TextInput.vue';
     import SelectInput from '../common/form/SelectInput.vue';
     import AppTestButton from '../apps/AppTestButton.vue';
@@ -70,6 +56,7 @@
     import { capitalize } from '@/lib/utils';
     import { ipFetch } from '@/lib/ipFetch';
 import LoadingIndicator from '../common/LoadingIndicator.vue';
+import IPlayarrModal from './IPlayarrModal.vue';
 
     const props = defineProps({action : String, inputObj : Object});
     const emit = defineEmits(['saved']);

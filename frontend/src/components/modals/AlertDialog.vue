@@ -1,23 +1,13 @@
 <template>
-    <VueFinalModal
-      class="iplayarr-modal"
-      content-class="iplayarr-modal-content confirmDialog"
-      overlay-transition="vfm-fade"
-      content-transition="vfm-fade"
-    >
-        <legend>{{ title }}</legend>
+    <IPlayarrModal :title="title" :show-cancel="showCancel" cancel-label="Cancel" :show-confirm="true" confirm-label="OK" @cancel="emit('cancel')" @confirm="emit('confirm')">
         <p :class="[subtext ? 'hasLower' : '']">{{ text }}</p>
         <p class="sub" v-if="subtext">{{ subtext }}</p>
-        <div class="button-container floor">
-            <button class="clickable cancel" @click="emit('cancel')" v-if="showCancel">Cancel</button>
-            <button class="clickable" @click="emit('confirm')">OK</button>
-        </div>
-    </VueFinalModal>
+    </IPlayarrModal>
 </template>
 
 <script setup>
-    import { VueFinalModal } from 'vue-final-modal'
     import { defineProps, defineEmits } from 'vue';
+import IPlayarrModal from './IPlayarrModal.vue';
 
     const emit = defineEmits(['confirm', 'cancel']);
 

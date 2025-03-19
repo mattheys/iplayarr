@@ -1,12 +1,5 @@
 <template>
-    <VueFinalModal
-      class="iplayarr-modal"
-      content-class="iplayarr-modal-content"
-      overlay-transition="vfm-fade"
-      content-transition="vfm-fade"
-      v-slot="{ close }"
-    >
-        <legend>Search History</legend>
+    <IPlayarrModal title="Search History" :show-close="true" close-label="Cancel">
         <table class="resultsTable">
             <thead>
                 <tr>
@@ -44,17 +37,14 @@
                 </tr>
             </tbody>
         </table>
-        <div class="button-container floor">
-            <button class="clickable cancel" @click="close()">Cancel</button>
-        </div>
-    </VueFinalModal>
+    </IPlayarrModal>
 </template>
 
 <script setup>
-    import { VueFinalModal } from 'vue-final-modal'
     import { ipFetch } from '@/lib/ipFetch';
 
     import {ref, onMounted, defineEmits} from 'vue';
+import IPlayarrModal from './IPlayarrModal.vue';
 
     const searchHistory = ref([]);
     const apps = ref([]);

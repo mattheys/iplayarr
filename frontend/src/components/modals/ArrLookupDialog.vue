@@ -1,12 +1,5 @@
 <template>
-    <VueFinalModal
-      class="iplayarr-modal"
-      content-class="iplayarr-modal-content"
-      overlay-transition="vfm-fade"
-      content-transition="vfm-fade"
-      v-slot="{ close }"
-    >
-        <legend>Lookup</legend>
+    <IPlayarrModal :show-close="true" close-label="Cancel" title="Lookup">
         <LoadingIndicator v-if="loading"/>
         <template v-if="!loading">
             <table class="resultsTable">
@@ -33,17 +26,14 @@
                 <p>No Results Found</p>
             </template>
         </template>
-        <div class="button-container floor">
-            <button class="clickable cancel" @click="close()">Cancel</button>
-        </div>
-    </VueFinalModal>
+    </IPlayarrModal>
 </template>
 
 <script setup>
-    import { VueFinalModal } from 'vue-final-modal'
     import { ipFetch } from '@/lib/ipFetch';
     import {ref, onMounted, defineEmits, defineProps} from 'vue';
-import LoadingIndicator from '../common/LoadingIndicator.vue';
+    import LoadingIndicator from '../common/LoadingIndicator.vue';
+    import IPlayarrModal from './IPlayarrModal.vue';
 
     const results = ref([]);
     const emit = defineEmits(['select', 'error'])

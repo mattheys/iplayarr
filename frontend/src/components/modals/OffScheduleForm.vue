@@ -1,26 +1,15 @@
 <template>
-    <VueFinalModal
-      class="iplayarr-modal"
-      content-class="iplayarr-modal-content"
-      overlay-transition="vfm-fade"
-      content-transition="vfm-fade"
-      v-slot="{ close }"
-    >
-        <legend>{{action}} Cache Definition</legend>
+    <IPlayarrModal :title="`${action} Cache Definition`" :show-close="true" close-label="Cancel" :show-confirm="true" confirm-label="Save" @confirm="saveCacheDefinition">
         <TextInput name="Name" tooltip="Name for the Cache Definition" v-model="form.name" placeholder="Red Dwarf"/>
         <TextInput name="URL" tooltip="iPlayer URL" v-model="form.url" placeholder="https://www.bbc.co.uk/iplayer/episodes/b008ncn6/red-dwarf"/>
-        <div class="button-container floor">
-            <button class="clickable cancel" @click="close()">Cancel</button>
-            <button @click="saveCacheDefinition">Save</button>
-        </div>
-    </VueFinalModal>
+    </IPlayarrModal>
 </template>
 
 <script setup>
-    import { VueFinalModal } from 'vue-final-modal'
     import TextInput from '../common/form/TextInput.vue';
     import {ref, defineEmits, onMounted, defineProps} from 'vue';
     import dialogService from '@/lib/dialogService';
+import IPlayarrModal from './IPlayarrModal.vue';
 
     const emit = defineEmits(['save']);
 
