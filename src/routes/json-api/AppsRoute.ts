@@ -85,4 +85,9 @@ router.post('/test', async (req : Request, res : Response) => {
     return;
 });
 
+router.post('/updateApiKey', async (_, res : Response) => {
+    appService.updateApiKey();
+    res.json(true);
+});
+
 export default router;

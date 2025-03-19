@@ -9,6 +9,7 @@ import { CreateDownloadClientForm } from '../types/requests/form/CreateDownloadC
 import { CreateIndexerForm } from '../types/requests/form/CreateIndexerForm';
 import arrService, { ArrConfig } from './arrService';
 import configService from './configService';
+import socketService from './socketService';
 
 let isStorageInitialized : boolean = false;
 
@@ -59,15 +60,17 @@ const appService = {
     },
 
     addApp : async (form : App) : Promise<App | undefined> => {
-        const id = v4();
-        form.id = id;
+        if (!form.id){
+            const id = v4();
+            form.id = id;
+        }
         const allApps : App[] = await appService.getAllApps();
         allApps.push(form);
         await storage.setItem('apps', allApps);
         return form;
     },
 
-    createUpdateIntegrations : async (input : App) : Promise<App> => {
+    createUpdateIntegrations : async (input : App, allowCreate : boolean = true) : Promise<App> => {
         let form = input;
         const features : AppFeature[] = appFeatures[form.type];
 
@@ -80,7 +83,7 @@ const appService = {
 
         for (const feature of features){
             try {
-                form = await createUpdateFeature[feature](form, arrConfig);
+                form = await createUpdateFeature[feature](form, arrConfig, allowCreate);
             } catch (err){
                 throw err;
             }
@@ -88,6 +91,21 @@ const appService = {
 
         await appService.updateApp(form);
         return form;
+    },
+
+    updateApiKey : async () : Promise<void> => {
+        const allApps : App[] = await appService.getAllApps();
+        const apiKeyApps : App[] = allApps.filter(({type}) => appFeatures[type].includes(AppFeature.CALLBACK));
+
+        apiKeyApps.forEach((app : App) => {
+            socketService.emit('app_update_status', {id : app.id, status : 'In Progress'});
+
+            appService.createUpdateIntegrations(app).then(() => {
+                socketService.emit('app_update_status', {id : app.id, status : 'Complete'});
+            }).catch((err) => {
+                socketService.emit('app_update_status', {id : app.id, status : 'Error', message : err.message});
+            });
+        })
     },
 
     testAppConnection : async (form : App) : Promise<string | boolean> => {
@@ -107,8 +125,8 @@ const appService = {
     }
 }
 
-const createUpdateFeature : Record<AppFeature, (form : App, arrConfig : ArrConfig) => Promise<App>> = {
-    [AppFeature.DOWNLOAD_CLIENT]: async (form: App, arrConfig: ArrConfig): Promise<App> => {
+const createUpdateFeature : Record<AppFeature, (form : App, arrConfig : ArrConfig, allowCreate : boolean) => Promise<App>> = {
+    [AppFeature.DOWNLOAD_CLIENT]: async (form: App, arrConfig: ArrConfig, allowCreate : boolean = true): Promise<App> => {
         const API_KEY: string = await configService.getParameter(IplayarrParameter.API_KEY) as string;
 
         if (form.download_client?.name) {
@@ -122,7 +140,7 @@ const createUpdateFeature : Record<AppFeature, (form : App, arrConfig : ArrConfi
 
 
             try {
-                const id = await arrService.createUpdateDownloadClient(createDownloadClientForm, arrConfig);
+                const id = await arrService.createUpdateDownloadClient(createDownloadClientForm, arrConfig, false, allowCreate);
                 form.download_client.id = id;
             } catch (err: any) {
                 throw {
@@ -133,7 +151,7 @@ const createUpdateFeature : Record<AppFeature, (form : App, arrConfig : ArrConfi
         }
         return form;
     },
-    [AppFeature.INDEXER]: async (form: App, arrConfig: ArrConfig): Promise<App> => {
+    [AppFeature.INDEXER]: async (form: App, arrConfig: ArrConfig, allowCreate : boolean = true): Promise<App> => {
         const API_KEY: string = await configService.getParameter(IplayarrParameter.API_KEY) as string;
 
         if (form.download_client?.id && form.indexer?.name) {
@@ -148,7 +166,7 @@ const createUpdateFeature : Record<AppFeature, (form : App, arrConfig : ArrConfi
             };
 
             try {
-                const id = await arrService.createUpdateIndexer(createIndexerForm, arrConfig);
+                const id = await arrService.createUpdateIndexer(createIndexerForm, arrConfig, allowCreate);
                 form.indexer.id = id;
             } catch (err: any) {
                 throw {
@@ -159,7 +177,7 @@ const createUpdateFeature : Record<AppFeature, (form : App, arrConfig : ArrConfi
         }
         return form;
     },
-    [AppFeature.PROWLARR_DOWNLOAD_CLIENT]: async (form: App, arrConfig: ArrConfig): Promise<App> => {
+    [AppFeature.PROWLARR_DOWNLOAD_CLIENT]: async (form: App, arrConfig: ArrConfig, allowCreate : boolean = true): Promise<App> => {
         const API_KEY: string = await configService.getParameter(IplayarrParameter.API_KEY) as string;
 
         if (form.download_client?.name) {
@@ -173,7 +191,7 @@ const createUpdateFeature : Record<AppFeature, (form : App, arrConfig : ArrConfi
 
 
             try {
-                const id = await arrService.createUpdateDownloadClient(createDownloadClientForm, arrConfig, true);
+                const id = await arrService.createUpdateDownloadClient(createDownloadClientForm, arrConfig, true, allowCreate);
                 form.download_client.id = id;
             } catch (err: any) {
                 throw {
@@ -184,7 +202,7 @@ const createUpdateFeature : Record<AppFeature, (form : App, arrConfig : ArrConfi
         }
         return form;
     },
-    [AppFeature.PROWLARR_INDEXER]: async (form: App, arrConfig: ArrConfig): Promise<App> => {
+    [AppFeature.PROWLARR_INDEXER]: async (form: App, arrConfig: ArrConfig, allowCreate : boolean = true): Promise<App> => {
         const API_KEY: string = await configService.getParameter(IplayarrParameter.API_KEY) as string;
 
         if (form.download_client?.id && form.indexer?.name) {
@@ -199,7 +217,7 @@ const createUpdateFeature : Record<AppFeature, (form : App, arrConfig : ArrConfi
             };
 
             try {
-                const id = await arrService.createUpdateProwlarrIndexer(createIndexerForm, arrConfig);
+                const id = await arrService.createUpdateProwlarrIndexer(createIndexerForm, arrConfig, allowCreate);
                 form.indexer.id = id;
             } catch (err: any) {
                 throw {

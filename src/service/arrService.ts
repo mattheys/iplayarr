@@ -19,7 +19,7 @@ export interface ArrConfig {
 }
 
 const arrService = {
-    createUpdateDownloadClient : async(form : CreateDownloadClientForm, config : ArrConfig, prowlarr : boolean = false) : Promise<number> => {
+    createUpdateDownloadClient : async(form : CreateDownloadClientForm, config : ArrConfig, prowlarr : boolean = false, allowCreate : boolean = true) : Promise<number> => {
         const {API_KEY, HOST, DOWNLOAD_CLIENT_ID} = config;
         let updateMethod : keyof AxiosInstance = 'post';
 
@@ -110,6 +110,8 @@ const arrService = {
                 if (downloadClient){
                     updateMethod = 'put';
                     createDownloadClientRequest.id = DOWNLOAD_CLIENT_ID;
+                } else if (!allowCreate){
+                    throw new Error('Existing Download Client not found');
                 }
             }
 
@@ -153,7 +155,7 @@ const arrService = {
         }
     },
 
-    createUpdateIndexer : async(form : CreateIndexerForm, config : ArrConfig) : Promise<number> => {
+    createUpdateIndexer : async(form : CreateIndexerForm, config : ArrConfig, allowCreate : boolean = true) : Promise<number> => {
         const {API_KEY, HOST, INDEXER_ID} = config;
         let updateMethod : keyof AxiosInstance = 'post';
 
@@ -227,6 +229,8 @@ const arrService = {
             if (indexer){
                 updateMethod = 'put';
                 createIndexerRequest.id = INDEXER_ID;
+            } else if (!allowCreate){
+                throw new Error('Existing Download Client not found');
             }
         }
 
@@ -270,7 +274,7 @@ const arrService = {
         }
     },
 
-    createUpdateProwlarrIndexer : async(form : CreateIndexerForm, config : ArrConfig) : Promise<number> => {
+    createUpdateProwlarrIndexer : async(form : CreateIndexerForm, config : ArrConfig, allowCreate : boolean = true) : Promise<number> => {
         const {API_KEY, HOST, INDEXER_ID} = config;
         let updateMethod : keyof AxiosInstance = 'post';
 
@@ -325,6 +329,8 @@ const arrService = {
             if (indexer){
                 updateMethod = 'put';
                 createIndexerRequest.id = INDEXER_ID;
+            } else if (!allowCreate){
+                throw new Error('Existing Download Client not found');
             }
         }
 

@@ -4,7 +4,7 @@
     <div class="inner-content" v-if="!loading">
         <legend>iPlayarr</legend>
         <TextInput name="Api Key" tooltip="API Key for access from *arr apps." v-model="config.API_KEY"
-            :error="validationErrors.config?.API_KEY" />
+            :error="validationErrors.config?.API_KEY" icon-button="qrcode" @action="generateApiKey"/>
         <TextInput name="Download Directory" tooltip="Directory for in-progress Downloads."
             v-model="config.DOWNLOAD_DIR" :error="validationErrors.config?.DOWNLOAD_DIR" />
         <TextInput name="Complete Directory" tooltip="Directory for completed Downloads."
@@ -49,8 +49,12 @@ import { ipFetch } from '@/lib/ipFetch';
 import SelectInput from '@/components/common/form/SelectInput.vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import dialogService from '@/lib/dialogService';
+import { v4 } from 'uuid';
+import { useModal } from 'vue-final-modal'
+import UpdateAppDialog from '@/components/modals/UpdateAppDialog.vue';
 
 const loading = ref(false);
+let originalApiKey = undefined;
 
 const config = ref({});
 const configChanges = ref(false);
@@ -73,6 +77,7 @@ onMounted(async () => {
     ]);
 
     config.value = configResponse.data;
+    originalApiKey = configResponse.data.API_KEY;
     qualityProfiles.value = qpResponse.data.map(({ id, name, quality }) => ({ "key": id, "value": `${name} (${quality})` }));
 
     watch(config, () => { configChanges.value = true }, { deep: true });
@@ -96,10 +101,30 @@ const saveConfig = async () => {
     }
 
     loading.value = false;
+    if (config.value.API_KEY != originalApiKey){
+        if (await dialogService.confirm("API Key Changed", "Api Key Changed, do you want to update any relevant apps?")){
+            const formModal = useModal({
+                component: UpdateAppDialog,
+                attrs : {
+                    onClose : () => {
+                        formModal.close();
+                    }
+                }
+            });
+            formModal.open();
+        }
+    }
+    originalApiKey = config.value.API_KEY;
 }
 
 const toggleAdvanced = () => {
     showAdvanced.value = !showAdvanced.value;
+}
+
+const generateApiKey = async () => {
+    if (await dialogService.confirm("Regenerate API Key", "Are you sure you want to regenerate the API Key?", "API Key will not change until settings are saved")){
+        config.value.API_KEY = v4();
+    }
 }
 
 onBeforeRouteLeave(async (_, __, next) => {
