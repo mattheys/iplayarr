@@ -61,14 +61,14 @@ export default async (req : Request, res : Response) => {
                     category: categoriesForType(result.type),
                     pubDate : result.pubDate ? result.pubDate.toUTCString().replace('GMT', '+0000') : pubDate,
                     'newznab:attr': [
-                      ...createCategoryAttributes(result.type),
-                      { $: { name: 'language', value: 'English' } },
-                      { $: { name: 'files', value: '1' } },
-                      { $: { name: 'grabs', value: '0' } }
+                        ...createCategoryAttributes(result.type),
+                        { $: { name: 'language', value: 'English' } },
+                        { $: { name: 'files', value: '1' } },
+                        { $: { name: 'grabs', value: '0' } }
                     ],
                     link: `${getBaseUrl(req)}${createNZBDownloadLink(result, req.query.apikey as string, app)}`,
                     enclosure: {$:{url : `${getBaseUrl(req)}${createNZBDownloadLink(result, req.query.apikey as string, app)}`, length : result.size ? String(result.size * 1048576) : '2147483648', type: 'application/x-nzb'} } 
-                  }
+                }
             ))
         }
     } as NewzNabSearchResponse
@@ -82,10 +82,10 @@ export default async (req : Request, res : Response) => {
 
 function categoriesForType(type : VideoType) : string[] {
     switch (type) {
-        case VideoType.MOVIE:
-            return ['2000','2040'];
-        case VideoType.TV:
-            return ['5000', '5040'];
+    case VideoType.MOVIE:
+        return ['2000','2040'];
+    case VideoType.TV:
+        return ['5000', '5040'];
     }   
 }
 

@@ -62,9 +62,9 @@ router.post('/login', async (req: Request, res: Response) => {
 
 router.get('/logout', (req, res) => {
     req.session.destroy(() => {
-      res.json({status : true});
+        res.json({status : true});
     });
-  });
+});
 
 router.get('/me', (req : Request, res : Response) => {
     if (!req.session?.user){
