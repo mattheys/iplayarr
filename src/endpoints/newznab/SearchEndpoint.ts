@@ -30,7 +30,9 @@ export default async (req : Request, res : Response) => {
         const historyEntry : SearchHistoryEntry = {
             term: searchTerm,
             results: results.length,
-            appId : app
+            appId : app,
+            series : season,
+            episode : ep
         }
         searchHistoryService.addItem(historyEntry);
     }

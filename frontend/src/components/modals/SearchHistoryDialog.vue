@@ -11,6 +11,8 @@
             <thead>
                 <tr>
                     <th>Search Term</th>
+                    <th>Series</th>
+                    <th>Episode</th>
                     <th>Results</th>
                     <th>App</th>
                     <th>
@@ -21,6 +23,8 @@
             <tbody>
                 <tr v-for="history of searchHistory" v-bind:key="history.term">
                     <td>{{ history.term }}</td>
+                    <td>{{ history.series }}</td>
+                    <td>{{ history.episode }}</td>
                     <td>{{ history.results }}</td>
                     <td>
                         <template v-if="getAppForId(history.appId)">
