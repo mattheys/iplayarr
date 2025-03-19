@@ -1,28 +1,46 @@
 <template>
-    <div :class="['form-group', advanced ? 'advanced' : '']">
-        <label v-if="name">{{ name }}</label>
-        <div :class="['inputBox', error ? 'error' : '']">
-            <div class="inputWithButton">
-                <input :type="typeOverride" v-model="localValue" :placeholder="placeholder" />
-                <button v-if="iconButton" @click="emit('action')" :title="buttonTooltip">
-                    <font-awesome-icon :icon="['fas', iconButton]" />
-                </button>
-                <button v-if="brandButton" @click="emit('action')" :title="buttonTooltip">
-                    <img class="brand" :src="`/img/${brandButton.toLowerCase()}.svg`"/>
-                </button>
-            </div>
-            <div class="error" v-if="error">
-                {{ error }}
-            </div>
-            <div class="tooltip">
-                {{ tooltip }}
-            </div>
-        </div>
+  <div :class="['form-group', advanced ? 'advanced' : '']">
+    <label v-if="name">{{ name }}</label>
+    <div :class="['inputBox', error ? 'error' : '']">
+      <div class="inputWithButton">
+        <input
+          v-model="localValue"
+          :type="typeOverride"
+          :placeholder="placeholder"
+        >
+        <button
+          v-if="iconButton"
+          :title="buttonTooltip"
+          @click="emit('action')"
+        >
+          <font-awesome-icon :icon="['fas', iconButton]" />
+        </button>
+        <button
+          v-if="brandButton"
+          :title="buttonTooltip"
+          @click="emit('action')"
+        >
+          <img
+            class="brand"
+            :src="`/img/${brandButton.toLowerCase()}.svg`"
+          >
+        </button>
+      </div>
+      <div
+        v-if="error"
+        class="error"
+      >
+        {{ error }}
+      </div>
+      <div class="tooltip">
+        {{ tooltip }}
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue';
+import { defineEmits, defineProps, ref, watch } from 'vue';
 
 const props = defineProps({
     name: {
@@ -40,7 +58,7 @@ const props = defineProps({
     typeOverride: {
         type: String,
         required: false,
-        default: "text"
+        default: 'text'
     },
     error: {
         type: String,

@@ -1,36 +1,56 @@
 <template>
-    <IPlayarrModal :title="title" :show-cancel="showCancel" cancel-label="Cancel" :show-confirm="true" confirm-label="OK" @cancel="emit('cancel')" @confirm="emit('confirm', selected)">
-        <p :class="[subtext ? 'hasLower' : '']">{{ text }}</p>
-        <p class="sub" v-if="subtext">{{ subtext }}</p>
-        <div class="alertDialogSelect">
-            <SelectInput :options="computedOptions" v-if="options" v-model="selected"/>
-        </div>
-    </IPlayarrModal>
+  <IPlayarrModal
+    :title="title"
+    :show-cancel="showCancel"
+    cancel-label="Cancel"
+    :show-confirm="true"
+    confirm-label="OK"
+    @cancel="emit('cancel')"
+    @confirm="emit('confirm', selected)"
+  >
+    <p :class="[subtext ? 'hasLower' : '']">
+      {{ text }}
+    </p>
+    <p
+      v-if="subtext"
+      class="sub"
+    >
+      {{ subtext }}
+    </p>
+    <div class="alertDialogSelect">
+      <SelectInput
+        v-if="options"
+        v-model="selected"
+        :options="computedOptions"
+      />
+    </div>
+  </IPlayarrModal>
 </template>
 
 <script setup>
-    import { defineProps, defineEmits, ref, computed } from 'vue';
-    import IPlayarrModal from './IPlayarrModal.vue';
-    import SelectInput from '../common/form/SelectInput.vue';
+import { computed,defineEmits, defineProps, ref } from 'vue';
 
-    const emit = defineEmits(['confirm', 'cancel']);
+import SelectInput from '../common/form/SelectInput.vue';
+import IPlayarrModal from './IPlayarrModal.vue';
 
-    const props = defineProps({
-        title : String,
-        text : String,
-        subtext : String,
-        showCancel : {
-            type : Boolean,
-            default : false
-        },
-        options : Array
-    });
+const emit = defineEmits(['confirm', 'cancel']);
 
-    const selected = ref(props.options ? props.options[0] : true);
+const props = defineProps({
+    title : String,
+    text : String,
+    subtext : String,
+    showCancel : {
+        type : Boolean,
+        default : false
+    },
+    options : Array
+});
 
-    const computedOptions = computed(() => {
-        return props.options ? props.options.map((v) => ({key : v, value : v})) : [];
-    });
+const selected = ref(props.options ? props.options[0] : true);
+
+const computedOptions = computed(() => {
+    return props.options ? props.options.map((v) => ({key : v, value : v})) : [];
+});
 </script>
 
 <style lang="less" scoped>

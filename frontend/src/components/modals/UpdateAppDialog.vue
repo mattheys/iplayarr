@@ -1,40 +1,52 @@
 <template>
-    <IPlayarrModal title="Updating Apps" :show-close="true" close-label="Close">
-        <table class="resultsTable">
-            <thead>
-                <tr>
-                    <th>App</th>
-                    <th>Status</th>
-                    <th>
-                        <font-awesome-icon :icon="['fas', 'book-open']" />
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="app of apps" v-bind:key="app.id">
-                    <td>
-                        <div class="appDisplay">
-                            <img class="appImg" :src="`/img/${app.type.toLowerCase()}.svg`"/>
-                            <span class="appName">
-                                {{app.name}}
-                            </span>
-                        </div>
-                    </td>
-                    <td v-if="appStatus[app.id]">
-                        <span :class="['pill', getPillColor(appStatus[app.id].status)]">{{appStatus[app.id].status}}</span>
-                    </td>
-                    <td v-if="appStatus[app.id]">
-                        {{appStatus[app.id].message}}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </IPlayarrModal>
+  <IPlayarrModal
+    title="Updating Apps"
+    :show-close="true"
+    close-label="Close"
+  >
+    <table class="resultsTable">
+      <thead>
+        <tr>
+          <th>App</th>
+          <th>Status</th>
+          <th>
+            <font-awesome-icon :icon="['fas', 'book-open']" />
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="app of apps"
+          :key="app.id"
+        >
+          <td>
+            <div class="appDisplay">
+              <img
+                class="appImg"
+                :src="`/img/${app.type.toLowerCase()}.svg`"
+              >
+              <span class="appName">
+                {{ app.name }}
+              </span>
+            </div>
+          </td>
+          <td v-if="appStatus[app.id]">
+            <span :class="['pill', getPillColor(appStatus[app.id].status)]">{{ appStatus[app.id].status }}</span>
+          </td>
+          <td v-if="appStatus[app.id]">
+            {{ appStatus[app.id].message }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </IPlayarrModal>
 </template>
 
 <script setup>
+import {defineEmits, inject, onBeforeUnmount,onMounted, ref} from 'vue';
+
 import { ipFetch } from '@/lib/ipFetch';
-import {ref, onMounted, defineEmits, inject, onBeforeUnmount} from 'vue';
+
 import IPlayarrModal from './IPlayarrModal.vue';
 
 const apps = ref([]);
@@ -46,8 +58,8 @@ const appStatus = ref({});
 const emit = defineEmits(['close'])
 
 onMounted(async () => {
-    apps.value = (await ipFetch("json-api/apps")).data;
-    features.value = (await ipFetch("json-api/apps/types")).data;
+    apps.value = (await ipFetch('json-api/apps')).data;
+    features.value = (await ipFetch('json-api/apps/types')).data;
 
     apps.value = apps.value.filter(({type}) => features.value[type].includes('callback'));
 
@@ -57,7 +69,7 @@ onMounted(async () => {
     }
 
     appStatus.value = apps.value.reduce((acc, {id}) => {
-        acc[id] = {status : "Pending", message : ""};
+        acc[id] = {status : 'Pending', message : ''};
         return acc;
     }, {});
 
@@ -65,7 +77,7 @@ onMounted(async () => {
         appStatus.value[id] = {status, message};
     });
 
-    ipFetch("json-api/apps/updateApiKey", "POST", {});
+    ipFetch('json-api/apps/updateApiKey', 'POST', {});
 });
 
 onBeforeUnmount(() => {
@@ -74,14 +86,14 @@ onBeforeUnmount(() => {
 
 const getPillColor = (status) => {
     switch (status) {
-        default:
-            return "grey";
-        case "In Progress":
-            return "error"; 
-        case "Complete":
-            return "success"; 
-        case "Error":
-            return "error";      
+    default:
+        return 'grey';
+    case 'In Progress':
+        return 'error'; 
+    case 'Complete':
+        return 'success'; 
+    case 'Error':
+        return 'error';      
     }
 }
 </script>

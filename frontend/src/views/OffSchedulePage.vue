@@ -1,87 +1,92 @@
 <template>
-    <div class="inner-content">
-        <legend>Off Schedule</legend>
-        <p>By default, only media broadcast in the last 30 days is returned, to extend this, you need to index specific iPlayer URLs</p>
-        <ListEditor :items="cacheDefinitions" @create="openForm" :actions="[['refresh', refreshCacheDefinition], ['trash', remove]]" v-slot="{item}">
-            <div class="major">
-                {{item.name}}
-            </div>
-            <div class="cacheDefinitionTarget">
-                {{item.url}}
-            </div>
-            <div class="cacheDefinitionTarget">
-                {{item.cacheRefreshed}}
-            </div>
-        </ListEditor>
-        <div class="block-reset"></div>
-    </div>
+  <div class="inner-content">
+    <legend>Off Schedule</legend>
+    <p>By default, only media broadcast in the last 30 days is returned, to extend this, you need to index specific iPlayer URLs</p>
+    <ListEditor
+      v-slot="{item}"
+      :items="cacheDefinitions"
+      :actions="[['refresh', refreshCacheDefinition], ['trash', remove]]"
+      @create="openForm"
+    >
+      <div class="major">
+        {{ item.name }}
+      </div>
+      <div class="cacheDefinitionTarget">
+        {{ item.url }}
+      </div>
+      <div class="cacheDefinitionTarget">
+        {{ item.cacheRefreshed }}
+      </div>
+    </ListEditor>
+    <div class="block-reset" />
+  </div>
 </template>
 
 <script setup>
-    import OffScheduleForm from '@/components/modals/OffScheduleForm.vue';
-    import ListEditor from '@/components/common/ListEditor.vue';
-    import { ipFetch } from '@/lib/ipFetch';
-    import {ref, onMounted} from 'vue';
-    import { useRouter } from 'vue-router';
-    import { useModal } from 'vue-final-modal'
-    import dialogService from '@/lib/dialogService';
+import {onMounted,ref} from 'vue';
+import { useModal } from 'vue-final-modal'
+import { useRouter } from 'vue-router';
 
-    import { deepCopy } from '@/lib/utils';
+import ListEditor from '@/components/common/ListEditor.vue';
+import OffScheduleForm from '@/components/modals/OffScheduleForm.vue';
+import dialogService from '@/lib/dialogService';
+import { ipFetch } from '@/lib/ipFetch';
+import { deepCopy } from '@/lib/utils';
 
-    const router = useRouter();
+const router = useRouter();
 
-    const cacheDefinitions = ref([]);
+const cacheDefinitions = ref([]);
 
-    const refreshCacheDefinitions = async () => {
-        cacheDefinitions.value = (await ipFetch(`json-api/offSchedule`)).data;
-    }
+const refreshCacheDefinitions = async () => {
+    cacheDefinitions.value = (await ipFetch('json-api/offSchedule')).data;
+}
 
-    onMounted(refreshCacheDefinitions);
+onMounted(refreshCacheDefinitions);
 
-    const openForm = (cacheDef) => {
-        const formModal = useModal({
-            component: OffScheduleForm,
-            attrs: {
-                inputObj : deepCopy(cacheDef),
-                action : cacheDef ? 'Edit' : 'Create',
-                onSave : async(form, success) => {
-                    const result = await saveCacheDefinition(form);
-                    if (result){
-                        formModal.close();
-                        success();
-                    }
+const openForm = (cacheDef) => {
+    const formModal = useModal({
+        component: OffScheduleForm,
+        attrs: {
+            inputObj : deepCopy(cacheDef),
+            action : cacheDef ? 'Edit' : 'Create',
+            onSave : async(form, success) => {
+                const result = await saveCacheDefinition(form);
+                if (result){
+                    formModal.close();
+                    success();
                 }
             }
-        });
-        formModal.open();
-    }
+        }
+    });
+    formModal.open();
+}
 
-    const remove = async (id) => {
-        if (await dialogService.confirm('Delete Cache Definition', 'Are you sure you want to delete this Cache Definition?')){
-            await ipFetch(`json-api/offSchedule`, 'DELETE', {id});
-            refreshCacheDefinitions();
-        }  
-    }
+const remove = async (id) => {
+    if (await dialogService.confirm('Delete Cache Definition', 'Are you sure you want to delete this Cache Definition?')){
+        await ipFetch('json-api/offSchedule', 'DELETE', {id});
+        refreshCacheDefinitions();
+    }  
+}
 
-    const saveCacheDefinition = async (form) => {
-        const method = form.id ? 'PUT' : 'POST';
-        const response = await ipFetch('json-api/offSchedule', method, form);
-        if (response.ok){
-            refreshCacheDefinitions();
-            return true;
-        } else {
-            dialogService.alert('Validation Error', response.data.invalid_fields?.url);
-            return false;
+const saveCacheDefinition = async (form) => {
+    const method = form.id ? 'PUT' : 'POST';
+    const response = await ipFetch('json-api/offSchedule', method, form);
+    if (response.ok){
+        refreshCacheDefinitions();
+        return true;
+    } else {
+        dialogService.alert('Validation Error', response.data.invalid_fields?.url);
+        return false;
+    }
+}
+
+const refreshCacheDefinition = async (def) => {
+    if (await dialogService.confirm('Refresh Cache', `Are you sure you want to refresh the cache for ${def.name}?`)) {
+        await ipFetch('json-api/offSchedule/refresh', 'POST', def);
+        if (await dialogService.confirm('Cache Refreshing', 'Cache Refresh Started, Would you like to view the logs?')) {
+            router.push('/logs');
         }
     }
-
-    const refreshCacheDefinition = async (def) => {
-        if (await dialogService.confirm("Refresh Cache", `Are you sure you want to refresh the cache for ${def.name}?`)) {
-            await ipFetch('json-api/offSchedule/refresh', 'POST', def);
-            if (await dialogService.confirm("Cache Refreshing", "Cache Refresh Started, Would you like to view the logs?")) {
-                router.push("/logs");
-            }
-        }
 
 }
 </script>

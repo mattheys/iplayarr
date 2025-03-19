@@ -1,11 +1,23 @@
 <template>
-    <div :class="['progress-bar', history ? 'history' : '']" v-if="!idle">
-        <div class="progress" :style="{ width: progress + '%' }"></div>
-    </div>
+  <div
+    v-if="!idle"
+    :class="['progress-bar', history ? 'history' : '']"
+  >
+    <div
+      class="progress"
+      :style="{ width: progress + '%' }"
+    />
+  </div>
 
-    <div :class="['progress-bar', history ? 'history' : '', 'idle']" v-if="idle">
-        <div class="progress" style="width: 100%"></div>
-    </div>
+  <div
+    v-if="idle"
+    :class="['progress-bar', history ? 'history' : '', 'idle']"
+  >
+    <div
+      class="progress"
+      style="width: 100%"
+    />
+  </div>
 </template>
 
 <script setup>

@@ -1,46 +1,55 @@
 <template>
-    <button class="test-button" @click="test">
-        <template v-if="testStatus == 'INITIAL'">
-            Test {{ capitalize(app.type) }}
-        </template>
-        <template v-if="testStatus == 'PENDING'">
-            <font-awesome-icon class="test-pending" :icon="['fas', 'spinner']" />
-        </template>
-        <template v-if="testStatus == 'SUCCESS'">
-            <font-awesome-icon class="test-success" :icon="['fas', 'check']" />
-        </template>
-    </button>
+  <button
+    class="test-button"
+    @click="test"
+  >
+    <template v-if="testStatus == 'INITIAL'">
+      Test {{ capitalize(app.type) }}
+    </template>
+    <template v-if="testStatus == 'PENDING'">
+      <font-awesome-icon
+        class="test-pending"
+        :icon="['fas', 'spinner']"
+      />
+    </template>
+    <template v-if="testStatus == 'SUCCESS'">
+      <font-awesome-icon
+        class="test-success"
+        :icon="['fas', 'check']"
+      />
+    </template>
+  </button>
 </template>
 
 <script setup>
-    import {defineProps, ref, defineExpose} from 'vue';
-    import { ipFetch } from '@/lib/ipFetch';
+import {defineExpose,defineProps, ref} from 'vue';
 
-    import dialogService from '@/lib/dialogService';
-    import { capitalize } from '@/lib/utils';
+import dialogService from '@/lib/dialogService';
+import { ipFetch } from '@/lib/ipFetch';
+import { capitalize } from '@/lib/utils';
 
-    const props = defineProps({
-        app: Object
-    });
+const props = defineProps({
+    app: Object
+});
 
-    const testStatus = ref('INITIAL');
+const testStatus = ref('INITIAL');
 
-    const test = async () => {
-        testStatus.value = "PENDING";
-        const {data, ok} = await ipFetch('json-api/apps/test', 'POST', props.app);
-        if (!ok){
-            dialogService.alert('Connection Error', `Error Connecting to ${capitalize(props.app.type)} : ${data.message}`);
-            testStatus.value = "INITIAL";
-        } else {
-            testStatus.value = "SUCCESS";
-        }
-    };
-
-    const resetTest = () => {
-        testStatus.value = "INITIAL";
+const test = async () => {
+    testStatus.value = 'PENDING';
+    const {data, ok} = await ipFetch('json-api/apps/test', 'POST', props.app);
+    if (!ok){
+        dialogService.alert('Connection Error', `Error Connecting to ${capitalize(props.app.type)} : ${data.message}`);
+        testStatus.value = 'INITIAL';
+    } else {
+        testStatus.value = 'SUCCESS';
     }
+};
 
-    defineExpose({ resetTest, status : testStatus.value == 'SUCCESS' });
+const resetTest = () => {
+    testStatus.value = 'INITIAL';
+}
+
+defineExpose({ resetTest, status : testStatus.value == 'SUCCESS' });
 </script>
 
 <style lang="less">

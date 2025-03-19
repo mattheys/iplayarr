@@ -1,51 +1,89 @@
 <template>
-    <div class="NavBar">
-        <div class="left">
-            <div class="logoPanel">
-                <RouterLink to="/queue">
-                    <img src="/iplayarr.png" alt="Logo">
-                    <p class="desktopOnly">iPlayarr</p>
-                </RouterLink>
-                <font-awesome-icon class="mobileOnly clickable burgerMenu" @click="toggleLeftHandNav" :icon="['fas', 'bars']" v-if="authState.user"/>
-            </div>
-        </div>
-        <div class="middle">
-            <div class="searchPanel" v-if="authState.user">
-                <font-awesome-icon :icon="['fas', 'search']"/>
-                <input class="searchBox" type="text" placeholder="Search" @keyup.enter="search" v-model="searchTerm"/>
-            </div>
-        </div>
-        <div class="right">
-            <a href="https://ko-fi.com/nikorag" aria-label="Donate" class="desktopOnly donateLink" target="_blank" v-if="!hiddenSettings.HIDE_DONATE">
-                <font-awesome-icon class="desktopOnly clickable" :icon="['fas', 'heart']" v-if="authState.user"/>
-            </a>
-            <a href="https://github.com/Nikorag/iplayarr" class="desktopOnly" aria-label="GitHub" target="_blank">
-                <font-awesome-icon class="desktopOnly clickable" :icon="['fab', 'github']" v-if="authState.user"/>
-            </a>
-        </div>
+  <div class="NavBar">
+    <div class="left">
+      <div class="logoPanel">
+        <RouterLink to="/queue">
+          <img
+            src="/iplayarr.png"
+            alt="Logo"
+          >
+          <p class="desktopOnly">
+            iPlayarr
+          </p>
+        </RouterLink>
+        <font-awesome-icon
+          v-if="authState.user"
+          class="mobileOnly clickable burgerMenu"
+          :icon="['fas', 'bars']"
+          @click="toggleLeftHandNav"
+        />
+      </div>
     </div>
+    <div class="middle">
+      <div
+        v-if="authState.user"
+        class="searchPanel"
+      >
+        <font-awesome-icon :icon="['fas', 'search']" />
+        <input
+          v-model="searchTerm"
+          class="searchBox"
+          type="text"
+          placeholder="Search"
+          @keyup.enter="search"
+        >
+      </div>
+    </div>
+    <div class="right">
+      <a
+        v-if="!hiddenSettings.HIDE_DONATE"
+        href="https://ko-fi.com/nikorag"
+        aria-label="Donate"
+        class="desktopOnly donateLink"
+        target="_blank"
+      >
+        <font-awesome-icon
+          v-if="authState.user"
+          class="desktopOnly clickable"
+          :icon="['fas', 'heart']"
+        />
+      </a>
+      <a
+        href="https://github.com/Nikorag/iplayarr"
+        class="desktopOnly"
+        aria-label="GitHub"
+        target="_blank"
+      >
+        <font-awesome-icon
+          v-if="authState.user"
+          class="desktopOnly clickable"
+          :icon="['fab', 'github']"
+        />
+      </a>
+    </div>
+  </div>
 </template>
 
 <script setup>
-    import { inject, ref, defineExpose } from 'vue';
-    import { useRouter } from 'vue-router';
+import { defineExpose,inject, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-    const router = useRouter();
+const router = useRouter();
 
-    const toggleLeftHandNav = inject('toggleLeftHandNav');
-    const hiddenSettings = inject("hiddenSettings");
-    const authState = inject("authState");
-    const searchTerm = ref("");
+const toggleLeftHandNav = inject('toggleLeftHandNav');
+const hiddenSettings = inject('hiddenSettings');
+const authState = inject('authState');
+const searchTerm = ref('');
 
-    const search = () => {
-        router.push({ name : 'search', query : {searchTerm : searchTerm.value}});
-    }
+const search = () => {
+    router.push({ name : 'search', query : {searchTerm : searchTerm.value}});
+}
 
-    const clearSearch = () => {
-        searchTerm.value = "";
-    }
+const clearSearch = () => {
+    searchTerm.value = '';
+}
 
-    defineExpose({clearSearch});
+defineExpose({clearSearch});
 </script>
 
 <style lang="less" scoped>

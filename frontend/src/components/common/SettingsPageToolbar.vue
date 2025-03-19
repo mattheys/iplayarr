@@ -1,76 +1,110 @@
 <template>
-    <div class="SettingsPageToolbar">
-        <div>
-            <button class="SettingsPageToolbar-button clickable" @click="emit('deleteQueueItem')"
-                v-if="icons.some((i) => i == 'delete')">
-                <font-awesome-icon :icon="['fas', 'trash']" />
-                <div class="SettingsPageToolbar-label">
-                    Stop
-                </div>
-            </button>
-            <button class="SettingsPageToolbar-button clickable" @click="emit('save')" :disabled="!saveEnabled"
-                v-if="icons.some((i) => i == 'save')">
-                <font-awesome-icon :icon="['fas', 'floppy-disk']" />
-                <div class="SettingsPageToolbar-label">
-                    {{ saveEnabled ? 'Save' : 'No' }} Changes
-                </div>
-            </button>
-            <button class="SettingsPageToolbar-button clickable" @click="emit('toggleAdvanced')"
-                v-if="icons.some((i) => i == 'advanced')">
-                <font-awesome-icon :icon="['fas', 'cog']" />
-                <div class="SettingsPageToolbar-label">
-                    Toggle Advanced
-                </div>
-            </button>
-            <button class="SettingsPageToolbar-button clickable" @click="emit('download')"
-                v-if="icons.some((i) => i == 'download')">
-                <font-awesome-icon :icon="['fas', 'download']" />
-                <div class="SettingsPageToolbar-label">
-                    Download
-                </div>
-            </button>
-            <button class="SettingsPageToolbar-button clickable" @click="emit('toggleFollow')"
-                v-if="icons.some((i) => i == 'follow')">
-                <font-awesome-icon :icon="['fas', followStatus ? 'person-walking' : 'person']" />
-                <div class="SettingsPageToolbar-label">
-                    {{ followStatus ? 'Following' : 'Not Following' }}
-                </div>
-            </button>
-            <button class="SettingsPageToolbar-button clickable" @click="emit('arrImport')"
-                v-if="icons.some((i) => i == 'arrImport')">
-                <font-awesome-icon :icon="['fas', 'hat-wizard']" />
-                <div class="SettingsPageToolbar-label">
-                    Arr Import
-                </div>
-            </button>
+  <div class="SettingsPageToolbar">
+    <div>
+      <button
+        v-if="icons.some((i) => i == 'delete')"
+        class="SettingsPageToolbar-button clickable"
+        @click="emit('deleteQueueItem')"
+      >
+        <font-awesome-icon :icon="['fas', 'trash']" />
+        <div class="SettingsPageToolbar-label">
+          Stop
         </div>
-        <div>
-            <template v-if="icons.some((i) => i == 'filter')">
-                <button :class="['SettingsPageToolbar-button clickable', filterEnabled ? 'enabled' : '']" @click="toggleFilter">
-                    <font-awesome-icon :icon="['fas', 'filter']" />
-                    <div class="SettingsPageToolbar-label">
-                        Filter
-                    </div>
-                </button>
-                <div class="filterDropdown" v-if="showFilterDropdown" ref="dropdownDiv">
-                    <ul>
-                        <li v-for="option in filterOptions" v-bind:key="option" :class="['clickable', selectedFilter == option ? 'selected' : '']" @click="selectFilter(option)">
-                            <div>
-                                {{ option }}
-                            </div>
-                            <div>
-                                <font-awesome-icon :icon="['fas', 'check']" v-if="selectedFilter == option"/>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </template>
+      </button>
+      <button
+        v-if="icons.some((i) => i == 'save')"
+        class="SettingsPageToolbar-button clickable"
+        :disabled="!saveEnabled"
+        @click="emit('save')"
+      >
+        <font-awesome-icon :icon="['fas', 'floppy-disk']" />
+        <div class="SettingsPageToolbar-label">
+          {{ saveEnabled ? 'Save' : 'No' }} Changes
         </div>
+      </button>
+      <button
+        v-if="icons.some((i) => i == 'advanced')"
+        class="SettingsPageToolbar-button clickable"
+        @click="emit('toggleAdvanced')"
+      >
+        <font-awesome-icon :icon="['fas', 'cog']" />
+        <div class="SettingsPageToolbar-label">
+          Toggle Advanced
+        </div>
+      </button>
+      <button
+        v-if="icons.some((i) => i == 'download')"
+        class="SettingsPageToolbar-button clickable"
+        @click="emit('download')"
+      >
+        <font-awesome-icon :icon="['fas', 'download']" />
+        <div class="SettingsPageToolbar-label">
+          Download
+        </div>
+      </button>
+      <button
+        v-if="icons.some((i) => i == 'follow')"
+        class="SettingsPageToolbar-button clickable"
+        @click="emit('toggleFollow')"
+      >
+        <font-awesome-icon :icon="['fas', followStatus ? 'person-walking' : 'person']" />
+        <div class="SettingsPageToolbar-label">
+          {{ followStatus ? 'Following' : 'Not Following' }}
+        </div>
+      </button>
+      <button
+        v-if="icons.some((i) => i == 'arrImport')"
+        class="SettingsPageToolbar-button clickable"
+        @click="emit('arrImport')"
+      >
+        <font-awesome-icon :icon="['fas', 'hat-wizard']" />
+        <div class="SettingsPageToolbar-label">
+          Arr Import
+        </div>
+      </button>
     </div>
+    <div>
+      <template v-if="icons.some((i) => i == 'filter')">
+        <button
+          :class="['SettingsPageToolbar-button clickable', filterEnabled ? 'enabled' : '']"
+          @click="toggleFilter"
+        >
+          <font-awesome-icon :icon="['fas', 'filter']" />
+          <div class="SettingsPageToolbar-label">
+            Filter
+          </div>
+        </button>
+        <div
+          v-if="showFilterDropdown"
+          ref="dropdownDiv"
+          class="filterDropdown"
+        >
+          <ul>
+            <li
+              v-for="option in filterOptions"
+              :key="option"
+              :class="['clickable', selectedFilter == option ? 'selected' : '']"
+              @click="selectFilter(option)"
+            >
+              <div>
+                {{ option }}
+              </div>
+              <div>
+                <font-awesome-icon
+                  v-if="selectedFilter == option"
+                  :icon="['fas', 'check']"
+                />
+              </div>
+            </li>
+          </ul>
+        </div>
+      </template>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { defineEmits, defineProps, ref, onBeforeUnmount } from 'vue';
+import { defineEmits, defineProps, onBeforeUnmount,ref } from 'vue';
 
 const emit = defineEmits([
     'save',
@@ -123,26 +157,26 @@ const selectFilter = (option) => {
 }
 
 const toggleFilter = () => {
-  showFilterDropdown.value = !showFilterDropdown.value;
+    showFilterDropdown.value = !showFilterDropdown.value;
 
-  if (showFilterDropdown.value) {
-    setTimeout(() => {
-      document.addEventListener('click', handleClickOutside);
-    }, 0); // Delay adding listener to avoid catching the current click event
-  } else {
-    document.removeEventListener('click', handleClickOutside);
-  }
+    if (showFilterDropdown.value) {
+        setTimeout(() => {
+            document.addEventListener('click', handleClickOutside);
+        }, 0); // Delay adding listener to avoid catching the current click event
+    } else {
+        document.removeEventListener('click', handleClickOutside);
+    }
 };
 
 onBeforeUnmount(() => {
-  document.removeEventListener('click', handleClickOutside);
+    document.removeEventListener('click', handleClickOutside);
 });
 
 const handleClickOutside = (event) => {
-  if (showFilterDropdown.value && dropdownDiv.value && !dropdownDiv.value.contains(event.target)) {
-    showFilterDropdown.value = false;
-    document.removeEventListener('click', handleClickOutside);
-  }
+    if (showFilterDropdown.value && dropdownDiv.value && !dropdownDiv.value.contains(event.target)) {
+        showFilterDropdown.value = false;
+        document.removeEventListener('click', handleClickOutside);
+    }
 };
 
 </script>

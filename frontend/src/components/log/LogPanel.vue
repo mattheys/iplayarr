@@ -1,13 +1,16 @@
 <template>
-    <ul ref="logView">
-        <li v-for="log in filteredLogs" :key="`${log.id}_${log.timestamp}`">
-            <pre :class="log.level">[ {{ log.id }} ] - {{ log.timestamp }} - {{ log.message.trim() }}</pre>
-        </li>
-    </ul>
+  <ul ref="logView">
+    <li
+      v-for="log in filteredLogs"
+      :key="`${log.id}_${log.timestamp}`"
+    >
+      <pre :class="log.level">[ {{ log.id }} ] - {{ log.timestamp }} - {{ log.message.trim() }}</pre>
+    </li>
+  </ul>
 </template>
 
 <script setup>
-import { ref, inject, nextTick, computed, defineProps, watch } from 'vue';
+import { computed, defineProps, inject, nextTick, ref, watch } from 'vue';
 
 const logs = inject('logs');
 const logView = ref(null);
@@ -35,11 +38,11 @@ watch(filteredLogs, () => {
 }, { deep: true });
 
 const scrollToBottom = () => {
-  nextTick(() => {
-    if (logView.value) {
-      logView.value.scrollTop = logView.value.scrollHeight;
-    }
-  });
+    nextTick(() => {
+        if (logView.value) {
+            logView.value.scrollTop = logView.value.scrollHeight;
+        }
+    });
 };
 </script>
 

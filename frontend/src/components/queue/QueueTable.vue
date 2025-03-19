@@ -1,41 +1,58 @@
 <template>
-  <table class='queueTable' summary='Hed'>
+  <table
+    class="queueTable"
+    summary="Hed"
+  >
     <thead>
       <tr>
-        <th></th>
+        <th />
         <th>Filename</th>
         <th>Type</th>
         <th>Start</th>
         <th>Size</th>
         <th>App</th>
-        <th class='progress-column'>Progress</th>
+        <th class="progress-column">
+          Progress
+        </th>
         <th>ETA</th>
         <th>Speed</th>
-        <th class='center'><font-awesome-icon :icon="['fas', 'cog']" /></th>
+        <th class="center">
+          <font-awesome-icon :icon="['fas', 'cog']" />
+        </th>
       </tr>
     </thead>
     <tbody>
-      <QueueTableRow v-for="item in queue" :key="item.id" :item="item" :history="false" />
-      <QueueTableRow v-for="item in history" :key="item.id" :item="item" :history="true" />
+      <QueueTableRow
+        v-for="item in queue"
+        :key="item.id"
+        :item="item"
+        :history="false"
+      />
+      <QueueTableRow
+        v-for="item in history"
+        :key="item.id"
+        :item="item"
+        :history="true"
+      />
     </tbody>
   </table>
 </template>
 
 <script setup>
-import QueueTableRow from './QueueTableRow.vue';
-
 import { defineProps } from 'vue';
 
-defineProps({
-  queue: {
-    type: Array,
-    required: true
-  },
+import QueueTableRow from './QueueTableRow.vue';
 
-  history: {
-    type: Array,
-    required: true
-  }
+defineProps({
+    queue: {
+        type: Array,
+        required: true
+    },
+
+    history: {
+        type: Array,
+        required: true
+    }
 });
 </script>
 

@@ -1,36 +1,42 @@
 <template>
-    <div :class="className" :style="{ height: sizeInPx }">
-      <div class="ripple-container" :style="{ width: sizeInPx, height: sizeInPx }">
-        <div
-          v-for="n in 3"
-          :key="n"
-          :class="[rippleClassName]"
-          :style="{ width: sizeInPx, height: sizeInPx, animationDelay: `${-0.8 + 0.2 * n}s` }"
-        />
-      </div>
+  <div
+    :class="className"
+    :style="{ height: sizeInPx }"
+  >
+    <div
+      class="ripple-container"
+      :style="{ width: sizeInPx, height: sizeInPx }"
+    >
+      <div
+        v-for="n in 3"
+        :key="n"
+        :class="[rippleClassName]"
+        :style="{ width: sizeInPx, height: sizeInPx, animationDelay: `${-0.8 + 0.2 * n}s` }"
+      />
     </div>
-  </template>
+  </div>
+</template>
   
-  <script setup>
-  import { computed, defineProps } from 'vue';
+<script setup>
+import { computed, defineProps } from 'vue';
 
-  const props = defineProps({
-      className: {
+const props = defineProps({
+    className: {
         type: String,
         default: 'loading', // Fallback to default 'loading' class
-      },
-      rippleClassName: {
+    },
+    rippleClassName: {
         type: String,
         default: 'ripple', // Fallback to default 'ripple' class
-      },
-      size: {
+    },
+    size: {
         type: Number,
         default: 50, // Default size is 50
-      },
-  });
+    },
+});
 
-  const sizeInPx = computed(() => `${props.size}px`);
-  </script>
+const sizeInPx = computed(() => `${props.size}px`);
+</script>
   
   <style scoped>
   .loading {

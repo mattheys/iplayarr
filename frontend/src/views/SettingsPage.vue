@@ -1,57 +1,119 @@
 <template>
-    <SettingsPageToolbar @save="saveConfig" @toggle-advanced="toggleAdvanced" :save-enabled="saveEnabled"
-        :icons="['save', 'advanced']" />
-    <div class="inner-content" v-if="!loading">
-        <legend>iPlayarr</legend>
-        <TextInput name="Api Key" tooltip="API Key for access from *arr apps." v-model="config.API_KEY"
-            :error="validationErrors.config?.API_KEY" icon-button="qrcode" @action="generateApiKey"/>
-        <TextInput name="Download Directory" tooltip="Directory for in-progress Downloads."
-            v-model="config.DOWNLOAD_DIR" :error="validationErrors.config?.DOWNLOAD_DIR" />
-        <TextInput name="Complete Directory" tooltip="Directory for completed Downloads."
-            v-model="config.COMPLETE_DIR" :error="validationErrors.config?.COMPLETE_DIR" />
-        <TextInput name="Download Limit" tooltip="The number of simultaneous downloads." type-override="number"
-            v-model="config.ACTIVE_LIMIT" :error="validationErrors.config?.ACTIVE_LIMIT" />
-        <SelectInput name="Video Quality" tooltip="Maximum video quality (Where available)"
-            v-model="config.VIDEO_QUALITY" :error="validationErrors.config?.ACTIVE_LIMIT" :options="qualityProfiles" />
+  <SettingsPageToolbar
+    :save-enabled="saveEnabled"
+    :icons="['save', 'advanced']"
+    @save="saveConfig"
+    @toggle-advanced="toggleAdvanced"
+  />
+  <div
+    v-if="!loading"
+    class="inner-content"
+  >
+    <legend>iPlayarr</legend>
+    <TextInput
+      v-model="config.API_KEY"
+      name="Api Key"
+      tooltip="API Key for access from *arr apps."
+      :error="validationErrors.config?.API_KEY"
+      icon-button="qrcode"
+      @action="generateApiKey"
+    />
+    <TextInput
+      v-model="config.DOWNLOAD_DIR"
+      name="Download Directory"
+      tooltip="Directory for in-progress Downloads."
+      :error="validationErrors.config?.DOWNLOAD_DIR"
+    />
+    <TextInput
+      v-model="config.COMPLETE_DIR"
+      name="Complete Directory"
+      tooltip="Directory for completed Downloads."
+      :error="validationErrors.config?.COMPLETE_DIR"
+    />
+    <TextInput
+      v-model="config.ACTIVE_LIMIT"
+      name="Download Limit"
+      tooltip="The number of simultaneous downloads."
+      type-override="number"
+      :error="validationErrors.config?.ACTIVE_LIMIT"
+    />
+    <SelectInput
+      v-model="config.VIDEO_QUALITY"
+      name="Video Quality"
+      tooltip="Maximum video quality (Where available)"
+      :error="validationErrors.config?.ACTIVE_LIMIT"
+      :options="qualityProfiles"
+    />
 
-        <template v-if="showAdvanced">
-            <TextInput :advanced="true" name="Refresh Schedule" tooltip="Cron Expression for schedule refresh."
-                v-model="config.REFRESH_SCHEDULE" :error="validationErrors.config?.REFRESH_SCHEDULE" />
-            <TextInput :advanced="true" name="TV Filename Template"
-                tooltip="Template for TV Filenames, {title, synonym, season, episode, quality}."
-                v-model="config.TV_FILENAME_TEMPLATE" :error="validationErrors.config?.TV_FILENAME_TEMPLATE" />
-            <TextInput :advanced="true" name="Movie Filename Template"
-                tooltip="Template for Movie Filenames, {title, synonym, quality}." v-model="config.MOVIE_FILENAME_TEMPLATE"
-                :error="validationErrors.config?.MOVIE_FILENAME_TEMPLATE" />
-            <TextInput :advanced="true" name="Additional Download Parameters"
-                tooltip="Extra parameters to pass to get_iplayer for download"
-                v-model="config.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS"
-                :error="validationErrors.config?.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS" />
-            <p class="nzbBanner">Looking for NZB Passthrough? Check the <RouterLink to="/apps">Apps</RouterLink> section</p>
-        </template>
+    <template v-if="showAdvanced">
+      <TextInput
+        v-model="config.REFRESH_SCHEDULE"
+        :advanced="true"
+        name="Refresh Schedule"
+        tooltip="Cron Expression for schedule refresh."
+        :error="validationErrors.config?.REFRESH_SCHEDULE"
+      />
+      <TextInput
+        v-model="config.TV_FILENAME_TEMPLATE"
+        :advanced="true"
+        name="TV Filename Template"
+        tooltip="Template for TV Filenames, {title, synonym, season, episode, quality}."
+        :error="validationErrors.config?.TV_FILENAME_TEMPLATE"
+      />
+      <TextInput
+        v-model="config.MOVIE_FILENAME_TEMPLATE"
+        :advanced="true"
+        name="Movie Filename Template"
+        tooltip="Template for Movie Filenames, {title, synonym, quality}."
+        :error="validationErrors.config?.MOVIE_FILENAME_TEMPLATE"
+      />
+      <TextInput
+        v-model="config.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS"
+        :advanced="true"
+        name="Additional Download Parameters"
+        tooltip="Extra parameters to pass to get_iplayer for download"
+        :error="validationErrors.config?.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS"
+      />
+      <p class="nzbBanner">
+        Looking for NZB Passthrough? Check the <RouterLink to="/apps">
+          Apps
+        </RouterLink> section
+      </p>
+    </template>
 
-        <legend class="sub">Authentication</legend>
-        <TextInput name="Username" tooltip="The Login Username." v-model="config.AUTH_USERNAME"
-            :error="validationErrors.config?.AUTH_USERNAME" />
-        <TextInput name="Password" tooltip="The Login Password." type-override="password"
-            v-model="config.AUTH_PASSWORD" :error="validationErrors.config?.AUTH_PASSWORD" />
-    </div>
-    <LoadingIndicator v-if="loading" />
+    <legend class="sub">
+      Authentication
+    </legend>
+    <TextInput
+      v-model="config.AUTH_USERNAME"
+      name="Username"
+      tooltip="The Login Username."
+      :error="validationErrors.config?.AUTH_USERNAME"
+    />
+    <TextInput
+      v-model="config.AUTH_PASSWORD"
+      name="Password"
+      tooltip="The Login Password."
+      type-override="password"
+      :error="validationErrors.config?.AUTH_PASSWORD"
+    />
+  </div>
+  <LoadingIndicator v-if="loading" />
 </template>
 
 <script setup>
-import SettingsPageToolbar from '@/components/common/SettingsPageToolbar.vue';
+import { v4 } from 'uuid';
+import { computed,onMounted, ref, watch } from 'vue';
+import { useModal } from 'vue-final-modal'
+import { onBeforeRouteLeave } from 'vue-router';
+
+import SelectInput from '@/components/common/form/SelectInput.vue';
 import TextInput from '@/components/common/form/TextInput.vue';
 import LoadingIndicator from '@/components/common/LoadingIndicator.vue';
-
-import { onMounted, ref, watch, computed } from 'vue';
-import { ipFetch } from '@/lib/ipFetch';
-import SelectInput from '@/components/common/form/SelectInput.vue';
-import { onBeforeRouteLeave } from 'vue-router';
-import dialogService from '@/lib/dialogService';
-import { v4 } from 'uuid';
-import { useModal } from 'vue-final-modal'
+import SettingsPageToolbar from '@/components/common/SettingsPageToolbar.vue';
 import UpdateAppDialog from '@/components/modals/UpdateAppDialog.vue';
+import dialogService from '@/lib/dialogService';
+import { ipFetch } from '@/lib/ipFetch';
 
 const loading = ref(false);
 let originalApiKey = undefined;
@@ -78,7 +140,7 @@ onMounted(async () => {
 
     config.value = configResponse.data;
     originalApiKey = configResponse.data.API_KEY;
-    qualityProfiles.value = qpResponse.data.map(({ id, name, quality }) => ({ "key": id, "value": `${name} (${quality})` }));
+    qualityProfiles.value = qpResponse.data.map(({ id, name, quality }) => ({ 'key': id, 'value': `${name} (${quality})` }));
 
     watch(config, () => { configChanges.value = true }, { deep: true });
 });
@@ -88,21 +150,21 @@ const saveConfig = async () => {
     if (configChanges.value) {
         validationErrors.value.config = {};
 
-        const configResponse = await ipFetch(`json-api/config`, 'PUT', config.value);
+        const configResponse = await ipFetch('json-api/config', 'PUT', config.value);
 
         if (!configResponse.ok) {
             const errorData = configResponse.data;
             validationErrors.value.config = errorData.invalid_fields;
             return;
         } else {
-            dialogService.alert("Success", "Save Successful");
+            dialogService.alert('Success', 'Save Successful');
             configChanges.value = false;
         }
     }
 
     loading.value = false;
     if (config.value.API_KEY != originalApiKey){
-        if (await dialogService.confirm("API Key Changed", "Api Key Changed, do you want to update any relevant apps?")){
+        if (await dialogService.confirm('API Key Changed', 'Api Key Changed, do you want to update any relevant apps?')){
             const formModal = useModal({
                 component: UpdateAppDialog,
                 attrs : {
@@ -122,14 +184,14 @@ const toggleAdvanced = () => {
 }
 
 const generateApiKey = async () => {
-    if (await dialogService.confirm("Regenerate API Key", "Are you sure you want to regenerate the API Key?", "API Key will not change until settings are saved")){
+    if (await dialogService.confirm('Regenerate API Key', 'Are you sure you want to regenerate the API Key?', 'API Key will not change until settings are saved')){
         config.value.API_KEY = v4();
     }
 }
 
 onBeforeRouteLeave(async (_, __, next) => {
     if (saveEnabled.value) {
-        if (await dialogService.confirm("Unsaved Changes", "You have unsaved changes. If you leave this page they will be lost.")) {
+        if (await dialogService.confirm('Unsaved Changes', 'You have unsaved changes. If you leave this page they will be lost.')) {
             next();
         } else {
             next(false);

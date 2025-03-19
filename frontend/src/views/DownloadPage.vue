@@ -1,18 +1,30 @@
 <template>
-    <SettingsPageToolbar :icons="['download']" @download="download"/>
-    <MediaInfoHero :pid="searchResult.pid" :type="searchResult.type" :title="`${searchResult.title}${searchResult.episode ? ` - Series ${searchResult.series || 'Unknown'}, Episode ${searchResult.episode}` : ''}`"/>
-    <div class="inner-content">
-        <TextInput name="Filename" tooltip="Filename to Download as (extension will be added automatically)" v-model="searchResult.nzbName"/>
-    </div>
+  <SettingsPageToolbar
+    :icons="['download']"
+    @download="download"
+  />
+  <MediaInfoHero
+    :pid="searchResult.pid"
+    :type="searchResult.type"
+    :title="`${searchResult.title}${searchResult.episode ? ` - Series ${searchResult.series || 'Unknown'}, Episode ${searchResult.episode}` : ''}`"
+  />
+  <div class="inner-content">
+    <TextInput
+      v-model="searchResult.nzbName"
+      name="Filename"
+      tooltip="Filename to Download as (extension will be added automatically)"
+    />
+  </div>
 </template>
 
 <script setup>
-import SettingsPageToolbar from '@/components/common/SettingsPageToolbar.vue';
+import {ref,watch} from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
 import TextInput from '@/components/common/form/TextInput.vue';
 import MediaInfoHero from '@/components/common/MediaInfoHero.vue';
+import SettingsPageToolbar from '@/components/common/SettingsPageToolbar.vue';
 import { ipFetch } from '@/lib/ipFetch';
-import {watch, ref} from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
@@ -27,7 +39,7 @@ watch(() => route.query.json, async (newJson) => {
 const download = async () => {
     const response = await ipFetch(`json-api/download?pid=${searchResult.value.pid}&nzbName=${searchResult.value.nzbName}&type=${searchResult.value.type}`);
     if (response.ok){
-        router.push("/queue");
+        router.push('/queue');
     }
 }
 </script>

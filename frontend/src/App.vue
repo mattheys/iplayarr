@@ -1,7 +1,11 @@
 <template>
   <NavBar ref="navBar" />
   <div class="main-layout">
-    <LeftHandNav ref="leftHandNav" v-if="authState.user" @clear-search="clearSearch" />
+    <LeftHandNav
+      v-if="authState.user"
+      ref="leftHandNav"
+      @clear-search="clearSearch"
+    />
     <div class="content">
       <RouterView />
     </div>
@@ -10,17 +14,18 @@
 </template>
 
 <script setup>
-import { ipFetch } from '@/lib/ipFetch';
-import { enforceMaxLength } from './lib/utils';
-import NavBar from './components/common/NavBar.vue';
-import LeftHandNav from './components/common/LeftHandNav.vue';
-import { RouterView } from 'vue-router';
+import { io } from 'socket.io-client';
+import { inject,provide, ref, watch } from 'vue';
 import { ModalsContainer } from 'vue-final-modal';
+import { RouterView } from 'vue-router';
 
-import { io } from "socket.io-client";
-import { ref, provide, watch, inject } from 'vue';
+import { ipFetch } from '@/lib/ipFetch';
 
-const authState = inject("authState");
+import LeftHandNav from './components/common/LeftHandNav.vue';
+import NavBar from './components/common/NavBar.vue';
+import { enforceMaxLength } from './lib/utils';
+
+const authState = inject('authState');
 const [queue, history, logs, socket, hiddenSettings] = [ref([]), ref([]), ref([]), ref(null), ref({})];
 
 const navBar = ref(null);
@@ -28,12 +33,12 @@ const navBar = ref(null);
 const leftHandNav = ref(null);
 
 const updateQueue = async () => {
-  queue.value = (await ipFetch('json-api/queue/queue')).data;
-  history.value = (await ipFetch('json-api/queue/history')).data;
+    queue.value = (await ipFetch('json-api/queue/queue')).data;
+    history.value = (await ipFetch('json-api/queue/history')).data;
 }
 
 const toggleLeftHandNav = () => {
-  leftHandNav.value.toggleLHN();
+    leftHandNav.value.toggleLHN();
 }
 
 provide('queue', queue);
@@ -45,41 +50,41 @@ provide('toggleLeftHandNav', toggleLeftHandNav);
 provide('hiddenSettings', hiddenSettings);
 
 const pageSetup = async () => {
-  if (socket.value == null) {
-    document.body.scrollTop = document.documentElement.scrollTop = 0;
-    await updateQueue();
-    if (process.env.NODE_ENV == 'production') {
-      socket.value = io();
-    } else {
-      const socketUrl = `http://${window.location.hostname}:4404`
-      socket.value = io(socketUrl);
+    if (socket.value == null) {
+        document.body.scrollTop = document.documentElement.scrollTop = 0;
+        await updateQueue();
+        if (process.env.NODE_ENV == 'production') {
+            socket.value = io();
+        } else {
+            const socketUrl = `http://${window.location.hostname}:4404`
+            socket.value = io(socketUrl);
+        }
+
+        socket.value.on('queue', (data) => {
+            queue.value = data;
+        });
+
+        socket.value.on('history', (data) => {
+            history.value = data;
+        });
+
+        socket.value.on('log', (data) => {
+            logs.value.push(data);
+            enforceMaxLength(logs.value, 5000);
+        })
+
+        hiddenSettings.value = (await ipFetch('json-api/config/hiddenSettings')).data;
     }
-
-    socket.value.on('queue', (data) => {
-      queue.value = data;
-    });
-
-    socket.value.on('history', (data) => {
-      history.value = data;
-    });
-
-    socket.value.on('log', (data) => {
-      logs.value.push(data);
-      enforceMaxLength(logs.value, 5000);
-    })
-
-    hiddenSettings.value = (await ipFetch('json-api/config/hiddenSettings')).data;
-  }
 }
 
 watch(authState, async (newAuthState) => {
-  if (newAuthState.user) {
-    pageSetup();
-  }
+    if (newAuthState.user) {
+        pageSetup();
+    }
 }, { immediate: true });
 
 const clearSearch = () => {
-  navBar.value.clearSearch();
+    navBar.value.clearSearch();
 }
 </script>
 

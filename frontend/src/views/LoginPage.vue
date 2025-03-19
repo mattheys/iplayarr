@@ -1,47 +1,102 @@
 <template>
-    <div class="login-content">
-        <div>
-            <div class="panel">
-                <div class="panel-header">
-                    <img src="/iplayarr.png" alt="Image" class="logo">
-                </div>
-                <div class="panel-body" v-if="!forgot">
-                    <div class="sign-in">SIGN IN TO CONTINUE</div>
-                    <div class="form-group">
-                        <input type="email" class="form-input" placeholder="Username" v-model="loginForm.username" @keyup.enter="login"/>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" class="form-input" placeholder="Password" v-model="loginForm.password" @keyup.enter="login"/>
-                    </div>
-                    <div class="forgot-container">
-                        <a href="#" @click="showForgot">Forgot your password?</a>
-                    </div>
-                    <button type="button" class="button" @click="login">Login</button>
-                    <div id="login-failed" class="login-failed" v-if="error">
-                        Incorrect Username or Password
-                    </div>
-                </div>
-                <div class="panel-body" v-if="forgot">
-                    <div class="sign-in">FORGOT PASSWORD</div>
-                    <p>A unique code has been printed into the logs, enter it below to reset the password to default</p>
-                    <div class="form-group">
-                        <input type="text" class="form-input" placeholder="Code from Console" v-model="forgotForm.key" @keyup.enter="submitForgot"/>
-                    </div>
-                    <div class="forgot-container">
-                        <a href="#" @click="hideForgot">Cancel</a>
-                    </div>
-                    <button type="button" class="button" @click="submitForgot">Reset</button>
-                </div>
-            </div>
+  <div class="login-content">
+    <div>
+      <div class="panel">
+        <div class="panel-header">
+          <img
+            src="/iplayarr.png"
+            alt="Image"
+            class="logo"
+          >
         </div>
+        <div
+          v-if="!forgot"
+          class="panel-body"
+        >
+          <div class="sign-in">
+            SIGN IN TO CONTINUE
+          </div>
+          <div class="form-group">
+            <input
+              v-model="loginForm.username"
+              type="email"
+              class="form-input"
+              placeholder="Username"
+              @keyup.enter="login"
+            >
+          </div>
+          <div class="form-group">
+            <input
+              v-model="loginForm.password"
+              type="password"
+              class="form-input"
+              placeholder="Password"
+              @keyup.enter="login"
+            >
+          </div>
+          <div class="forgot-container">
+            <a
+              href="#"
+              @click="showForgot"
+            >Forgot your password?</a>
+          </div>
+          <button
+            type="button"
+            class="button"
+            @click="login"
+          >
+            Login
+          </button>
+          <div
+            v-if="error"
+            id="login-failed"
+            class="login-failed"
+          >
+            Incorrect Username or Password
+          </div>
+        </div>
+        <div
+          v-if="forgot"
+          class="panel-body"
+        >
+          <div class="sign-in">
+            FORGOT PASSWORD
+          </div>
+          <p>A unique code has been printed into the logs, enter it below to reset the password to default</p>
+          <div class="form-group">
+            <input
+              v-model="forgotForm.key"
+              type="text"
+              class="form-input"
+              placeholder="Code from Console"
+              @keyup.enter="submitForgot"
+            >
+          </div>
+          <div class="forgot-container">
+            <a
+              href="#"
+              @click="hideForgot"
+            >Cancel</a>
+          </div>
+          <button
+            type="button"
+            class="button"
+            @click="submitForgot"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
-import dialogService from '@/lib/dialogService';
-import { ipFetch } from '@/lib/ipFetch';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+
+import dialogService from '@/lib/dialogService';
+import { ipFetch } from '@/lib/ipFetch';
 
 const router = useRouter();
 
@@ -77,7 +132,7 @@ const hideForgot = async () => {
 
 const submitForgot = async () => {
     ipFetch('auth/resetPassword', 'POST', forgotForm.value);
-    dialogService.alert('Reset Password', "If the code is correct, the password will be reset!");
+    dialogService.alert('Reset Password', 'If the code is correct, the password will be reset!');
     forgot.value=false;
 }
 </script>

@@ -1,16 +1,18 @@
 import pluginJs from '@eslint/js';
 import importPlugin from 'eslint-plugin-import';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import pluginVue from 'eslint-plugin-vue'
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-    { files: ['**/*.{ts}'] },
-    { languageOptions: { globals: globals.node } },
+    { files: ['**/*.{ts,vue}', 'frontend/src/**/*.{js}'] },
+    { languageOptions: { globals: {...globals.node, ...globals.browser} } },
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,
-    { ignores: ['**/*.js'] },
+    ...pluginVue.configs['flat/recommended'],
+    { ignores: ['**/dist/**', '**/node_modules/**'] },
 
     // Enable sorting and enforce single quotes
     {
