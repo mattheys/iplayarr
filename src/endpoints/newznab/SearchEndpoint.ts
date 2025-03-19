@@ -66,8 +66,8 @@ export default async (req : Request, res : Response) => {
                       { $: { name: 'files', value: '1' } },
                       { $: { name: 'grabs', value: '0' } }
                     ],
-                    link: `${getBaseUrl(req)}${createNZBDownloadLink(result, req.query.apikey as string)}`,
-                    enclosure: {$:{url : `${getBaseUrl(req)}${createNZBDownloadLink(result, req.query.apikey as string)}`, length : result.size ? String(result.size * 1048576) : '2147483648', type: 'application/x-nzb'} } 
+                    link: `${getBaseUrl(req)}${createNZBDownloadLink(result, req.query.apikey as string, app)}`,
+                    enclosure: {$:{url : `${getBaseUrl(req)}${createNZBDownloadLink(result, req.query.apikey as string, app)}`, length : result.size ? String(result.size * 1048576) : '2147483648', type: 'application/x-nzb'} } 
                   }
             ))
         }
