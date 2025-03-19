@@ -110,17 +110,17 @@ const appService = {
 
     testAppConnection : async (form : App) : Promise<string | boolean> => {
         switch (form.type){
-            case AppType.PROWLARR:
-            case AppType.RADARR:
-            case AppType.SONARR: {
-                return await arrService.testConnection({API_KEY : form.api_key as string, HOST : form.url});
-            }
-            case AppType.NZBGET:
-            case AppType.SABNZBD: {
-                return await nzbFacade.testConnection(form.type.toString().toLowerCase(), form.url, form.api_key, form.username, form.password); 
-            }
-            default:
-                return false; 
+        case AppType.PROWLARR:
+        case AppType.RADARR:
+        case AppType.SONARR: {
+            return await arrService.testConnection({API_KEY : form.api_key as string, HOST : form.url});
+        }
+        case AppType.NZBGET:
+        case AppType.SABNZBD: {
+            return await nzbFacade.testConnection(form.type.toString().toLowerCase(), form.url, form.api_key, form.username, form.password); 
+        }
+        default:
+            return false; 
         }
     }
 }

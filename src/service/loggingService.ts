@@ -32,17 +32,17 @@ const loggingService = {
 
 function joinOrReturn(input : string | any[]) : string {
     if (Array.isArray(input)) {
-      return input.map((item : any) => {
-        if (typeof item === 'string'){
-            return item;
-        } else {
-            return JSON.stringify(item, null, 2);
-        }
-      }).join(' ');
+        return input.map((item : any) => {
+            if (typeof item === 'string'){
+                return item;
+            } else {
+                return JSON.stringify(item, null, 2);
+            }
+        }).join(' ');
     } else if (typeof input === 'string') {
-      return input;
+        return input;
     }
     return '';
-  }
+}
 
 export default loggingService;

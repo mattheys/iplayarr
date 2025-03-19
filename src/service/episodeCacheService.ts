@@ -27,7 +27,7 @@ const episodeCacheService = {
     getEpisodeCache : async (term : string) : Promise<IPlayerSearchResult[]> => {
         await episodeCacheService.initStorage();
         const result = (await storage.getItem(term))?.results || [];
-	return result.map((sr : any) => ({...sr, pubDate : new Date(sr.pubDate)}));
+        return result.map((sr : any) => ({...sr, pubDate : new Date(sr.pubDate)}));
     },
 
     getEpisodeCacheForUrl : async (url : string) : Promise<IPlayerSearchResult[]> => {

@@ -1,38 +1,39 @@
 <template>
-    <VueFinalModal
-      class="iplayarr-modal"
-      content-class="iplayarr-modal-content confirmDialog"
-      overlay-transition="vfm-fade"
-      content-transition="vfm-fade"
-    >
-        <legend>{{ title }}</legend>
+    <IPlayarrModal :title="title" :show-cancel="showCancel" cancel-label="Cancel" :show-confirm="true" confirm-label="OK" @cancel="emit('cancel')" @confirm="emit('confirm', selected)">
         <p :class="[subtext ? 'hasLower' : '']">{{ text }}</p>
         <p class="sub" v-if="subtext">{{ subtext }}</p>
-        <div class="button-container floor">
-            <button class="clickable cancel" @click="emit('cancel')" v-if="showCancel">Cancel</button>
-            <button class="clickable" @click="emit('confirm')">OK</button>
+        <div class="alertDialogSelect">
+            <SelectInput :options="computedOptions" v-if="options" v-model="selected"/>
         </div>
-    </VueFinalModal>
+    </IPlayarrModal>
 </template>
 
 <script setup>
-    import { VueFinalModal } from 'vue-final-modal'
-    import { defineProps, defineEmits } from 'vue';
+    import { defineProps, defineEmits, ref, computed } from 'vue';
+    import IPlayarrModal from './IPlayarrModal.vue';
+    import SelectInput from '../common/form/SelectInput.vue';
 
     const emit = defineEmits(['confirm', 'cancel']);
 
-    defineProps({
+    const props = defineProps({
         title : String,
         text : String,
         subtext : String,
         showCancel : {
             type : Boolean,
             default : false
-        }
+        },
+        options : Array
+    });
+
+    const selected = ref(props.options ? props.options[0] : true);
+
+    const computedOptions = computed(() => {
+        return props.options ? props.options.map((v) => ({key : v, value : v})) : [];
     });
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
     p {
         &.sub {
             font-size: 14px;

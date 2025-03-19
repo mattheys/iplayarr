@@ -1,14 +1,8 @@
 <template>
-    <VueFinalModal
-      class="iplayarr-modal"
-      content-class="iplayarr-modal-content"
-      overlay-transition="vfm-fade"
-      content-transition="vfm-fade"
-      v-slot="{ close }"
-    >
-        <legend>Lookup</legend>
+    <IPlayarrModal :show-close="true" close-label="Cancel" title="Lookup">
         <LoadingIndicator v-if="loading"/>
-        <template v-if="!loading">
+        <div v-if="!loading" class="arrLookup">
+            <TextInput v-if="showFilter" placeholder="Filter" v-model="filterText"/>
             <table class="resultsTable">
                 <thead>
                     <tr>
@@ -19,8 +13,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="result of results" v-bind:key="result">
-                        <td>{{ result }}</td>
+                    <tr v-for="result of computedResults" v-bind:key="result.id">
+                        <td>{{ result.title }}</td>
                         <td>
                             <a class="clickable" @click="emit('select', result)">
                                 Select
@@ -32,26 +26,25 @@
             <template v-if="results.length == 0">
                 <p>No Results Found</p>
             </template>
-        </template>
-        <div class="button-container floor">
-            <button class="clickable cancel" @click="close()">Cancel</button>
         </div>
-    </VueFinalModal>
+    </IPlayarrModal>
 </template>
 
 <script setup>
-    import { VueFinalModal } from 'vue-final-modal'
     import { ipFetch } from '@/lib/ipFetch';
-    import {ref, onMounted, defineEmits, defineProps} from 'vue';
-import LoadingIndicator from '../common/LoadingIndicator.vue';
+    import {ref, onMounted, defineEmits, defineProps, computed} from 'vue';
+    import LoadingIndicator from '../common/LoadingIndicator.vue';
+    import IPlayarrModal from './IPlayarrModal.vue';
+    import TextInput from '../common/form/TextInput.vue';
 
     const results = ref([]);
     const emit = defineEmits(['select', 'error'])
-    const props = defineProps({app : Object, term : String});
+    const props = defineProps({app : Object, term : String, showFilter : {type: Boolean, required : false, default : false}});
     const loading = ref(true);
+    const filterText = ref("");
 
     onMounted(async () => {
-        const response = await ipFetch(`json-api/synonym/lookup/${props.app.id}?term=${props.term}`);
+        const response = await ipFetch(`json-api/synonym/lookup/${props.app.id}${props.term ? `?term=${props.term}` : ''}`);
         if (response.ok){
             results.value = response.data;
             loading.value = false;
@@ -59,6 +52,14 @@ import LoadingIndicator from '../common/LoadingIndicator.vue';
             emit('error', response.data);
         }
     });
+
+    const computedResults = computed(() => {
+        if (filterText.value){
+            return results.value.filter(({title}) => title.toLowerCase().includes(filterText.value.toLowerCase()));
+        } else {
+            return results.value;
+        }
+    })
 </script>
 
 <style lang="less" scoped>

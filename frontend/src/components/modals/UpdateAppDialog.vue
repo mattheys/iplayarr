@@ -1,7 +1,5 @@
 <template>
-    <VueFinalModal class="iplayarr-modal" content-class="iplayarr-modal-content" overlay-transition="vfm-fade"
-        content-transition="vfm-fade" v-slot="{close}">
-        <legend>Updating Apps</legend>
+    <IPlayarrModal title="Updating Apps" :show-close="true" close-label="Close">
         <table class="resultsTable">
             <thead>
                 <tr>
@@ -31,16 +29,13 @@
                 </tr>
             </tbody>
         </table>
-        <div class="button-container floor">
-            <button class="clickable" @click="close()">Close</button>
-        </div>
-    </VueFinalModal>
+    </IPlayarrModal>
 </template>
 
 <script setup>
-import { VueFinalModal } from 'vue-final-modal'
 import { ipFetch } from '@/lib/ipFetch';
 import {ref, onMounted, defineEmits, inject, onBeforeUnmount} from 'vue';
+import IPlayarrModal from './IPlayarrModal.vue';
 
 const apps = ref([]);
 const features = ref([]);

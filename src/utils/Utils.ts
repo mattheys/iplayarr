@@ -33,8 +33,8 @@ export function md5(input: string): string {
     return crypto.createHash('md5').update(input).digest('hex');
 }
 
-export function createNZBDownloadLink({ pid, nzbName, type }: IPlayerSearchResult, apiKey: string): string {
-    return `/api?mode=nzb-download&pid=${pid}&nzbName=${nzbName}&type=${type}&apikey=${apiKey}`
+export function createNZBDownloadLink({ pid, nzbName, type }: IPlayerSearchResult, apiKey: string, app? : string): string {
+    return `/api?mode=nzb-download&pid=${pid}&nzbName=${nzbName}&type=${type}&apikey=${apiKey}${app ? `&app=${app}` : ''}`
 }
 
 export async function getQualityPofile(): Promise<QualityProfile> {

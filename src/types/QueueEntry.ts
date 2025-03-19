@@ -10,5 +10,6 @@ export interface QueueEntry {
     process? : ChildProcess,
     details?: DownloadDetails,
     nzbName: string,
-    type : VideoType
+    type : VideoType,
+    appId? : string
 }

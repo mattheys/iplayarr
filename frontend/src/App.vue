@@ -227,6 +227,13 @@ button:focus {
   border-radius: 8px;
   box-shadow: 0 4px 10px @primary-box-shadow;
 
+  .modal-inner {
+    overflow-y: auto;
+    @media (min-width: @mobile-breakpoint) {
+      max-height: 75vh;
+    }
+  }
+
   @media (min-width: @mobile-breakpoint) {
     min-width: 600px;
     max-width: 80%;
@@ -247,7 +254,6 @@ button:focus {
     display: flex;
     flex-direction: column;
     height: 100%;
-    overflow-y: auto;
   }
 
   .button-container {

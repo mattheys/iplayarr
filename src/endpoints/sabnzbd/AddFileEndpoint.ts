@@ -18,7 +18,8 @@ interface AddFileRequest {
 interface NZBDetails {
     pid : string,
     nzbName : string,
-    type : VideoType
+    type : VideoType,
+    appId? : string
 }
 
 export default async (req : Request, res : Response) => {
@@ -28,8 +29,8 @@ export default async (req : Request, res : Response) => {
         const pids : string[] = [];
         for (const file of files){
             const xmlString = file.buffer.toString('utf-8');
-            const {pid, nzbName, type} = await getDetails(xmlString);
-            queueService.addToQueue(pid, nzbName, type);
+            const {pid, nzbName, type, appId} = await getDetails(xmlString);
+            queueService.addToQueue(pid, nzbName, type, appId);
             pids.push(pid);
         }
 
@@ -77,10 +78,12 @@ async function getDetails(xml : string) : Promise<NZBDetails> {
 	    }
             const nzbName : NZBMetaEntry = result.nzb.head[0].meta.find(({$} : any) => $.type === 'nzbName');
             const type : NZBMetaEntry = result.nzb.head[0].meta.find(({$} : any) => $.type === 'type');
+            const app : NZBMetaEntry = result.nzb.head[0].meta.find(({$} : any) => $.type === 'app');
             const details : NZBDetails = {
                 'pid' : result.nzb.head[0].title[0],
                 'nzbName' : nzbName?.$?._,
-                'type' : (type?.$?._) as VideoType
+                'type' : (type?.$?._) as VideoType,
+                'appId' : app ? app?.$?._ : undefined
             }
             resolve(details);
         });
