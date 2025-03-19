@@ -106,7 +106,7 @@ const arrService = {
         //Find an existing one
         try {
             if (DOWNLOAD_CLIENT_ID){
-                const downloadClient = await arrService.getDownloadClient(DOWNLOAD_CLIENT_ID, config);
+                const downloadClient = await arrService.getDownloadClient(DOWNLOAD_CLIENT_ID, config, prowlarr);
                 if (downloadClient){
                     updateMethod = 'put';
                     createDownloadClientRequest.id = DOWNLOAD_CLIENT_ID;
@@ -126,8 +126,8 @@ const arrService = {
         }
     },
 
-    getDownloadClient : async(id : number, {API_KEY, HOST} : ArrConfig) : Promise<DownloadClientResponse | undefined> => {
-        const url : string = `${HOST}/api/v3/downloadclient/${id}?apikey=${API_KEY}`;
+    getDownloadClient : async(id : number, {API_KEY, HOST} : ArrConfig, prowlarr : boolean) : Promise<DownloadClientResponse | undefined> => {
+        const url : string = `${HOST}/api/${prowlarr ? 'v1' : 'v3'}/downloadclient/${id}?apikey=${API_KEY}`;
 
         try {
             const response = await axios.get(url, {
