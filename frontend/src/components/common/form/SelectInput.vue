@@ -1,6 +1,6 @@
 <template>
     <div :class="['form-group', advanced ? 'advanced' : '']">
-        <label>{{ name }}</label>
+        <label v-if="name">{{ name }}</label>
         <div :class="['inputBox', error ? 'error' : '']">
             <select v-model="localValue">
                 <option v-for="option of options" v-bind:key="option.key" :value="option.key">

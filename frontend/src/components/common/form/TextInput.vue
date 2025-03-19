@@ -1,6 +1,6 @@
 <template>
     <div :class="['form-group', advanced ? 'advanced' : '']">
-        <label>{{ name }}</label>
+        <label v-if="name">{{ name }}</label>
         <div :class="['inputBox', error ? 'error' : '']">
             <div class="inputWithButton">
                 <input :type="typeOverride" v-model="localValue" :placeholder="placeholder" />
