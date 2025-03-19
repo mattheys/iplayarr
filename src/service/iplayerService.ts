@@ -250,6 +250,10 @@ const iplayerService = {
                 resolve(details);
             })
         });
+    },
+
+    removeFromSearchCache : (term : string) => {
+        searchCache.del(term);
     }
 }
 
