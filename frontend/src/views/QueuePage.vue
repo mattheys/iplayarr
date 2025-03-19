@@ -8,8 +8,9 @@
 <script setup>
     import QueueTable from '../components/queue/QueueTable.vue';
     import SettingsPageToolbar from '@/components/common/SettingsPageToolbar.vue';
+import { ipFetch } from '@/lib/ipFetch';
 
-    import {ref, inject} from 'vue';
+    import {ref, inject, provide, onMounted} from 'vue';
 
     const filterOptions = ref([
         'ALL',
@@ -21,4 +22,11 @@
 
     const queue = inject('queue');
     const history = inject('history');
-</script>
+
+    const apps = ref([]);
+    provide('apps', apps);
+
+    onMounted(async () => {
+        apps.value = (await ipFetch('json-api/apps')).data;
+    });
+</script> 

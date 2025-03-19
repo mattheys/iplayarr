@@ -13,6 +13,17 @@
         </td>
         <td data-title='Start'>{{ item.details.start }}</td>
         <td data-title='Size'>{{ formatStorageSize(item.details.size) }}</td>
+        <td>
+            <template v-if="item.appId && getAppForId(item.appId)">
+                <div class="appDisplay">
+                    <img class="appImg"
+                        :src="`/img/${getAppForId(item.appId).type.toLowerCase()}.svg`" />
+                    <span class="appName">
+                        {{ getAppForId(item.appId).name }}
+                    </span>
+                </div>
+            </template>
+        </td>
         <td class='progress-column' data-title='Progress'>
             <ProgressBar :progress="item.details.progress" :history="history" :idle="item.status == 'Queued'"/>
         </td>
@@ -32,7 +43,7 @@
 <script setup>
 import { ipFetch } from '@/lib/ipFetch';
 import ProgressBar from '../common/ProgressBar.vue';
-import { defineProps } from 'vue';
+import { defineProps, inject } from 'vue';
 import { formatStorageSize } from '@/lib/utils';
 import dialogService from '@/lib/dialogService';
 
@@ -48,6 +59,8 @@ defineProps({
     }
 });
 
+const apps = inject('apps');
+
 const trash = async (pid) => {
     if (await dialogService.confirm("Delete", "Are you sure you want to delete this history item?")) {
         ipFetch(`json-api/queue/history?pid=${pid}`, 'DELETE');
@@ -58,6 +71,10 @@ const cancel = async (pid) => {
     if (await dialogService.confirm("Cancel", "Are you sure you want to cancel this download?")) {
         ipFetch(`json-api/queue/queue?pid=${pid}`, 'DELETE');
     }
+}
+
+const getAppForId = (id) => {
+    return apps.value.find(({ id: appId }) => id == appId);
 }
 </script>
 

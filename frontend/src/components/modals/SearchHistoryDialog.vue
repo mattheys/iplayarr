@@ -22,9 +22,10 @@
                     <td>
                         <template v-if="getAppForId(history.appId)">
                             <div class="appDisplay">
-                                <img class="appImg" :src="`/img/${getAppForId(history.appId).type.toLowerCase()}.svg`"/>
+                                <img class="appImg"
+                                    :src="`/img/${getAppForId(history.appId).type.toLowerCase()}.svg`" />
                                 <span class="appName">
-                                    {{getAppForId(history.appId).name}}
+                                    {{ getAppForId(history.appId).name }}
                                 </span>
                             </div>
                         </template>
@@ -41,28 +42,28 @@
 </template>
 
 <script setup>
-    import { ipFetch } from '@/lib/ipFetch';
+import { ipFetch } from '@/lib/ipFetch';
 
-    import {ref, onMounted, defineEmits} from 'vue';
+import { ref, onMounted, defineEmits } from 'vue';
 import IPlayarrModal from './IPlayarrModal.vue';
 
-    const searchHistory = ref([]);
-    const apps = ref([]);
+const searchHistory = ref([]);
+const apps = ref([]);
 
-    const emit = defineEmits(['select']);
+const emit = defineEmits(['select']);
 
-    onMounted(async () => {
-        searchHistory.value = (await ipFetch('json-api/synonym/searchHistory')).data
-        apps.value = (await ipFetch("json-api/apps")).data;
-    });
+onMounted(async () => {
+    searchHistory.value = (await ipFetch('json-api/synonym/searchHistory')).data
+    apps.value = (await ipFetch("json-api/apps")).data;
+});
 
-    const getAppForId = (id) => {
-        return apps.value.find(({id : appId}) => id == appId);
-    }
+const getAppForId = (id) => {
+    return apps.value.find(({ id: appId }) => id == appId);
+}
 
-    const select = (history) => {
-        emit('select', {history, app : getAppForId(history.appId)});
-    }
+const select = (history) => {
+    emit('select', { history, app: getAppForId(history.appId) });
+}
 </script>
 
 <style lang="less" scoped>
@@ -94,6 +95,7 @@ import IPlayarrModal from './IPlayarrModal.vue';
                 padding: 8px;
                 border-top: 1px solid @table-border-color;
                 line-height: 1.52857143;
+
                 .appDisplay {
                     display: flex;
                     align-items: center;
@@ -113,5 +115,4 @@ import IPlayarrModal from './IPlayarrModal.vue';
 .floor {
     margin-top: 1rem;
 }
-
 </style>
