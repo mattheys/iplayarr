@@ -5,7 +5,10 @@ export default defineConfig({
     css: {
         loaderOptions: {
             less: {
-                additionalData: '@import "~@/assets/styles/variables.less";'
+                additionalData: `
+                    @import "~@/assets/styles/variables.less";
+                    @import "~@/assets/styles/global.less";
+                `
             }
         }
     },

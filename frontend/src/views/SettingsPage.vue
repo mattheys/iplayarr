@@ -13,11 +13,12 @@
       <TextInput v-model="config.TV_FILENAME_TEMPLATE" :advanced="true" name="TV Filename Template" tooltip="Template for TV Filenames, {title, synonym, season, episode, quality}." :error="validationErrors.config?.TV_FILENAME_TEMPLATE" />
       <TextInput v-model="config.MOVIE_FILENAME_TEMPLATE" :advanced="true" name="Movie Filename Template" tooltip="Template for Movie Filenames, {title, synonym, quality}." :error="validationErrors.config?.MOVIE_FILENAME_TEMPLATE" />
       <TextInput v-model="config.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS" :advanced="true" name="Additional Download Parameters" tooltip="Extra parameters to pass to get_iplayer for download" :error="validationErrors.config?.ADDITIONAL_IPLAYER_DOWNLOAD_PARAMS" />
-      <p class="nzbBanner">
+      
+      <InfoBar>
         Looking for NZB Passthrough? Check the <RouterLink to="/apps">
           Apps
         </RouterLink> section
-      </p>
+      </InfoBar>
     </template>
 
     <legend class="sub">
@@ -37,6 +38,7 @@ import { onBeforeRouteLeave } from 'vue-router';
 
 import SelectInput from '@/components/common/form/SelectInput.vue';
 import TextInput from '@/components/common/form/TextInput.vue';
+import InfoBar from '@/components/common/InfoBar.vue';
 import LoadingIndicator from '@/components/common/LoadingIndicator.vue';
 import SettingsPageToolbar from '@/components/common/SettingsPageToolbar.vue';
 import UpdateAppDialog from '@/components/modals/UpdateAppDialog.vue';
@@ -160,9 +162,5 @@ onBeforeRouteLeave(async (_, __, next) => {
       min-width: 115px;
     }
   }
-}
-
-.nzbBanner {
-  color: @warn-color;
 }
 </style>

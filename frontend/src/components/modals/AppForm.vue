@@ -27,6 +27,9 @@
         </template>
 
         <template v-if="showForm('callback')">
+          <InfoBar v-if="form.type == 'PROWLARR'" class="warning">
+            Prowlarr cannot force download client affinity in downstream Arrs
+          </InfoBar>
           <SelectInput v-model="form.iplayarr.useSSL" name="iPlayarr Protocol" :tooltip="`iPlayarr Protocol for connection from ${capitalize(form.type)}`" :options="[{ key: 'true', value: 'https' }, { key: 'false', value: 'http' }]" />
           <TextInput v-model="form.iplayarr.host" name="iPlayarr Host" :tooltip="`iPlayarr Host for connection from ${capitalize(form.type)}`" />
           <TextInput v-model="form.iplayarr.port" name="iPlayarr Port" type-override="number" :tooltip="`iPlayarr Port for connection from ${capitalize(form.type)}`" />
@@ -36,6 +39,9 @@
           <legend class="sub">
             Download Client
           </legend>
+          <InfoBar clazz="info">
+            Leaving this blank will not create a Download Client
+          </InfoBar>
           <TextInput v-model="form.download_client.name" name="Name" placeholder="iPlayarr" :tooltip="`Name for Download Client in ${capitalize(form.type)}`" :error="validationErrors?.download_client_name" />
         </template>
 
@@ -43,6 +49,9 @@
           <legend class="sub">
             Indexer
           </legend>
+          <InfoBar clazz="info">
+            Leaving this blank will not create an Indexer
+          </InfoBar>
           <TextInput v-model="form.indexer.name" name="Name" placeholder="iPlayarr" :tooltip="`Name for Indexer in ${capitalize(form.type)}`" :error="validationErrors?.indexer_name" />
           <TextInput v-model="form.indexer.priority" name="Priority" placeholder="25" type-override="number" :tooltip="`Priority in ${capitalize(form.type)}`" :error="validationErrors?.indexer_priority" />
         </template>
@@ -60,6 +69,7 @@ import { capitalize } from '@/lib/utils';
 import AppTestButton from '../apps/AppTestButton.vue';
 import SelectInput from '../common/form/SelectInput.vue';
 import TextInput from '../common/form/TextInput.vue';
+import InfoBar from '../common/InfoBar.vue';
 import LoadingIndicator from '../common/LoadingIndicator.vue';
 import IPlayarrModal from './IPlayarrModal.vue';
 

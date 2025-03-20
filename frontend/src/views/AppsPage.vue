@@ -4,7 +4,9 @@
     <p class="mb-0">
       Manage your integrations with Apps (including Arr and NZB Clients) here
     </p>
-    <sub>In order for NZB Forwarding to work successfully, your NZB Client needs the category "iplayer"</sub>
+    <InfoBar clazz="warning">
+      In order for NZB Forwarding to work successfully, your NZB Client needs the category "iplayer"
+    </InfoBar>
     <div class="block-reset" />
     <AppsList :apps="apps" @create="openForm" />
     <ListEditor v-slot="{ item }" :items="apps" :actions="[['trash', deleteApp]]" @create="openForm">
@@ -39,6 +41,7 @@
 import { onMounted, ref } from 'vue';
 import { useModal } from 'vue-final-modal'
 
+import InfoBar from '@/components/common/InfoBar.vue';
 import ListEditor from '@/components/common/ListEditor.vue';
 import AppForm from '@/components/modals/AppForm.vue';
 import dialogService from '@/lib/dialogService';
@@ -85,21 +88,21 @@ const hasFeature = (itemType, type) => {
 
 <style lang="less" scoped>
 .major {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    height: 30px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
 
-    .appImg {
-        width: 25px;
-        filter: grayscale(100%) contrast(100%);
-    }
+  .appImg {
+    width: 25px;
+    filter: grayscale(100%) contrast(100%);
+  }
 }
 
 .featureList {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
 }
 </style>
