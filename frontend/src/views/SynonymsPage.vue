@@ -36,7 +36,7 @@ import ArrLookupDialog from '@/components/modals/ArrLookupDialog.vue';
 import SynonymForm from '@/components/modals/SynonymForm.vue';
 import dialogService from '@/lib/dialogService';
 import { ipFetch } from '@/lib/ipFetch';
-import { deepCopy } from '@/lib/utils';
+import { deepCopy, getCleanSceneTitle } from '@/lib/utils';
 
 const synonyms = ref([]);
 
@@ -107,8 +107,9 @@ const openArrItemList = async (app) => {
                 }
                 formModal.close();
                 let from = await dialogService.select(result.title, 'Select a search Term', undefined, options);
-                from = from.replaceAll(/[^a-zA-Z0-9\s.]/g, '');
+                
                 if (from !== false){
+                    from = getCleanSceneTitle(from);
                     openForm({
                         from,
                         filenameOverride: result.title
