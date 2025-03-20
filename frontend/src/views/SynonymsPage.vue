@@ -107,7 +107,8 @@ const openArrItemList = async (app) => {
                     options = [...options, ...result.alternateTitles.map(({title}) => title)]
                 }
                 formModal.close();
-                const from = await dialogService.select(result.title, "Select a search Term", undefined, options);
+                let from = await dialogService.select(result.title, 'Select a search Term', undefined, options);
+                from = from.replaceAll(/[^a-zA-Z0-9\s.]/g, '');
                 if (from !== false){
                     openForm({
                         from,
