@@ -22,6 +22,8 @@
         </a>
       </div>
     </div>
+    <h2>Collaborators</h2>
+    <p><a href="https://github.com/StormPooper">@StormFoo</a></p>
     <h2 v-if="isAppleDevice">
       Tools
     </h2>

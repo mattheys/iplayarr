@@ -1,3 +1,8 @@
 {
-    "html.format.wrapLineLength": 600
+    "html.format.wrapLineLength": 600,
+    "eslint.workingDirectories": [
+        {
+            "mode": "auto"
+        }
+    ],
 }
