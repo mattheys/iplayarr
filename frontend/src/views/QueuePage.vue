@@ -1,21 +1,12 @@
 <template>
-  <SettingsPageToolbar
-    v-if="false"
-    :icons="['filter']"
-    :filter-options="filterOptions"
-    :selected-filter="filter"
-    :filter-enabled="filter != 'All'"
-  />
+  <SettingsPageToolbar v-if="false" :icons="['filter']" :filter-options="filterOptions" :selected-filter="filter" :filter-enabled="filter != 'All'" />
   <div class="inner-content scroll-x">
-    <QueueTable
-      :queue="queue"
-      :history="history"
-    />
+    <QueueTable :queue="queue" :history="history" />
   </div>
 </template>
 
 <script setup>
-import {inject, onMounted,provide, ref} from 'vue';
+import { inject, onMounted, provide, ref } from 'vue';
 
 import SettingsPageToolbar from '@/components/common/SettingsPageToolbar.vue';
 import { ipFetch } from '@/lib/ipFetch';
@@ -39,4 +30,4 @@ provide('apps', apps);
 onMounted(async () => {
     apps.value = (await ipFetch('json-api/apps')).data;
 });
-</script> 
+</script>

@@ -1,21 +1,8 @@
 <template>
-  <SettingsPageToolbar
-    :icons="['follow', 'delete']"
-    :follow-status="followlog"
-    :download-details="item.details"
-    @toggle-follow="toggleFollow"
-    @delete-queue-item="deleteQueueItem"
-  />
-  <MediaInfoHero
-    :title="item.nzbName"
-    :pid="item.pid"
-    :type="item.type"
-  />
+  <SettingsPageToolbar :icons="['follow', 'delete']" :follow-status="followlog" :download-details="item.details" @toggle-follow="toggleFollow" @delete-queue-item="deleteQueueItem" />
+  <MediaInfoHero :title="item.nzbName" :pid="item.pid" :type="item.type" />
   <div class="inner-content">
-    <LogPanel
-      :filter="item.pid"
-      :follow="followlog"
-    />
+    <LogPanel :filter="item.pid" :follow="followlog" />
   </div>
 </template>
 

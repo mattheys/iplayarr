@@ -1,9 +1,5 @@
 <template>
-  <IPlayarrModal
-    title="Search History"
-    :show-close="true"
-    close-label="Cancel"
-  >
+  <IPlayarrModal title="Search History" :show-close="true" close-label="Cancel">
     <table class="resultsTable">
       <thead>
         <tr>
@@ -18,10 +14,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="history of searchHistory"
-          :key="history.term"
-        >
+        <tr v-for="history of searchHistory" :key="history.term">
           <td>{{ history.term }}</td>
           <td>{{ history.series }}</td>
           <td>{{ history.episode }}</td>
@@ -29,10 +22,7 @@
           <td>
             <template v-if="getAppForId(history.appId)">
               <div class="appDisplay">
-                <img
-                  class="appImg"
-                  :src="`/img/${getAppForId(history.appId).type.toLowerCase()}.svg`"
-                >
+                <img class="appImg" :src="`/img/${getAppForId(history.appId).type.toLowerCase()}.svg`">
                 <span class="appName">
                   {{ getAppForId(history.appId).name }}
                 </span>
@@ -40,10 +30,7 @@
             </template>
           </td>
           <td>
-            <a
-              class="clickable"
-              @click="select(history)"
-            >
+            <a class="clickable" @click="select(history)">
               Select
             </a>
           </td>
@@ -54,7 +41,7 @@
 </template>
 
 <script setup>
-import { defineEmits,onMounted, ref } from 'vue';
+import { defineEmits, onMounted, ref } from 'vue';
 
 import { ipFetch } from '@/lib/ipFetch';
 

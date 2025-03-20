@@ -27,6 +27,8 @@ export default [
             'no-async-promise-executor': 'off',
             'simple-import-sort/imports': 'error',
             'simple-import-sort/exports': 'error',
+            'vue/max-attributes-per-line': 'off',
+            'vue/require-default-prop': 'off',
             'quotes': ['error', 'single'],
         }
     }

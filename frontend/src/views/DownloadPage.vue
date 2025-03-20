@@ -1,24 +1,13 @@
 <template>
-  <SettingsPageToolbar
-    :icons="['download']"
-    @download="download"
-  />
-  <MediaInfoHero
-    :pid="searchResult.pid"
-    :type="searchResult.type"
-    :title="`${searchResult.title}${searchResult.episode ? ` - Series ${searchResult.series || 'Unknown'}, Episode ${searchResult.episode}` : ''}`"
-  />
+  <SettingsPageToolbar :icons="['download']" @download="download" />
+  <MediaInfoHero :pid="searchResult.pid" :type="searchResult.type" :title="`${searchResult.title}${searchResult.episode ? ` - Series ${searchResult.series || 'Unknown'}, Episode ${searchResult.episode}` : ''}`" />
   <div class="inner-content">
-    <TextInput
-      v-model="searchResult.nzbName"
-      name="Filename"
-      tooltip="Filename to Download as (extension will be added automatically)"
-    />
+    <TextInput v-model="searchResult.nzbName" name="Filename" tooltip="Filename to Download as (extension will be added automatically)" />
   </div>
 </template>
 
 <script setup>
-import {ref,watch} from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import TextInput from '@/components/common/form/TextInput.vue';
@@ -38,7 +27,7 @@ watch(() => route.query.json, async (newJson) => {
 
 const download = async () => {
     const response = await ipFetch(`json-api/download?pid=${searchResult.value.pid}&nzbName=${searchResult.value.nzbName}&type=${searchResult.value.type}`);
-    if (response.ok){
+    if (response.ok) {
         router.push('/queue');
     }
 }

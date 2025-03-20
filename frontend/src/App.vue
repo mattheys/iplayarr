@@ -1,11 +1,7 @@
 <template>
   <NavBar ref="navBar" />
   <div class="main-layout">
-    <LeftHandNav
-      v-if="authState.user"
-      ref="leftHandNav"
-      @clear-search="clearSearch"
-    />
+    <LeftHandNav v-if="authState.user" ref="leftHandNav" @clear-search="clearSearch" />
     <div class="content">
       <RouterView />
     </div>
@@ -15,7 +11,7 @@
 
 <script setup>
 import { io } from 'socket.io-client';
-import { inject,provide, ref, watch } from 'vue';
+import { inject, provide, ref, watch } from 'vue';
 import { ModalsContainer } from 'vue-final-modal';
 import { RouterView } from 'vue-router';
 
@@ -234,6 +230,7 @@ button:focus {
 
   .modal-inner {
     overflow-y: auto;
+
     @media (min-width: @mobile-breakpoint) {
       max-height: 75vh;
     }
@@ -271,6 +268,7 @@ button:focus {
         margin-top: auto;
         margin-bottom: 3rem;
       }
+
       box-sizing: border-box;
     }
 

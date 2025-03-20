@@ -1,55 +1,31 @@
 <template>
-  <div
-    class="infoBanner"
-    :style="{'background-image' : `url(${details.thumbnail})`}"
-  >
+  <div class="infoBanner" :style="{ 'background-image': `url(${details.thumbnail})` }">
     <div class="infoContainer">
       <h1>{{ title }}</h1>
-      <div
-        v-if="details.category"
-        class="seriesDetails"
-      >
+      <div v-if="details.category" class="seriesDetails">
         <span>{{ details.runtime }} Minutes</span>
         <span>{{ details.category }}</span>
         <span>{{ details.firstBroadcast }}</span>
       </div>
-      <div
-        v-if="details.category"
-        class="seriesDetails"
-      >
+      <div v-if="details.category" class="seriesDetails">
         <span :class="['pill', 'grey']">
-          <font-awesome-icon :icon="['fas', type == 'TV' ? 'tv' : 'film' ]" />
+          <font-awesome-icon :icon="['fas', type == 'TV' ? 'tv' : 'film']" />
           {{ fixCasing(type) }}
         </span>
-        <span
-          v-if="details.channel"
-          :class="['pill', 'grey']"
-        >
+        <span v-if="details.channel" :class="['pill', 'grey']">
           <font-awesome-icon :icon="['fas', 'tower-broadcast']" />
           {{ details.channel }}
         </span>
-        <span
-          v-if="details.link"
-          :class="['pill', 'grey']"
-        >
-          <a
-            :href="details.link"
-            target="_blank"
-          >
+        <span v-if="details.link" :class="['pill', 'grey']">
+          <a :href="details.link" target="_blank">
             <font-awesome-icon :icon="['fas', 'arrow-up-right-from-square']" />Link
           </a>
         </span>
       </div>
-      <div
-        v-if="details.category"
-        class="seriesDetails"
-      >
+      <div v-if="details.category" class="seriesDetails">
         <span>{{ details.description }}</span>
       </div>
-      <div
-        v-if="downloadDetails.progress"
-        class="seriesDetails downloadDetails"
-      >
+      <div v-if="downloadDetails.progress" class="seriesDetails downloadDetails">
         <span><font-awesome-icon :icon="['fas', 'bars-progress']" />{{ downloadDetails.progress }}%</span>
         <span><font-awesome-icon :icon="['fas', 'flag-checkered']" />{{ downloadDetails.eta }}</span>
         <span><font-awesome-icon :icon="['fas', 'gauge']" />{{ downloadDetails.speed }}MB/s</span>
@@ -60,7 +36,7 @@
 </template>
 
 <script setup>
-import {computed,defineProps, inject, ref, watch} from 'vue';
+import { computed, defineProps, inject, ref, watch } from 'vue';
 
 import { ipFetch } from '@/lib/ipFetch';
 
@@ -71,34 +47,34 @@ const queue = inject('queue');
 const history = inject('history');
 
 const props = defineProps({
-    pid :{
-        type : String,
+    pid: {
+        type: String,
         required: true
     },
-    title :{
-        type : String,
+    title: {
+        type: String,
         required: true
     },
-    type :{
-        type : String,
+    type: {
+        type: String,
         required: true
     }
 });
 
 const downloadDetails = computed(() => {
-    const historyItem = history.value.find(({pid}) => pid == props.pid);
+    const historyItem = history.value.find(({ pid }) => pid == props.pid);
     if (historyItem) return historyItem.details;
-    const queueItem = queue.value.find(({pid}) => pid == props.pid);
+    const queueItem = queue.value.find(({ pid }) => pid == props.pid);
     if (queueItem) return queueItem.details;
     return {};
 });
 
 watch(() => props.pid, async (newPid) => {
     details.value = {};
-    if (newPid){
+    if (newPid) {
         details.value = (await ipFetch(`json-api/details?pid=${newPid}`)).data;
     }
-}, {immediate : true})
+}, { immediate: true })
 
 const fixCasing = (str) => {
     return str
@@ -109,63 +85,63 @@ const fixCasing = (str) => {
 </script>
 
 <style lang="less">
-    .infoBanner {
-        position: relative;
-        width: 100%;
-        height: 325px;
-        background-size: cover;
-        background-position: center;
+.infoBanner {
+  position: relative;
+  width: 100%;
+  height: 325px;
+  background-size: cover;
+  background-position: center;
 
-        .infoContainer {
-            position: absolute;
-            width: 100%;
-            height: 325px;
-            background-color: rgba(0,0,0,0.6);
-            padding: 2rem;
-            box-sizing: border-box;
-
-            .seriesDetails {
-                margin-bottom: 8px;
-                font-weight: 300;
-                font-size: 20px;
-
-                span {
-                    margin-right: 15px;
-                }
-
-                &.downloadDetails {
-                    svg {
-                        margin-right: 10px;
-                    }
-                }
-            }
-        }
-
-        h1 {
-            text-wrap: balance;
-            font-weight: 300;
-            font-size: 50px;
-            line-height: 50px;
-            margin: 0px;
-
-            @media (max-width: @mobile-breakpoint) {
-                font-size: 30px;
-                line-height: 30px;
-            }
-        }
-    }
+  .infoContainer {
+    position: absolute;
+    width: 100%;
+    height: 325px;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 2rem;
+    box-sizing: border-box;
 
     .seriesDetails {
-        .pill.grey {
-            padding: 3px 7px;
-            font-weight: 300;
-            font-size: 17px;
+      margin-bottom: 8px;
+      font-weight: 300;
+      font-size: 20px;
 
-            svg {
-                margin-right: 3px;
-            }
+      span {
+        margin-right: 15px;
+      }
 
-            margin-right: 10px !important;
+      &.downloadDetails {
+        svg {
+          margin-right: 10px;
         }
+      }
     }
+  }
+
+  h1 {
+    text-wrap: balance;
+    font-weight: 300;
+    font-size: 50px;
+    line-height: 50px;
+    margin: 0px;
+
+    @media (max-width: @mobile-breakpoint) {
+      font-size: 30px;
+      line-height: 30px;
+    }
+  }
+}
+
+.seriesDetails {
+  .pill.grey {
+    padding: 3px 7px;
+    font-weight: 300;
+    font-size: 17px;
+
+    svg {
+      margin-right: 3px;
+    }
+
+    margin-right: 10px !important;
+  }
+}
 </style>

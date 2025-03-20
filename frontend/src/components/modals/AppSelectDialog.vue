@@ -1,16 +1,9 @@
 <template>
   <IPlayarrModal title="Select App">
-    <ListEditor
-      v-slot="{item}"
-      :show-add="false"
-      :items="apps"
-    >
+    <ListEditor v-slot="{ item }" :show-add="false" :items="apps">
       <a @click.prevent="emit('selectApp', item)">
         <div class="major">
-          <img
-            class="appImg"
-            :src="`/img/${item.type.toLowerCase()}.svg`"
-          >
+          <img class="appImg" :src="`/img/${item.type.toLowerCase()}.svg`">
           <span class="appName">
             {{ item.name }}
           </span>
@@ -24,7 +17,7 @@
 </template>
 
 <script setup>
-import {defineEmits,onMounted, ref} from 'vue';
+import { defineEmits, onMounted, ref } from 'vue';
 
 import { ipFetch } from '@/lib/ipFetch';
 
@@ -39,9 +32,9 @@ const features = ref([]);
 onMounted(async () => {
     features.value = (await ipFetch('json-api/apps/types')).data;
     apps.value = (await ipFetch('json-api/apps')).data;
-    apps.value = apps.value.filter(({type}) => features.value[type].includes('callback'));
+    apps.value = apps.value.filter(({ type }) => features.value[type].includes('callback'));
 
-    if (apps.value.length == 0){
+    if (apps.value.length == 0) {
         emit('close');
         return;
     }
@@ -49,22 +42,22 @@ onMounted(async () => {
 </script>
 
 <style lang="less" scoped>
-    .major {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        height: 30px;
+.major {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
 
-        .appImg {
-            width: 25px;
-            filter: grayscale(100%) contrast(100%);
-        }
-    }
+  .appImg {
+    width: 25px;
+    filter: grayscale(100%) contrast(100%);
+  }
+}
 
-    .featureList {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        margin-top: 6px;
-    }
+.featureList {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+}
 </style>

@@ -1,69 +1,21 @@
 <template>
-  <div
-    ref="lhn"
-    class="LeftHandNav"
-  >
+  <div ref="lhn" class="LeftHandNav">
     <ul>
-      <LeftHandNavLink
-        label="Queue"
-        icon="tasks"
-        path="/queue"
-        @option-clicked="closeLHN"
-      />
-      <LeftHandNavLink
-        label="Logs"
-        icon="history"
-        path="/logs"
-        @option-clicked="closeLHN"
-      />
-      <LeftHandNavLink
-        label="Settings"
-        icon="gears"
-        path="/settings"
-        @option-clicked="closeLHN"
-      />
-      <LeftHandNavLink
-        label="Apps"
-        icon="laptop-code"
-        path="/apps"
-        @option-clicked="closeLHN"
-      />
-      <LeftHandNavLink
-        label="Synonyms"
-        icon="arrows-rotate"
-        path="/synonyms"
-        @option-clicked="closeLHN"
-      />
-      <LeftHandNavLink
-        label="Off Schedule"
-        icon="calendar"
-        path="/offSchedule"
-        @option-clicked="closeLHN"
-      />
-      <LeftHandNavLink
-        label="Refresh Index"
-        icon="address-book"
-        :no-link="true"
-        @option-clicked="refreshCache"
-      />
-      <LeftHandNavLink
-        label="About"
-        icon="circle-info"
-        path="/about"
-        @option-clicked="closeLHN"
-      />
-      <LeftHandNavLink
-        label="Logout"
-        icon="sign-out"
-        :no-link="true"
-        @option-clicked="logout"
-      />
+      <LeftHandNavLink label="Queue" icon="tasks" path="/queue" @option-clicked="closeLHN" />
+      <LeftHandNavLink label="Logs" icon="history" path="/logs" @option-clicked="closeLHN" />
+      <LeftHandNavLink label="Settings" icon="gears" path="/settings" @option-clicked="closeLHN" />
+      <LeftHandNavLink label="Apps" icon="laptop-code" path="/apps" @option-clicked="closeLHN" />
+      <LeftHandNavLink label="Synonyms" icon="arrows-rotate" path="/synonyms" @option-clicked="closeLHN" />
+      <LeftHandNavLink label="Off Schedule" icon="calendar" path="/offSchedule" @option-clicked="closeLHN" />
+      <LeftHandNavLink label="Refresh Index" icon="address-book" :no-link="true" @option-clicked="refreshCache" />
+      <LeftHandNavLink label="About" icon="circle-info" path="/about" @option-clicked="closeLHN" />
+      <LeftHandNavLink label="Logout" icon="sign-out" :no-link="true" @option-clicked="logout" />
     </ul>
   </div>
 </template>
 
 <script setup>
-import { defineEmits, defineExpose, onBeforeUnmount,ref } from 'vue';
+import { defineEmits, defineExpose, onBeforeUnmount, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { onBeforeRouteLeave } from 'vue-router';
 
@@ -78,7 +30,7 @@ const emit = defineEmits(['clear-search']);
 
 const toggleLHN = () => {
     lhn.value.classList.toggle('show');
-    if (lhn.value.classList.contains('show')){
+    if (lhn.value.classList.contains('show')) {
         setTimeout(() => {
             document.addEventListener('click', handleClickOutside);
         }, 0);
@@ -152,7 +104,8 @@ const handleClickOutside = (event) => {
 
       padding-left: 21px;
 
-      a, span {
+      a,
+      span {
         color: @brand-color !important;
         text-decoration: none;
       }
@@ -163,7 +116,8 @@ const handleClickOutside = (event) => {
     }
   }
 
-  a, span {
+  a,
+  span {
     color: @nav-link-color;
     text-decoration: none;
 
@@ -186,5 +140,4 @@ const handleClickOutside = (event) => {
     transform: translateX(0);
   }
 }
-
 </style>

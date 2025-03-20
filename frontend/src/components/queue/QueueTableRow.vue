@@ -1,16 +1,10 @@
 <template>
   <tr>
     <td>
-      <font-awesome-icon
-        :class="[history ? 'complete' : '', item.status]"
-        :icon="['fas', history ? 'download' : (item.status == 'Queued' ? 'cloud' : 'cloud-download')]"
-      />
+      <font-awesome-icon :class="[history ? 'complete' : '', item.status]" :icon="['fas', history ? 'download' : (item.status == 'Queued' ? 'cloud' : 'cloud-download')]" />
     </td>
-    <td
-      class="text"
-      data-title="Filename"
-    >
-      <RouterLink :to="{ path: '/info', query: { item : JSON.stringify(item) } }">
+    <td class="text" data-title="Filename">
+      <RouterLink :to="{ path: '/info', query: { item: JSON.stringify(item) } }">
         {{ item.nzbName }}
       </RouterLink>
     </td>
@@ -28,25 +22,15 @@
     <td>
       <template v-if="item.appId && getAppForId(item.appId)">
         <div class="appDisplay">
-          <img
-            class="appImg"
-            :src="`/img/${getAppForId(item.appId).type.toLowerCase()}.svg`"
-          >
+          <img class="appImg" :src="`/img/${getAppForId(item.appId).type.toLowerCase()}.svg`">
           <span class="appName">
             {{ getAppForId(item.appId).name }}
           </span>
         </div>
       </template>
     </td>
-    <td
-      class="progress-column"
-      data-title="Progress"
-    >
-      <ProgressBar
-        :progress="item.details.progress"
-        :history="history"
-        :idle="item.status == 'Queued'"
-      />
+    <td class="progress-column" data-title="Progress">
+      <ProgressBar :progress="item.details.progress" :history="history" :idle="item.status == 'Queued'" />
     </td>
     <td data-title="ETA">
       {{ item.details.eta }}
@@ -54,23 +38,12 @@
     <td data-title="Speed">
       {{ item.details.speed || '' }} {{ item.details.speed != '' ? 'MB/s' : '' }}
     </td>
-    <td
-      class="actionCol"
-      data-title="Action"
-    >
+    <td class="actionCol" data-title="Action">
       <span v-if="history">
-        <font-awesome-icon
-          class="clickable"
-          :icon="['fas', 'trash']"
-          @click="trash(item.pid)"
-        />
+        <font-awesome-icon class="clickable" :icon="['fas', 'trash']" @click="trash(item.pid)" />
       </span>
       <span v-if="!history">
-        <font-awesome-icon
-          class="clickable"
-          :icon="['fas', 'xmark']"
-          @click="cancel(item.pid)"
-        />
+        <font-awesome-icon class="clickable" :icon="['fas', 'xmark']" @click="cancel(item.pid)" />
       </span>
     </td>
   </tr>
@@ -117,7 +90,7 @@ const getAppForId = (id) => {
 </script>
 
 <style lang="less" scoped>
-    .complete {
-        color: @complete-color;
-    }
+.complete {
+    color: @complete-color;
+}
 </style>

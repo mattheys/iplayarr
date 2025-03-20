@@ -1,19 +1,8 @@
 <template>
-  <IPlayarrModal
-    :show-close="true"
-    close-label="Cancel"
-    title="Lookup"
-  >
+  <IPlayarrModal :show-close="true" close-label="Cancel" title="Lookup">
     <LoadingIndicator v-if="loading" />
-    <div
-      v-if="!loading"
-      class="arrLookup"
-    >
-      <TextInput
-        v-if="showFilter"
-        v-model="filterText"
-        placeholder="Filter"
-      />
+    <div v-if="!loading" class="arrLookup">
+      <TextInput v-if="showFilter" v-model="filterText" placeholder="Filter" />
       <table class="resultsTable">
         <thead>
           <tr>
@@ -24,16 +13,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="result of computedResults"
-            :key="result.id"
-          >
+          <tr v-for="result of computedResults" :key="result.id">
             <td>{{ result.title }}</td>
             <td>
-              <a
-                class="clickable"
-                @click="emit('select', result)"
-              >
+              <a class="clickable" @click="emit('select', result)">
                 Select
               </a>
             </td>
@@ -48,7 +31,7 @@
 </template>
 
 <script setup>
-import {computed,defineEmits, defineProps, onMounted, ref} from 'vue';
+import { computed, defineEmits, defineProps, onMounted, ref } from 'vue';
 
 import { ipFetch } from '@/lib/ipFetch';
 
@@ -58,13 +41,13 @@ import IPlayarrModal from './IPlayarrModal.vue';
 
 const results = ref([]);
 const emit = defineEmits(['select', 'error'])
-const props = defineProps({app : Object, term : String, showFilter : {type: Boolean, required : false, default : false}});
+const props = defineProps({ app: Object, term: String, showFilter: { type: Boolean, required: false, default: false } });
 const loading = ref(true);
 const filterText = ref('');
 
 onMounted(async () => {
     const response = await ipFetch(`json-api/synonym/lookup/${props.app.id}${props.term ? `?term=${props.term}` : ''}`);
-    if (response.ok){
+    if (response.ok) {
         results.value = response.data;
         loading.value = false;
     } else {
@@ -73,8 +56,8 @@ onMounted(async () => {
 });
 
 const computedResults = computed(() => {
-    if (filterText.value){
-        return results.value.filter(({title}) => title.toLowerCase().includes(filterText.value.toLowerCase()));
+    if (filterText.value) {
+        return results.value.filter(({ title }) => title.toLowerCase().includes(filterText.value.toLowerCase()));
     } else {
         return results.value;
     }
@@ -83,51 +66,51 @@ const computedResults = computed(() => {
 
 <style lang="less" scoped>
 .resultsTable {
-    max-width: 100%;
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    color: @table-text-color;
+  max-width: 100%;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  color: @table-text-color;
 
-    thead {
-        th {
-            padding: 8px;
-            border-bottom: 1px solid @table-border-color;
-            text-align: left;
-            font-weight: bold;
-        }
+  thead {
+    th {
+      padding: 8px;
+      border-bottom: 1px solid @table-border-color;
+      text-align: left;
+      font-weight: bold;
     }
+  }
 
-    tbody {
-        tr {
-            transition: background-color 500ms;
+  tbody {
+    tr {
+      transition: background-color 500ms;
 
-            &:hover {
-                background-color: @table-row-hover-color;
-            }
+      &:hover {
+        background-color: @table-row-hover-color;
+      }
 
-            td {
-                padding: 8px;
-                border-top: 1px solid @table-border-color;
-                line-height: 1.52857143;
-                .appDisplay {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    height: 30px;
+      td {
+        padding: 8px;
+        border-top: 1px solid @table-border-color;
+        line-height: 1.52857143;
 
-                    .appImg {
-                        width: 15px;
-                        filter: grayscale(100%) contrast(100%);
-                    }
-                }
-            }
+        .appDisplay {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          height: 30px;
+
+          .appImg {
+            width: 15px;
+            filter: grayscale(100%) contrast(100%);
+          }
         }
+      }
     }
+  }
 }
 
 .floor {
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
-
 </style>

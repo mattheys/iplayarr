@@ -1,8 +1,5 @@
 <template>
-  <table
-    class="queueTable"
-    summary="Hed"
-  >
+  <table class="queueTable" summary="Hed">
     <thead>
       <tr>
         <th />
@@ -22,18 +19,8 @@
       </tr>
     </thead>
     <tbody>
-      <QueueTableRow
-        v-for="item in queue"
-        :key="item.id"
-        :item="item"
-        :history="false"
-      />
-      <QueueTableRow
-        v-for="item in history"
-        :key="item.id"
-        :item="item"
-        :history="true"
-      />
+      <QueueTableRow v-for="item in queue" :key="item.id" :item="item" :history="false" />
+      <QueueTableRow v-for="item in history" :key="item.id" :item="item" :history="true" />
     </tbody>
   </table>
 </template>

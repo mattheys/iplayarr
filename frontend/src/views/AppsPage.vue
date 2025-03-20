@@ -6,22 +6,11 @@
     </p>
     <sub>In order for NZB Forwarding to work successfully, your NZB Client needs the category "iplayer"</sub>
     <div class="block-reset" />
-    <AppsList
-      :apps="apps"
-      @create="openForm"
-    />
-    <ListEditor
-      v-slot="{item}"
-      :items="apps"
-      :actions="[['trash', deleteApp]]"
-      @create="openForm"
-    >
+    <AppsList :apps="apps" @create="openForm" />
+    <ListEditor v-slot="{ item }" :items="apps" :actions="[['trash', deleteApp]]" @create="openForm">
       <a @click="openForm(item)">
         <div class="major">
-          <img
-            class="appImg"
-            :src="`/img/${item.type.toLowerCase()}.svg`"
-          >
+          <img class="appImg" :src="`/img/${item.type.toLowerCase()}.svg`">
           <span class="appName">
             {{ item.name }}
           </span>
@@ -30,22 +19,13 @@
           {{ item.url }}
         </div>
         <div class="featureList">
-          <span
-            v-if="hasFeature(item.type, 'download_client') || hasFeature(item.type, 'prowlarr_download_client')"
-            :class="['pill', item.download_client?.id ? 'success' : 'error']"
-          >
+          <span v-if="hasFeature(item.type, 'download_client') || hasFeature(item.type, 'prowlarr_download_client')" :class="['pill', item.download_client?.id ? 'success' : 'error']">
             Download Client
           </span>
-          <span
-            v-if="hasFeature(item.type, 'indexer') || hasFeature(item.type, 'prowlarr_indexer')"
-            :class="['pill', item.indexer?.id ? 'success' : 'error']"
-          >
+          <span v-if="hasFeature(item.type, 'indexer') || hasFeature(item.type, 'prowlarr_indexer')" :class="['pill', item.indexer?.id ? 'success' : 'error']">
             Indexer
           </span>
-          <span
-            v-if="hasFeature(item.type, 'priority')"
-            :class="['pill', 'grey']"
-          >
+          <span v-if="hasFeature(item.type, 'priority')" :class="['pill', 'grey']">
             Priority: {{ item.priority }}
           </span>
         </div>
@@ -56,7 +36,7 @@
 </template>
 
 <script setup>
-import {onMounted,ref} from 'vue';
+import { onMounted, ref } from 'vue';
 import { useModal } from 'vue-final-modal'
 
 import ListEditor from '@/components/common/ListEditor.vue';
@@ -79,10 +59,10 @@ onMounted(refreshApps);
 const openForm = (app) => {
     const formModal = useModal({
         component: AppForm,
-        attrs : {
-            action : app ? 'Edit' : 'Create',
-            inputObj : deepCopy(app),
-            onSaved : async () => {
+        attrs: {
+            action: app ? 'Edit' : 'Create',
+            inputObj: deepCopy(app),
+            onSaved: async () => {
                 formModal.close();
                 await refreshApps();
             }
@@ -91,9 +71,9 @@ const openForm = (app) => {
     formModal.open();
 }
 
-const deleteApp = async ({id, name}) => {
-    if (await dialogService.confirm('Delete App', `Are you sure you want to delete ${name}`, 'Indexers and Download Clients in the target Arr, will NOT be deleted')){
-        await ipFetch('json-api/apps', 'DELETE', {id});
+const deleteApp = async ({ id, name }) => {
+    if (await dialogService.confirm('Delete App', `Are you sure you want to delete ${name}`, 'Indexers and Download Clients in the target Arr, will NOT be deleted')) {
+        await ipFetch('json-api/apps', 'DELETE', { id });
         await refreshApps();
     }
 }
@@ -104,22 +84,22 @@ const hasFeature = (itemType, type) => {
 </script>
 
 <style lang="less" scoped>
-    .major {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        height: 30px;
+.major {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
 
-        .appImg {
-            width: 25px;
-            filter: grayscale(100%) contrast(100%);
-        }
+    .appImg {
+        width: 25px;
+        filter: grayscale(100%) contrast(100%);
     }
+}
 
-    .featureList {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        margin-top: 6px;
-    }
+.featureList {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+}
 </style>

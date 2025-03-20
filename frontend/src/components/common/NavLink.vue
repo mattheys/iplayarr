@@ -1,12 +1,6 @@
 <template>
-  <component
-    :is="noLink ? 'span' : 'RouterLink'"
-    :to="path"
-  >
-    <li
-      :class="[route.path === path ? 'active' : '', 'clickable']"
-      @click="optionClicked"
-    >
+  <component :is="noLink ? 'span' : 'RouterLink'" :to="path">
+    <li :class="[route.path === path ? 'active' : '', 'clickable']" @click="optionClicked">
       <span>
         <font-awesome-icon :icon="['fas', icon]" />
         <span class="menuText">{{ label }}</span>
@@ -16,29 +10,29 @@
 </template>
 
 <script setup>
-import { defineEmits,defineProps } from 'vue';
+import { defineEmits, defineProps } from 'vue';
 import { useRoute } from 'vue-router';
 
 const emit = defineEmits(['optionClicked']);
 const route = useRoute();
 
 defineProps({
-    path : {
-        type : String,
+    path: {
+        type: String,
         required: false
     },
-    label : {
-        type : String,
+    label: {
+        type: String,
         required: true,
     },
-    icon : {
-        type : String,
+    icon: {
+        type: String,
         required: true,
     },
-    noLink : {
-        type : Boolean,
-        required : false,
-        default : false
+    noLink: {
+        type: Boolean,
+        required: false,
+        default: false
     }
 });
 

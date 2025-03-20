@@ -1,15 +1,6 @@
 <template>
-  <SettingsPageToolbar
-    :icons="['filter']"
-    :filter-options="availableFilters"
-    :selected-filter="filter"
-    :filter-enabled="filter != 'All'"
-    @select-filter="selectFilter"
-  />
-  <div
-    v-if="!loading"
-    class="inner-content scroll-x"
-  >
+  <SettingsPageToolbar :icons="['filter']" :filter-options="availableFilters" :selected-filter="filter" :filter-enabled="filter != 'All'" @select-filter="selectFilter" />
+  <div v-if="!loading" class="inner-content scroll-x">
     <table class="resultsTable">
       <thead>
         <tr>
@@ -26,26 +17,17 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="result of filteredResults"
-          :key="result.pid"
-        >
+        <tr v-for="result of filteredResults" :key="result.pid">
           <td>{{ result.number }}</td>
           <td>
             <span :class="['pill', result.type]">
               {{ result.type }}
             </span>
           </td>
-          <td
-            class="clickable"
-            @click="download(result)"
-          >
+          <td class="clickable" @click="download(result)">
             {{ result.title }}
           </td>
-          <td
-            class="clickable"
-            @click="download(result)"
-          >
+          <td class="clickable" @click="download(result)">
             {{ result.nzbName }}
           </td>
           <td>{{ formatStorageSize(result.size) }}</td>
@@ -56,11 +38,7 @@
           </td>
           <td>{{ result.pid }}</td>
           <td>
-            <font-awesome-icon
-              :class="['clickable', result.downloading ? 'downloading' : '']"
-              :icon="['fas', 'cloud-download']"
-              @click="immediateDownload(result)"
-            />
+            <font-awesome-icon :class="['clickable', result.downloading ? 'downloading' : '']" :icon="['fas', 'cloud-download']" @click="immediateDownload(result)" />
           </td>
         </tr>
       </tbody>
@@ -70,7 +48,7 @@
 </template>
 
 <script setup>
-import { computed,ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import LoadingIndicator from '@/components/common/LoadingIndicator.vue';
@@ -88,7 +66,7 @@ const availableFilters = ref(['All', 'TV', 'Movie']);
 const filter = ref('All');
 
 const filteredResults = computed(() => {
-    return filter.value == 'All' ? searchResults.value : searchResults.value.filter(({type}) => type == filter.value.toUpperCase());
+    return filter.value == 'All' ? searchResults.value : searchResults.value.filter(({ type }) => type == filter.value.toUpperCase());
 })
 
 watch(() => route.query.searchTerm, async (newSearchTerm) => {
@@ -102,13 +80,13 @@ watch(() => route.query.searchTerm, async (newSearchTerm) => {
     }
 }, { immediate: true });
 
-const download = async(searchResult) => {
-    router.push({ name : 'download', query : {json : JSON.stringify(searchResult)}});
+const download = async (searchResult) => {
+    router.push({ name: 'download', query: { json: JSON.stringify(searchResult) } });
 }
 
-const immediateDownload = async({pid, nzbName, type}) => {
+const immediateDownload = async ({ pid, nzbName, type }) => {
     const response = await ipFetch(`json-api/download?pid=${pid}&nzbName=${nzbName}&type=${type}`);
-    if (response.ok){
+    if (response.ok) {
         router.push('/queue');
     }
 }

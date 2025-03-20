@@ -1,18 +1,7 @@
 <template>
-  <SettingsPageToolbar
-    :icons="['follow', 'filter']"
-    :follow-status="followlog"
-    :filter-enabled="filter != null"
-    :filter-options="availableFilters"
-    :selected-filter="selectedFilter"
-    @toggle-follow="toggleFollow"
-    @select-filter="selectFilter"
-  />
+  <SettingsPageToolbar :icons="['follow', 'filter']" :follow-status="followlog" :filter-enabled="filter != null" :filter-options="availableFilters" :selected-filter="selectedFilter" @toggle-follow="toggleFollow" @select-filter="selectFilter" />
   <div class="inner-content">
-    <LogPanel
-      :filter="filter"
-      :follow="followlog"
-    />
+    <LogPanel :filter="filter" :follow="followlog" />
   </div>
 </template>
 
@@ -38,7 +27,7 @@ const availableFilters = ref(defaultAvailableFilter);
 
 watch(() => route.query.filter, (newFilter) => {
     availableFilters.value = defaultAvailableFilter;
-    if (newFilter){
+    if (newFilter) {
         availableFilters.value.push(newFilter);
         filter.value = newFilter;
     } else {

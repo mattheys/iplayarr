@@ -1,9 +1,5 @@
 <template>
-  <IPlayarrModal
-    title="Updating Apps"
-    :show-close="true"
-    close-label="Close"
-  >
+  <IPlayarrModal title="Updating Apps" :show-close="true" close-label="Close">
     <table class="resultsTable">
       <thead>
         <tr>
@@ -15,16 +11,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="app of apps"
-          :key="app.id"
-        >
+        <tr v-for="app of apps" :key="app.id">
           <td>
             <div class="appDisplay">
-              <img
-                class="appImg"
-                :src="`/img/${app.type.toLowerCase()}.svg`"
-              >
+              <img class="appImg" :src="`/img/${app.type.toLowerCase()}.svg`">
               <span class="appName">
                 {{ app.name }}
               </span>
@@ -43,7 +33,7 @@
 </template>
 
 <script setup>
-import {defineEmits, inject, onBeforeUnmount,onMounted, ref} from 'vue';
+import { defineEmits, inject, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { ipFetch } from '@/lib/ipFetch';
 
@@ -61,20 +51,20 @@ onMounted(async () => {
     apps.value = (await ipFetch('json-api/apps')).data;
     features.value = (await ipFetch('json-api/apps/types')).data;
 
-    apps.value = apps.value.filter(({type}) => features.value[type].includes('callback'));
+    apps.value = apps.value.filter(({ type }) => features.value[type].includes('callback'));
 
-    if (apps.value.length == 0){
+    if (apps.value.length == 0) {
         emit('close');
         return;
     }
 
-    appStatus.value = apps.value.reduce((acc, {id}) => {
-        acc[id] = {status : 'Pending', message : ''};
+    appStatus.value = apps.value.reduce((acc, { id }) => {
+        acc[id] = { status: 'Pending', message: '' };
         return acc;
     }, {});
 
-    socket.value.on('app_update_status', ({id, status, message}) => {
-        appStatus.value[id] = {status, message};
+    socket.value.on('app_update_status', ({ id, status, message }) => {
+        appStatus.value[id] = { status, message };
     });
 
     ipFetch('json-api/apps/updateApiKey', 'POST', {});
@@ -89,58 +79,59 @@ const getPillColor = (status) => {
     default:
         return 'grey';
     case 'In Progress':
-        return 'error'; 
+        return 'error';
     case 'Complete':
-        return 'success'; 
+        return 'success';
     case 'Error':
-        return 'error';      
+        return 'error';
     }
 }
 </script>
 
 <style lang="less">
 .resultsTable {
-    max-width: 100%;
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    color: @table-text-color;
-    margin-bottom: 2rem;
+  max-width: 100%;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  color: @table-text-color;
+  margin-bottom: 2rem;
 
-    thead {
-        th {
-            padding: 8px;
-            border-bottom: 1px solid @table-border-color;
-            text-align: left;
-            font-weight: bold;
-        }
+  thead {
+    th {
+      padding: 8px;
+      border-bottom: 1px solid @table-border-color;
+      text-align: left;
+      font-weight: bold;
     }
+  }
 
-    tbody {
-        tr {
-            transition: background-color 500ms;
+  tbody {
+    tr {
+      transition: background-color 500ms;
 
-            &:hover {
-                background-color: @table-row-hover-color;
-            }
+      &:hover {
+        background-color: @table-row-hover-color;
+      }
 
-            td {
-                padding: 8px;
-                border-top: 1px solid @table-border-color;
-                line-height: 1.52857143;
-                .appDisplay {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    height: 30px;
+      td {
+        padding: 8px;
+        border-top: 1px solid @table-border-color;
+        line-height: 1.52857143;
 
-                    .appImg {
-                        width: 15px;
-                        filter: grayscale(100%) contrast(100%);
-                    }
-                }
-            }
+        .appDisplay {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          height: 30px;
+
+          .appImg {
+            width: 15px;
+            filter: grayscale(100%) contrast(100%);
+          }
         }
+      }
     }
+  }
 }
 </style>

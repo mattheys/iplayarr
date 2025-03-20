@@ -3,33 +3,15 @@
     <label v-if="name">{{ name }}</label>
     <div :class="['inputBox', error ? 'error' : '']">
       <div class="inputWithButton">
-        <input
-          v-model="localValue"
-          :type="typeOverride"
-          :placeholder="placeholder"
-        >
-        <button
-          v-if="iconButton"
-          :title="buttonTooltip"
-          @click="emit('action')"
-        >
+        <input v-model="localValue" :type="typeOverride" :placeholder="placeholder">
+        <button v-if="iconButton" :title="buttonTooltip" @click="emit('action')">
           <font-awesome-icon :icon="['fas', iconButton]" />
         </button>
-        <button
-          v-if="brandButton"
-          :title="buttonTooltip"
-          @click="emit('action')"
-        >
-          <img
-            class="brand"
-            :src="`/img/${brandButton.toLowerCase()}.svg`"
-          >
+        <button v-if="brandButton" :title="buttonTooltip" @click="emit('action')">
+          <img class="brand" :src="`/img/${brandButton.toLowerCase()}.svg`">
         </button>
       </div>
-      <div
-        v-if="error"
-        class="error"
-      >
+      <div v-if="error" class="error">
         {{ error }}
       </div>
       <div class="tooltip">
@@ -74,9 +56,9 @@ const props = defineProps({
         required: false,
         default: false
     },
-    iconButton : String,
-    brandButton : String,
-    buttonTooltip : String
+    iconButton: String,
+    brandButton: String,
+    buttonTooltip: String
 })
 
 const emit = defineEmits(['update:modelValue', 'action']);
@@ -97,97 +79,97 @@ watch(
 
 <style lang="less" scoped>
 .form-group {
+  display: flex;
+  max-width: 650px;
+  margin-bottom: 1rem;
+
+  label {
+    flex: 0 0 250px;
     display: flex;
-    max-width: 650px;
-    margin-bottom: 1rem;
+    justify-content: flex-end;
+    margin-right: 20px;
+    padding-top: 8px;
+    min-height: 35px;
+    text-align: end;
+    font-weight: bold;
+    font-size: 14px;
+    color: @table-text-color;
 
-    label {
-        flex: 0 0 250px;
-        display: flex;
-        justify-content: flex-end;
-        margin-right: 20px;
-        padding-top: 8px;
-        min-height: 35px;
-        text-align: end;
-        font-weight: bold;
-        font-size: 14px;
-        color: @table-text-color;
-
-        @media (max-width: @mobile-breakpoint) {
-            flex: 0 0 80px;
-        }
+    @media (max-width: @mobile-breakpoint) {
+      flex: 0 0 80px;
     }
+  }
 
-    .inputBox {
-        flex: 1 1 auto;
-        box-sizing: border-box;
+  .inputBox {
+    flex: 1 1 auto;
+    box-sizing: border-box;
 
-        .inputWithButton {
-            position: relative;
-            display: flex;
-            align-items: center;
-            width: 100%;
+    .inputWithButton {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
 
-            button {
-                position: absolute;
-                right: 0;
-                top: 50%;
-                transform: translateY(-50%);
-                background-color: @settings-button-hover-background-color;
-                border: none;
-                cursor: pointer;
-                padding: 9px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border: 1px solid @input-border-color;
+      button {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: @settings-button-hover-background-color;
+        border: none;
+        cursor: pointer;
+        padding: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid @input-border-color;
 
-                .brand {
-                    width: 15px;
-                    filter: grayscale(100%) contrast(100%);
-                }
-
-                &:hover {
-                    background-color: @input-background-color;
-                }
-            }
-
-            input {
-                box-sizing: border-box;
-                padding: 6px 16px;
-                width: 100%;
-                height: 35px;
-                border: 1px solid @input-border-color;
-                border-radius: 4px;
-                background-color: @input-background-color;
-                box-shadow: inset 0 1px 1px @primary-box-shadow;
-                color: @input-text-color;
-            }
-
-            &.error {
-                font-size: 14px;
-                color: @error-color;
-
-                input {
-                    border-color: @error-color;
-                }
-            }
+        .brand {
+          width: 15px;
+          filter: grayscale(100%) contrast(100%);
         }
+
+        &:hover {
+          background-color: @input-background-color;
+        }
+      }
+
+      input {
+        box-sizing: border-box;
+        padding: 6px 16px;
+        width: 100%;
+        height: 35px;
+        border: 1px solid @input-border-color;
+        border-radius: 4px;
+        background-color: @input-background-color;
+        box-shadow: inset 0 1px 1px @primary-box-shadow;
+        color: @input-text-color;
+      }
+
+      &.error {
+        font-size: 14px;
+        color: @error-color;
+
+        input {
+          border-color: @error-color;
+        }
+      }
+    }
+  }
+
+  .tooltip {
+    font-size: 14px;
+    color: @subtle-text-color;
+  }
+
+  &.advanced {
+    label {
+      color: @warn-color;
     }
 
     .tooltip {
-        font-size: 14px;
-        color: @subtle-text-color;
+      color: @warn-color;
     }
-
-    &.advanced {
-        label {
-            color: @warn-color;
-        }
-
-        .tooltip {
-            color: @warn-color;
-        }
-    }
+  }
 }
 </style>
