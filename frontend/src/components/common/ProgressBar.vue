@@ -1,11 +1,11 @@
 <template>
-    <div :class="['progress-bar', history ? 'history' : '']" v-if="!idle">
-        <div class="progress" :style="{ width: progress + '%' }"></div>
-    </div>
+  <div v-if="!idle" :class="['progress-bar', history ? 'history' : '']">
+    <div class="progress" :style="{ width: progress + '%' }" />
+  </div>
 
-    <div :class="['progress-bar', history ? 'history' : '', 'idle']" v-if="idle">
-        <div class="progress" style="width: 100%"></div>
-    </div>
+  <div v-if="idle" :class="['progress-bar', history ? 'history' : '', 'idle']">
+    <div class="progress" style="width: 100%" />
+  </div>
 </template>
 
 <script setup>
@@ -31,21 +31,21 @@ defineProps({
 
 <style lang="less" scoped>
 .progress-bar {
-    width: 100%;
-    position: relative;
-    background-color: @input-background-color;
-    border-radius: 5px;
-    overflow: hidden;
+  width: 100%;
+  position: relative;
+  background-color: @input-background-color;
+  border-radius: 5px;
+  overflow: hidden;
 
+  .progress {
+    height: 15px;
+    background-color: @primary-color;
+  }
+
+  &.history {
     .progress {
-        height: 15px;
-        background-color: @primary-color;
+      background-color: @complete-color;
     }
-
-    &.history {
-        .progress {
-            background-color: @complete-color;
-        }
-    }
+  }
 }
 </style>

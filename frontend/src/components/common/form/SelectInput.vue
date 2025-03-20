@@ -1,24 +1,24 @@
 <template>
-    <div :class="['form-group', advanced ? 'advanced' : '']">
-        <label v-if="name">{{ name }}</label>
-        <div :class="['inputBox', error ? 'error' : '']">
-            <select v-model="localValue">
-                <option v-for="option of options" v-bind:key="option.key" :value="option.key">
-                    {{ option.value }}
-                </option>
-            </select>
-            <div class="error" v-if="error">
-                {{ error }}
-            </div>
-            <div class="tooltip">
-                {{ tooltip }}
-            </div>
-        </div>
+  <div :class="['form-group', advanced ? 'advanced' : '']">
+    <label v-if="name">{{ name }}</label>
+    <div :class="['inputBox', error ? 'error' : '']">
+      <select v-model="localValue">
+        <option v-for="option of options" :key="option.key" :value="option.key">
+          {{ option.value }}
+        </option>
+      </select>
+      <div v-if="error" class="error">
+        {{ error }}
+      </div>
+      <div class="tooltip">
+        {{ tooltip }}
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue';
+import { defineEmits, defineProps, ref, watch } from 'vue';
 
 const props = defineProps({
     name: {

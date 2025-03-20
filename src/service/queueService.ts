@@ -12,13 +12,14 @@ import socketService from './socketService';
 let queue : QueueEntry[] = [];
 
 const queueService = {
-    addToQueue : (pid : string, nzbName : string, type : VideoType) : void => {
+    addToQueue : (pid : string, nzbName : string, type : VideoType, appId? : string) : void => {
         const queueEntry : QueueEntry = {
             pid,
             status : QueueEntryStatus.QUEUED,
             nzbName,
             details : {},
-            type
+            type,
+            appId
         }
         queue.push(queueEntry);
         queueService.moveQueue();

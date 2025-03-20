@@ -20,7 +20,7 @@ const historyService = {
     },
 
     addHistory : async(item : QueueEntry) : Promise<void> => {
-        const historyItem : QueueEntry = {...item, details : {...item.details, eta: '', speed: 0, progress: 100}};
+        const historyItem : QueueEntry = {...item, details : {...item.details, eta: '', speed: 0, progress: 100}, process : undefined};
         const history : QueueEntry[] = await historyService.getHistory();
         history.push(historyItem);
         await storage.setItem('history', history);

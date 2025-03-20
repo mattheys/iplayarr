@@ -3,7 +3,7 @@ import { getHost } from './utils.js'
 export const ipFetch = async(endpoint, method = 'GET', body) => {
     const options = {
         method,
-        credentials : "include"
+        credentials : 'include'
     }
     if (body) {
         options.headers = { 'Content-Type': 'application/json' };

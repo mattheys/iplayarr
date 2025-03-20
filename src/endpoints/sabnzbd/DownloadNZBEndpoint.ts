@@ -2,16 +2,17 @@ import { Request, Response } from 'express';
 import { Builder } from 'xml2js';
 
 import { VideoType } from '../../types/IPlayerSearchResult';
-import { NZBFileResponse } from '../../types/responses/newznab/NZBFileResponse';
+import { NZBFileResponse, NZBMetaEntry } from '../../types/responses/newznab/NZBFileResponse';
 
 interface DownloadNZBRequest {
     pid : string,
     nzbName : string,
-    type : VideoType
+    type : VideoType,
+    app? : string
 }
 
 export default async (req : Request, res : Response) => {
-    const { pid, nzbName, type } = req.query as any as DownloadNZBRequest;
+    const { pid, nzbName, type, app } = req.query as any as DownloadNZBRequest;
 
     const date : Date = new Date();
     date.setMinutes(date.getMinutes() - 720);
@@ -21,26 +22,37 @@ export default async (req : Request, res : Response) => {
         renderOpts: { pretty: true }
     });
 
+    const meta : NZBMetaEntry[] = [
+        {
+            $: {
+                type: 'nzbName',
+                _: nzbName
+            }
+        },
+        {
+            $: {
+                type: 'type',
+                _: type
+            }
+        }
+    ]
+
+    if (app){
+        meta.push({
+            $: {
+                type: 'app',
+                _: app
+            }
+        })
+    }
+
     const nzbFile : NZBFileResponse = {
         $: {
             xmlns: 'http://www.newzbin.com/DTD/2003/nzb'
         },
         head: {
             title: pid,
-            meta: [
-                {
-                    $: {
-                        type: 'nzbName',
-                        _: nzbName
-                    }
-                },
-                {
-                    $: {
-                        type: 'type',
-                        _: type
-                    }
-                }
-            ]
+            meta
         },
         file: {
             $: {

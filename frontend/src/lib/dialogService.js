@@ -1,5 +1,6 @@
-import AlertDialog from '@/components/modals/AlertDialog.vue';
 import { useModal } from 'vue-final-modal'
+
+import AlertDialog from '@/components/modals/AlertDialog.vue';
 
 const dialogService = {
     alert : (title, text, subtext) => {

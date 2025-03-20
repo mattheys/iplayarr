@@ -25,7 +25,7 @@ if (isDebug){
         origin: (origin, callback) => {
             callback(null, origin)
         },
-		credentials: true
+        credentials: true
     }));
 }
 
