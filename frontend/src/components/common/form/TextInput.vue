@@ -1,8 +1,8 @@
 <template>
   <div :class="['form-group', advanced ? 'advanced' : '']">
     <label v-if="name">{{ name }}</label>
-    <div :class="['inputBox', error ? 'error' : '']">
-      <div class="inputWithButton">
+    <div class="inputBox">
+      <div :class="['inputWithButton', error ? 'error' : '']">
         <input v-model="localValue" :type="typeOverride" :placeholder="placeholder">
         <button v-if="iconButton" :title="buttonTooltip" @click="emit('action')">
           <font-awesome-icon :icon="['fas', iconButton]" />
@@ -103,6 +103,11 @@ watch(
   .inputBox {
     flex: 1 1 auto;
     box-sizing: border-box;
+
+    .error {
+      font-size: 14px;
+      color: @error-color;
+    }
 
     .inputWithButton {
       position: relative;
