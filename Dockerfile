@@ -57,7 +57,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm run install:both --only=production
+RUN npm run install:both --omit=dev
 
 COPY --from=builder /app/dist ./
 
