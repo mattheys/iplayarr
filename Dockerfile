@@ -1,3 +1,33 @@
+# base
+FROM node:current AS base
+
+WORKDIR /app
+
+COPY package*.json ./
+    
+RUN npm install
+
+COPY . .
+
+# for lint
+
+FROM base as linter
+
+WORKDIR /app
+
+RUN npm run lint
+
+# for build
+
+FROM linter as builder
+
+WORKDIR /app
+
+RUN npm run build
+
+
+# for production
+
 FROM node:current-alpine
 
 RUN apk --update add \
@@ -10,8 +40,6 @@ RUN apk --update add \
     su-exec
 
 RUN apk add atomicparsley --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted && ln -s `which atomicparsley` /usr/local/bin/AtomicParsley
-
-RUN mkdir -p /data/output /data/config
 
 WORKDIR /iplayer
 
@@ -27,16 +55,19 @@ ENV STORAGE_LOCATION=/config
 
 WORKDIR /app
 
-RUN mkdir /config && mkdir /app/frontend
 COPY package*.json ./
-COPY frontend/package*.json ./frontend/
 
-RUN npm run install:both
-COPY . .
+RUN npm run install:both --only=production
+
+COPY --from=builder /app/dist ./
+
 RUN npm run build:frontend && npm run build:backend
+
 RUN rm -rf /app/src /app/frontend/src
 
+EXPOSE 3000
 
 ENTRYPOINT [ "./docker_entry.sh" ]
 
 CMD ["npm", "run", "start"]
+
