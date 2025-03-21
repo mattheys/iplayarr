@@ -41,6 +41,8 @@ RUN apk --update add \
 
 RUN apk add atomicparsley --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted && ln -s `which atomicparsley` /usr/local/bin/AtomicParsley
 
+RUN mkdir -p /data/output /data/config /config /app/frontend
+
 WORKDIR /iplayer
 
 ENV GET_IPLAYER_VERSION=3.35
@@ -56,6 +58,7 @@ ENV STORAGE_LOCATION=/config
 WORKDIR /app
 
 COPY package*.json ./
+COPY frontend/package*.json ./frontend/
 
 RUN npm run install:both 
 
