@@ -23,7 +23,7 @@ FROM linter as builder
 
 WORKDIR /app
 
-RUN npm run build
+RUN npm run build:both
 
 
 # for production
