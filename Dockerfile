@@ -60,7 +60,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY frontend/package*.json ./frontend/
 
-RUN npm run install:both 
+RUN npm run install:both --omit=dev
 
 COPY --from=builder /app/dist ./
 
